@@ -18,8 +18,11 @@ export const navy = '#005082';
 export const gray_t = '#BDBDBD77';
 export const t_cyan = '#56CCF244';
 
+export const primary = '#7C7BAD';
+
 const Colors = {
-    primary: red,
+    primary,
+    // primary: red,
     green,
     gray1,
     gray2,
@@ -41,6 +44,7 @@ const Colors = {
     white_t: '#ffffffCC',
     t_cyan,
     transparent: '#00000000',
+    gray_aaa: "#aaa",
 };
 
 export default Colors;
