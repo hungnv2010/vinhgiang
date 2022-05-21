@@ -3,15 +3,27 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
 import {InvalidAccessToken, InvalidRequest} from '../errors';
 
-export const unsecuredPost = (uri, data = {}) => {
-    const url = `${API_ROOT}/${uri}`;
-    return axios.post(url, data, {
+const convertJsonToPrameter = jsonData => {
+    return ( "?" + Object.keys(jsonData)
+            .map(function (k) {
+                return encodeURIComponent(k) + "=" + encodeURIComponent(jsonData[k]);
+            })
+            .join("&")
+    );
+};
+
+export const unsecuredPost = (uri, param = {}) => {
+    let jsonParam = {...param}
+    let params = jsonParam ? convertJsonToPrameter(jsonParam) : "";
+
+    const url = `${API_ROOT}/${uri}${params}`;
+    return axios.get(url, [], {
         validateStatus: false,
         headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'text/plain',
         },
     })
-        .then(res => res.data)
+        // .then(res => res.data)
         .catch(e => {
             console.error('post error', e);
             throw e;
@@ -25,7 +37,7 @@ export const post = async (uri, data = {}) => {
         validateStatus: false,
         headers: {
             'Content-Type': 'application/json',
-            AUTHORIZATION: token,
+            'access_token': token,
         },
     })
         .then(res => {
@@ -49,16 +61,53 @@ export const post = async (uri, data = {}) => {
         });
 };
 
+export const get = async (uri, param = {}) => {
+    const token = await AsyncStorage.getItem('token');
+
+    let jsonParam = {...param}
+    let params = jsonParam ? convertJsonToPrameter(jsonParam) : "";
+
+    const url = `${API_ROOT}/${uri}${params}`;
+    return axios.get(url, {
+        validateStatus: false,
+        headers: {
+            'Content-Type': 'text/html',
+            'access_token': token,
+        },
+    })
+        .then(res => {
+            if (res.status === 401) {
+                throw new InvalidAccessToken(res.data?.message);
+            }
+            if (res.status === 400) {
+                console.log('get response InvalidRequest ===============', url);
+                console.log(JSON.stringify(data));
+                console.log(res.data);
+                console.log('======================');
+                throw new InvalidRequest(res.data.result);
+            }
+            return res.data;
+        })
+        .catch(e => {
+            
+            console.log('get error ', e);
+
+            if (e.message?.includes('Accesstoken is not valid')) {
+                throw new InvalidAccessToken(e.message);
+            }
+            throw e;
+        });
+};
+
 const ApiService = {
     login: async (username, password) => {
         try {
             console.log('login api', username, password);
-            const res = await unsecuredPost('signin', {
+            const res = await unsecuredPost('auth/token', {
                 login: username,
                 password,
-                device_token: 'phone_abc',
+                // device_token: 'phone_abc',
             });
-            console.log('login result=====', res);
             if (res.status === 200) {
                 return {...res.data, success: true};
             }
@@ -88,28 +137,13 @@ const ApiService = {
         console.log('update order api', JSON.stringify(data));
         return await post('edit_request_order', data);
     },
-    getProductCua: async () => {
-        return await post('get_product_door')
-            .then(res => res.result.data);
+    getProductCategory: async () => {
+        return await get('product.category')
+            //.then(res => res.data);
     },
-    getProductCanh: async () => {
-        return await post('get_product_door_leaf')
-            .then(res => res.result.data);
-    },
-    getProductKhung: async () => {
-        return await post('get_product_door_frames')
-            .then(res => res.result.data);
-    },
-    getProductPhao: async () => {
-        return await post('get_product_phao')
-            .then(res => res.result.data);
-    },
-    getProductOThoang: async () => {
-        return await post('get_o_thoang')
-            .then(res => res.result.data);
-    },
-    getMaHuynh: async () => {
-        return await post('get_all_ma_huynh');
+    getProductAll: async () => {
+        return await get('product.product')
+            //.then(res => res.result.data);
     },
     getAllColors: async () => {
         return await post('get_all_color_code');

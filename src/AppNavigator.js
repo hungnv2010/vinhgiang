@@ -50,15 +50,15 @@ const options = {
 
 const AppNavigator = (props) => {
   const state = useAuthState();
-  // if (!state.token) {
-  //   return <Stack.Navigator
-  //     screenOptions={options}
-  //     initialRouteName={Login.route}>
-  //     <Stack.Screen
-  //       name={Login.route}
-  //       component={Login}/>
-  //   </Stack.Navigator>;
-  // }
+  if (!state.token) {
+    return <Stack.Navigator
+      screenOptions={options}
+      initialRouteName={Login.route}>
+      <Stack.Screen
+        name={Login.route}
+        component={Login}/>
+    </Stack.Navigator>;
+  }
   return <Stack.Navigator initialRouteName={BottomTabNavigator.route}>
     <Stack.Screen options={options} name={BottomTabNavigator.route} component={BottomTabNavigator} />
     <Stack.Screen options={options} name={Home.route} component={Home} />

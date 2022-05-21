@@ -17,31 +17,53 @@ export const STATE = {
 };
 
 export default class OrderModel {
-    id = 'New';
-    isRecreated = false;
-    customer = '';
-    bill = 0;
-    lines = [];
-    note = '';
-    name = '';
-    state = '';
-    mobile = '';
-    date_nhan = moment();
-    date_send = moment();
-    date_order = moment();
-    date_validity = '';
-    infor_tranfer = '';
-    sale_order = {id: false, name: false};
-    partner_id = 0;
-    delivery_address = '';
-    infor_receive = '';
-    new_order = 0;
-    ngay_nhan_theo_bao_gia = '';
-    amount_total: 0;
+
+    activity_ids = []
+    company_id = 1
+    currency_id = 23
+    date_order = "2022-05-18 14:52:05"
+    date_planned = "2022-05-18 05:00:00"
+    dest_address_id = false
+    fiscal_position_id = false
+    incoterm_id = 1
+    message_follower_ids = []
+    message_ids = []
+    notes = '' // dieu khoan
+    order_line = []
+    origin = false
+    partner_id = 7
+    partner_ref = false
+    payment_term_id = 2
+    picking_type_id = 1
+    priority = "0"
+    receipt_reminder_email = false
+    reminder_date_before_receipt = 1
+    user_id = 2
+    // id = 'New';
+    // isRecreated = false;
+    // customer = '';
+    // bill = 0;
+    // lines = [];
+    // note = '';
+    // name = '';
+    // state = '';
+    // mobile = '';
+    // date_nhan = moment();
+    // date_send = moment();
+    // date_order = moment();
+    // date_validity = '';
+    // infor_tranfer = '';
+    // sale_order = {id: false, name: false};
+    // partner_id = 0;
+    // delivery_address = '';
+    // infor_receive = '';
+    // new_order = 0;
+    // ngay_nhan_theo_bao_gia = '';
+    // amount_total: 0;
 
     constructor(data = {}) {
-        if (data.lines && _.isArray(data.lines)) {
-            data.lines = data.lines.map(item => new ProductModel(item));
+        if (data.order_line && _.isArray(data.order_line)) {
+            data.order_line = data.order_line.map(item => new ProductModel(item));
         }
         Object.assign(this, data);
     }
@@ -88,7 +110,7 @@ export default class OrderModel {
         return {
             infor_receive: this.infor_receive,
             date_nhan: this.getDate(this.date_nhan),
-            lines: this.lines.map(product => product.getRequestData()),
+            order_line: this.order_line.map(product => product.getRequestData()),
             infor_tranfer: this.infor_tranfer,
             is_app_order: true,
             new_order: false,
@@ -98,6 +120,6 @@ export default class OrderModel {
 
     addProduct(productData) {
         console.log('add product', productData);
-        this.lines.push(new ProductModel(productData));
+        this.order_line.push(new ProductModel(productData));
     }
 }
