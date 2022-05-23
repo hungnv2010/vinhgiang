@@ -8,17 +8,17 @@ import { Colors } from './configs';
 
 const Tab = createBottomTabNavigator();
 
-const BottomTabNavigator = () => {
+export const BottomTabNavigator = () => {
   return (
     <Tab.Navigator
-      initialRouteName="Customer"
+      initialRouteName={Customer.route}
       screenOptions={({ route }) => ({
         tabBarActiveTintColor: Colors.primary,
         tabBarInactiveTintColor: Colors.gray_aaa,
         headerShown: false,
         tabBarStyle: {
-          height: 82,
-          paddingHorizontal: 5,
+          // height: 52,
+          // padding: 0,
         }
       })}
     >
@@ -35,6 +35,7 @@ const optionsTab = (name, icon) => {
   return {
     tabBarLabelStyle: {
       fontSize: 12,
+      marginBottom: 3
     },
     tabBarLabel: name,
     tabBarIcon: ({ color, size }) => (
@@ -56,7 +57,7 @@ const AppNavigator = (props) => {
       initialRouteName={Login.route}>
       <Stack.Screen
         name={Login.route}
-        component={Login}/>
+        component={Login} />
     </Stack.Navigator>;
   }
   return <Stack.Navigator initialRouteName={BottomTabNavigator.route}>

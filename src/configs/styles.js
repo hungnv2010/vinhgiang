@@ -1,4 +1,4 @@
-import {StyleSheet} from 'react-native';
+import { StyleSheet } from 'react-native';
 import Colors from './colors';
 
 const FORM_INPUT_HEIGHT = 36;
@@ -118,7 +118,7 @@ const Styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
     },
-    label: {flexDirection: 'row', justifyContent: 'space-between'},
+    label: { flexDirection: 'row', justifyContent: 'space-between' },
     button: {
         backgroundColor: Colors.primary,
     },
@@ -320,7 +320,7 @@ const Styles = StyleSheet.create({
     itemDt: {
         flex: 3,
         color: Colors.black,
-        textAlignVertical:'center'
+        textAlignVertical: 'center'
     },
     itemDl: {
         flexDirection: 'row',
@@ -445,6 +445,21 @@ const Styles = StyleSheet.create({
     checkBox: {
         color: Colors.white,
     },
+
+    productList: { flex: 1, padding: 5 },
+    productViewNoList: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+    productViewFilter: { flexDirection: "row" },
+    productViewFilterCategori: { padding: 5, flexDirection: "row", alignItems: "center", justifyContent: "center", borderWidth: 0.5, borderColor: "#aaa", borderRadius: 7, height: 40, margin: 10, marginBottom: 0, marginRight: 0 },
+    productViewSearch: { flexDirection: "row", padding: 5, alignItems: "center", justifyContent: "center", borderWidth: 0.5, borderColor: "#aaa", borderRadius: 7, height: 40, margin: 10, marginBottom: 0, flex: 1 },
+    productInputSearch: { flex: 1 },
+    productTextFilterCategori: { paddingHorizontal: 5, alignSelf: "center" },
+    productViewApply: { padding: 5, flexDirection: "row", alignItems: "center", justifyContent: "center", borderWidth: 0, backgroundColor: Colors.primary, borderRadius: 7, height: 40, margin: 10, marginBottom: 0, marginRight: 0 },
+    productTextApply: { color: Colors.white },
+    productViewModalCategori: { padding: 20, paddingTop: 0, zIndex: 9999999 },
+    productIconCloseModalCategori: { alignSelf: "flex-end", padding: 0 },
+    productViewItemModalCategori: { padding: 0, flexDirection: "row", alignItems: "center", justifyContent: "center", },
+    productItemNameCategori: { padding: 0, alignSelf: "center", flex: 1 },
+    productCheckBox: { padding: 0, margin: 10 },
 });
 
 export default Styles;
