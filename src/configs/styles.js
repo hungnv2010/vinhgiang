@@ -450,7 +450,7 @@ const Styles = StyleSheet.create({
     productViewNoList: { flex: 1, alignItems: 'center', justifyContent: 'center' },
     productViewFilter: { flexDirection: "row" },
     productViewFilterCategori: { padding: 5, flexDirection: "row", alignItems: "center", justifyContent: "center", borderWidth: 0.5, borderColor: "#aaa", borderRadius: 7, height: 40, margin: 10, marginBottom: 0, marginRight: 0 },
-    productViewSearch: { flexDirection: "row", padding: 5, alignItems: "center", justifyContent: "center", borderWidth: 0.5, borderColor: "#aaa", borderRadius: 7, height: 40, margin: 10, marginBottom: 0, flex: 1 },
+    productViewSearch: { flexDirection: "row", paddingHorizontal: 5, alignItems: "center", justifyContent: "center", borderWidth: 0.5, borderColor: "#aaa", borderRadius: 7, height: 40, margin: 10, marginBottom: 0, flex: 1 },
     productInputSearch: { flex: 1 },
     productTextFilterCategori: { paddingHorizontal: 5, alignSelf: "center" },
     productViewApply: { padding: 5, flexDirection: "row", alignItems: "center", justifyContent: "center", borderWidth: 0, backgroundColor: Colors.primary, borderRadius: 7, height: 40, margin: 10, marginBottom: 0, marginRight: 0 },
