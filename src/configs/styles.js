@@ -28,13 +28,15 @@ const Styles = StyleSheet.create({
     },
     screenContainer: {
         flex: 1,
+        backgroundColor: Colors.white
     },
     centerContent: {
         alignItems: 'center',
+        color: Colors.white
     },
     logoBanner: {
-        height: 194,
-        marginBottom: 94,
+        height: 120,
+        marginVertical: 100,
     },
     fullWidth: {
         width: '100%',
@@ -164,14 +166,14 @@ const Styles = StyleSheet.create({
     },
     buttonContainer: {
         marginVertical: 26,
-        marginHorizontal: 0,
+        marginHorizontal: 17,
     },
     inputLabel: {},
     inputContainer: {
         backgroundColor: Colors.white_t,
         borderRadius: 10,
         paddingHorizontal: 10,
-        borderColor: Colors.primary,
+        borderColor: Colors.gray_aaa,
     },
     inputLeftIcon: {
         backgroundColor: Colors.white_t,

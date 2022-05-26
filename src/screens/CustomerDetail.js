@@ -113,12 +113,29 @@ const CustomerDetail = (props) => {
         if (customer.id && customer.id != "") {
             body["id"] = customer.id
         }
-        await ApiService.addCustomer(body).then(res => {
-            messageService.showSuccess(`${customer.id ? 'Cập nhật' : 'Thêm mới'} khách hàng thành công`);
-            goBack()
-        }).catch(err => {
-            console.log("addCustomer err ", JSON.stringify(err));
-        })
+        if (customer.id && customer.id != "") {
+            await ApiService.editCustomer(body).then(res => {
+                messageService.showSuccess(`${customer.id ? 'Cập nhật' : 'Thêm mới'} khách hàng thành công`);
+                goBack()
+            }).catch(err => {
+                messageService.showError('Có lỗi trong quá trình xử lý');
+                console.log("addCustomer err ", JSON.stringify(err));
+            })
+        } else {
+            await ApiService.addCustomer(body).then(res => {
+                messageService.showSuccess(`${customer.id ? 'Cập nhật' : 'Thêm mới'} khách hàng thành công`);
+                goBack()
+            }).catch(err => {
+                messageService.showError('Có lỗi trong quá trình xử lý');
+                console.log("addCustomer err ", JSON.stringify(err));
+            })
+        }
+        // await ApiService.addCustomer(body).then(res => {
+        //     messageService.showSuccess(`${customer.id ? 'Cập nhật' : 'Thêm mới'} khách hàng thành công`);
+        //     goBack()
+        // }).catch(err => {
+        //     console.log("addCustomer err ", JSON.stringify(err));
+        // })
     }
 
     const checkDataApply = () => {

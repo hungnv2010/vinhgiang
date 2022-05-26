@@ -156,6 +156,9 @@ const ApiService = {
     },
     addCustomer: async (body) => {
         return await post('res.partner', body);
+    },
+    editCustomer: async (body) => {
+        return await put('res.partner', body);
     }
 };
 
