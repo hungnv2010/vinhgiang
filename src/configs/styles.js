@@ -460,6 +460,19 @@ const Styles = StyleSheet.create({
     productViewItemModalCategori: { padding: 0, flexDirection: "row", alignItems: "center", justifyContent: "center", },
     productItemNameCategori: { padding: 0, alignSelf: "center", flex: 1 },
     productCheckBox: { padding: 0, margin: 10 },
+    detailCustomerViewTextInput: { flexDirection: "row", paddingHorizontal: 5, alignItems: "center", justifyContent: "center", borderWidth: 0.5, borderColor: "#aaa", borderRadius: 7, height: 40, margin: 10, marginBottom: 0 },
+    detailCustomerInput: { flex: 1 },
+    detailCustomerApply: { padding: 5, flexDirection: "row", alignItems: "center", justifyContent: "center", borderWidth: 0, backgroundColor: Colors.primary, borderRadius: 7, height: 40, margin: 10 },
+    detailCustomerTextApply: { color: Colors.white },
+    customerAdd: { right: 20, bottom: 15, position: "absolute" },
+    customerButonAdd: { borderRadius: 1000 },
+    backgroundColorF5F5F5: { backgroundColor: '#F5F5F5' },
+    viewItemProduct: { padding: 3, margin: 5, borderRadius: 10, borderColor: 'silver', borderWidth: 0.5, },
+    flexDirection: { flexDirection: 'row' },
+    itemViewContent: { flexDirection: 'column', justifyContent: 'space-between', flex: 1, padding: 5, marginLeft: 5 },
+    itemViewIcon: { flexDirection: 'column', justifyContent: 'center', alignItems: "center" },
+    itemProductText: { color: Colors.gray_aaa, marginTop: 5, fontSize: 12 },
+    textSize14: { fontSize: 14 },
 });
 
 export default Styles;

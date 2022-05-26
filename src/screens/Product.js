@@ -10,7 +10,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 import FSModal from '../components/FSModal';
 import { Button } from 'react-native-elements/dist/buttons/Button';
 import { CheckBox } from 'react-native-elements';
-import { ChangeAlias } from '../configs/Utils';
+import { ChangeAlias, NumberFormat } from '../configs/Utils';
 
 const Product = (props) => {
     const { navigation, route } = props;
@@ -34,7 +34,7 @@ const Product = (props) => {
         let getProductCategory = await ApiService.getProductCategory()
         // console.log("getProductCategory ", JSON.stringify(getProductCategory));
         let getProductAll = await ApiService.getProductAll()
-        // console.log("getProductAll ", JSON.stringify(getProductAll));
+        console.log("getProductAll ", JSON.stringify(getProductAll));
         setRefreshing(false);
         setListProduct(getProductAll.data)
         setListCategori(getProductCategory.data)
@@ -57,18 +57,18 @@ const Product = (props) => {
 
     const renderProduct = (item, index) => {
         return (
-            <TouchableOpacity key={index.toString()} onPress={() => onClickItem(item)} style={{ backgroundColor: '#F5F5F5' }}>
-                <View style={{ padding: 3, margin: 5, borderRadius: 10, borderColor: 'silver', borderWidth: 0.5, }}>
-                    <View style={{ flexDirection: 'row' }}>
-                        <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: "center" }}>
+            <TouchableOpacity key={index.toString()} onPress={() => onClickItem(item)} style={Styles.backgroundColorF5F5F5}>
+                <View style={Styles.viewItemProduct}>
+                    <View style={Styles.flexDirection}>
+                        <View style={Styles.itemViewIcon}>
                             <MaterialCommunityIcons name={"image"} color={Colors.t_cyan} size={70} />
                         </View>
-                        <View style={{ flexDirection: 'column', justifyContent: 'space-between', flex: 1, padding: 5, marginLeft: 5 }}>
-                            <Text style={{ fontSize: 14 }}>{item.name} [{item.default_code}]</Text>
-                            <View style={{ flexDirection: 'row' }}>
-                                <Text style={{ color: Colors.gray_aaa, marginTop: 5, fontSize: 12 }}>Giá {item.lst_price} đ</Text>
+                        <View style={Styles.itemViewContent}>
+                            <Text style={Styles.textSize14}>{item.name} [{item.default_code}]</Text>
+                            <View style={Styles.flexDirection}>
+                                <Text style={Styles.itemProductText}>Giá {NumberFormat(item.lst_price)} đ</Text>
                             </View>
-                            <Text style={{ color: Colors.gray_aaa, marginTop: 5, fontSize: 12 }}>Tồn hiện có {item.qty_available} </Text>
+                            <Text style={Styles.itemProductText}>Tồn hiện có {NumberFormat(item.qty_available)} </Text>
                         </View>
                     </View>
                 </View>
