@@ -1,4 +1,4 @@
-import {StyleSheet} from 'react-native';
+import { StyleSheet } from 'react-native';
 import Colors from './colors';
 
 const FORM_INPUT_HEIGHT = 36;
@@ -28,13 +28,15 @@ const Styles = StyleSheet.create({
     },
     screenContainer: {
         flex: 1,
+        backgroundColor: Colors.white
     },
     centerContent: {
         alignItems: 'center',
+        color: Colors.white
     },
     logoBanner: {
-        height: 194,
-        marginBottom: 94,
+        height: 120,
+        marginVertical: 100,
     },
     fullWidth: {
         width: '100%',
@@ -118,7 +120,7 @@ const Styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
     },
-    label: {flexDirection: 'row', justifyContent: 'space-between'},
+    label: { flexDirection: 'row', justifyContent: 'space-between' },
     button: {
         backgroundColor: Colors.primary,
     },
@@ -164,14 +166,14 @@ const Styles = StyleSheet.create({
     },
     buttonContainer: {
         marginVertical: 26,
-        marginHorizontal: 0,
+        marginHorizontal: 17,
     },
     inputLabel: {},
     inputContainer: {
         backgroundColor: Colors.white_t,
         borderRadius: 10,
         paddingHorizontal: 10,
-        borderColor: Colors.primary,
+        borderColor: Colors.gray_aaa,
     },
     inputLeftIcon: {
         backgroundColor: Colors.white_t,
@@ -320,7 +322,7 @@ const Styles = StyleSheet.create({
     itemDt: {
         flex: 3,
         color: Colors.black,
-        textAlignVertical:'center'
+        textAlignVertical: 'center'
     },
     itemDl: {
         flexDirection: 'row',
@@ -445,6 +447,34 @@ const Styles = StyleSheet.create({
     checkBox: {
         color: Colors.white,
     },
+
+    productList: { flex: 1, padding: 5 },
+    productViewNoList: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+    productViewFilter: { flexDirection: "row" },
+    productViewFilterCategori: { padding: 5, flexDirection: "row", alignItems: "center", justifyContent: "center", borderWidth: 0.5, borderColor: "#aaa", borderRadius: 7, height: 40, margin: 10, marginBottom: 0, marginRight: 0 },
+    productViewSearch: { flexDirection: "row", paddingHorizontal: 5, alignItems: "center", justifyContent: "center", borderWidth: 0.5, borderColor: "#aaa", borderRadius: 7, height: 40, margin: 10, marginBottom: 0, flex: 1 },
+    productInputSearch: { flex: 1 },
+    productTextFilterCategori: { paddingHorizontal: 5, alignSelf: "center" },
+    productViewApply: { padding: 5, flexDirection: "row", alignItems: "center", justifyContent: "center", borderWidth: 0, backgroundColor: Colors.primary, borderRadius: 7, height: 40, margin: 10, marginBottom: 0, marginRight: 0 },
+    productTextApply: { color: Colors.white },
+    productViewModalCategori: { padding: 20, paddingTop: 0, zIndex: 9999999 },
+    productIconCloseModalCategori: { alignSelf: "flex-end", padding: 0 },
+    productViewItemModalCategori: { padding: 0, flexDirection: "row", alignItems: "center", justifyContent: "center", },
+    productItemNameCategori: { padding: 0, alignSelf: "center", flex: 1 },
+    productCheckBox: { padding: 0, margin: 10 },
+    detailCustomerViewTextInput: { flexDirection: "row", paddingHorizontal: 5, alignItems: "center", justifyContent: "center", borderWidth: 0.5, borderColor: "#aaa", borderRadius: 7, height: 40, margin: 10, marginBottom: 0 },
+    detailCustomerInput: { flex: 1 },
+    detailCustomerApply: { padding: 5, flexDirection: "row", alignItems: "center", justifyContent: "center", borderWidth: 0, backgroundColor: Colors.primary, borderRadius: 7, height: 40, margin: 10 },
+    detailCustomerTextApply: { color: Colors.white },
+    customerAdd: { right: 20, bottom: 15, position: "absolute" },
+    customerButonAdd: { borderRadius: 1000 },
+    backgroundColorF5F5F5: { backgroundColor: '#F5F5F5' },
+    viewItemProduct: { padding: 3, margin: 5, borderRadius: 10, borderColor: 'silver', borderWidth: 0.5, },
+    flexDirection: { flexDirection: 'row' },
+    itemViewContent: { flexDirection: 'column', justifyContent: 'space-between', flex: 1, padding: 5, marginLeft: 5 },
+    itemViewIcon: { flexDirection: 'column', justifyContent: 'center', alignItems: "center" },
+    itemProductText: { color: Colors.gray_aaa, marginTop: 5, fontSize: 12 },
+    textSize14: { fontSize: 14 },
 });
 
 export default Styles;

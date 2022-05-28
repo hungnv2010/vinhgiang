@@ -38,20 +38,17 @@ const Login = () => {
     const ref_password = useRef();
 
 
-    return <ImageBackground
-        source={Asset.BackgroundImage}
-        style={Styles.loginBg}
-        blurRadius={0.6}>
-        <KeyboardAvoidingView behavior={'height'} style={Styles.screenContainer}>
+    return <KeyboardAvoidingView behavior={'height'} style={Styles.screenContainer}>
             <ScrollView 
             keyboardShouldPersistTaps='always' 
             showsVerticalScrollIndicator={false}>
                 <View style={Styles.centerContent}>
-                    <Image source={Asset.LoginBanner}
+                    <Image resizeMode="contain" source={Asset.LogoVinhGiang}
                            style={Styles.logoBanner}/>
                     <View style={Styles.fullWidth}>
                         <Input
                             autoCapitalize={'none'}
+                            placeholder="Tên đăng nhập"
                             inputContainerStyle={Styles.inputContainer}
                             leftIcon={<Icon
                                 name="login"
@@ -71,6 +68,7 @@ const Login = () => {
                                 size={24}
                                 color="black"
                             />}
+                            placeholder="Mật khẩu"
                             inputContainerStyle={Styles.inputContainer}
                             secureTextEntry={true}
                             value={password}
@@ -79,12 +77,12 @@ const Login = () => {
                             onSubmitEditing={handleLogin}
                             onChangeText={val => setPassword(val)}/>
 
-                        <CheckBox
+                        {/* <CheckBox
                             containerStyle={Styles.checkBoxContainer}
                             textStyle={Styles.checkBox}
                             checked={savePassword}
                             onPress={() => setSavePassword(!savePassword)}
-                            title={'Nhớ mật khẩu'}/>
+                            title={'Nhớ mật khẩu'}/> */}
 
                         <Button
                             type={'solid'}
@@ -97,7 +95,6 @@ const Login = () => {
                 </View>
             </ScrollView>
         </KeyboardAvoidingView>
-    </ImageBackground>;
 };
 
 Login.route = 'Login';

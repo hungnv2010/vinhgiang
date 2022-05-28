@@ -1,19 +1,19 @@
-import {API_ROOT} from '../configs';
+import { API_ROOT } from '../configs';
 import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
-import {InvalidAccessToken, InvalidRequest} from '../errors';
+import { InvalidAccessToken, InvalidRequest } from '../errors';
 
 const convertJsonToPrameter = jsonData => {
-    return ( "?" + Object.keys(jsonData)
-            .map(function (k) {
-                return encodeURIComponent(k) + "=" + encodeURIComponent(jsonData[k]);
-            })
-            .join("&")
+    return ("?" + Object.keys(jsonData)
+        .map(function (k) {
+            return encodeURIComponent(k) + "=" + encodeURIComponent(jsonData[k]);
+        })
+        .join("&")
     );
 };
 
 export const unsecuredPost = (uri, param = {}) => {
-    let jsonParam = {...param}
+    let jsonParam = { ...param }
     let params = jsonParam ? convertJsonToPrameter(jsonParam) : "";
 
     const url = `${API_ROOT}/${uri}${params}`;
@@ -64,7 +64,7 @@ export const post = async (uri, data = {}) => {
 export const get = async (uri, param = {}) => {
     const token = await AsyncStorage.getItem('token');
 
-    let jsonParam = {...param}
+    let jsonParam = { ...param }
     let params = jsonParam ? convertJsonToPrameter(jsonParam) : "";
 
     const url = `${API_ROOT}/${uri}${params}`;
@@ -89,7 +89,7 @@ export const get = async (uri, param = {}) => {
             return res.data;
         })
         .catch(e => {
-            
+
             console.log('get error ', e);
 
             if (e.message?.includes('Accesstoken is not valid')) {
@@ -109,7 +109,7 @@ const ApiService = {
                 // device_token: 'phone_abc',
             });
             if (res.status === 200) {
-                return {...res.data, success: true};
+                return { ...res.data, success: true };
             }
             return {
                 success: false,
@@ -122,7 +122,7 @@ const ApiService = {
         }
     },
     getDetail: async (name) => {
-        return await post('get_detail_request_order', {name})
+        return await post('get_detail_request_order', { name })
             .then(res => res.result.data);
     },
     getOrderList: async (search = {}) => {
@@ -142,11 +142,11 @@ const ApiService = {
     },
     getProductCategory: async () => {
         return await get('product.category')
-            //.then(res => res.data);
+        //.then(res => res.data);
     },
     getProductAll: async () => {
         return await get('product.product')
-            //.then(res => res.result.data);
+        //.then(res => res.result.data);
     },
     getAllColors: async () => {
         return await post('get_all_color_code');
@@ -154,6 +154,15 @@ const ApiService = {
     getProductAttachments: async () => {
         return await post('get_product_attach');
     },
+    getCustomer: async () => {
+        return await get('res.partner');
+    },
+    addCustomer: async (body) => {
+        return await post('res.partner', body);
+    },
+    editCustomer: async (body) => {
+        return await put('res.partner', body);
+    }
 };
 
 export default ApiService;
