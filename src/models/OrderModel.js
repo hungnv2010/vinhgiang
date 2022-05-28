@@ -11,7 +11,7 @@ export const LIST_THONG_TIN_NHAN_HANG = {
 };
 
 export const STATE = {
-    'darft': 'Nháp',
+    'sale': 'Đơn bán hàng',
     'draft': 'Nháp',
     'send': 'Gửi',
 };

@@ -23,34 +23,30 @@ const OrderList = (props) => {
             <Text style={{...Styles.listItemTitle, alignSelf:'flex-start', fontSize: 16}}>
                 {item.name}
             </Text>
+            <OrderListItem
+                    // type={'date'}
+                    dd={'Khách hàng'}
+                    dt={item.partner_id[1]}/>
+                <OrderListItem
+                    //type={'date'}
+                    dd={'Nhân viên'}
+                    dt={item.user_id[1]}/>
             <View style={{ flex: 1, flexDirection: "row", }}>
               <View style={{ flex: 1 }}>
+
                 <OrderListItem
                     type={'date'}
-                    dd={'Ngay gửi'}
-                    dt={item.date_send}/>
+                    dd={'Ngày tạo'}
+                    dt={item.expected_date}/>
                 <OrderListItem
-                    type={'date'}
-                    dd={'Ngày xác nhận'}
-                    dt={item.date_validity}/>
-                <OrderListItem
-                    type={'date'}
-                    dd={'Ngày lên đơn'}
-                    dt={item.date_order}/>
-                <OrderListItem
-                    type={'date'}
-                    dd={'Ngày giao dự kiến'}
-                    dt={item.ngay_nhan_theo_bao_gia}/>
+                    type={'text'}
+                    dd={'Trạng thái'}
+                    dt={STATE[item.state]}/>
               </View>
     
               <View style={{ flex: 0.05}}/>
               <View style={{ flex: 0.8 }}>
                 <Text/>
-                <OrderListItem
-                    type={'text'}
-                    dd={'Trạng thái'}
-                    dt={STATE[item.state]}/>
-                  <Text/>
                 <OrderListItem
                     dd={'Tổng tiền'}
                     dt={NumberFormat(item.amount_total) + ' đ'}/>

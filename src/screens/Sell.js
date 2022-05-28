@@ -15,7 +15,7 @@ import { ApiService } from '../services';
 const Sell = (props) => {
     const {navigation} = props;
     const [data, setData] = useState({
-        orders: [],
+        data: [],
         count: 0,
         limit: 10,
         page: 1,
@@ -24,13 +24,9 @@ const Sell = (props) => {
     const dispatch = useAuthDispatch();
     const [refreshing, setRefreshing] = useState(false);
     const createOrder = () => {
-        const res = ApiService.getProductAll().then( res => 
-            console.log("aaaaa " , res)
-
-        )
-        // navigation.navigate(Create.route, {
-        //     goBack: refresh,
-        // });
+        navigation.navigate(Create.route, {
+            goBack: refresh,
+        });
     };
 
     const viewOrder = (item) => {
@@ -41,6 +37,7 @@ const Sell = (props) => {
         setRefreshing(true);
         OrderModel.GetOrderList(1)
             .then(res => {
+                console.log("aaaa list ", res);
                 if (res) {
                     setData(res);
                 }
@@ -112,7 +109,7 @@ const Sell = (props) => {
             });
     };
 
-    if (!refreshing && data.count === 0 && data.orders.length === 0) {
+    if (!refreshing && data.count === 0 && data.data.length === 0) {
         return <Screen
             showLogoutButton={true}
             header={'Yêu cầu mua hàng'}>
@@ -120,8 +117,8 @@ const Sell = (props) => {
                 refreshing={refreshing}
                 onRefresh={refresh}>
                 <TouchableOpacity onPress={createOrder} style={Styles.noOrder}>
-                    <Text style={Styles.textNormal}>Chưa có yêu cầu mua hàng nào!</Text>
-                    <Text style={Styles.textNormal}>Hãy tạo yêu cầu mua hàng!</Text>
+                    <Text style={Styles.textNormal}>Chưa có đơn bán hàng nào!</Text>
+                    <Text style={Styles.textNormal}>Hãy tạo đơn bán hàng!</Text>
                 </TouchableOpacity>
             </RefreshControl>
             <View style={Styles.floatingIcon}>
@@ -143,7 +140,7 @@ const Sell = (props) => {
                 onRefresh={refresh}>
                 <ScrollView
                     showsVerticalScrollIndicator={false}>
-                    <OrderList data={data.orders} onSelect={viewOrder}/>
+                    <OrderList data={data.data} onSelect={viewOrder}/>
                     {data.total_pages > 1
                         && <Pagination
                             onBack={() => loadPage(data.page - 1)}
