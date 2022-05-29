@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 import Colors from './colors';
 
 const FORM_INPUT_HEIGHT = 36;
-const FORM_TEXT_AREA_HEIGHT = 150;
+const FORM_TEXT_AREA_HEIGHT = 100;
 const FORM_LABEL_WIDTH = '35%';
 
 const Styles = StyleSheet.create({
@@ -52,7 +52,7 @@ const Styles = StyleSheet.create({
     },
     screenContent: {
         paddingTop: 0,
-        paddingHorizontal: 25,
+        paddingHorizontal: 20,
         alignItems: 'center',
     },
     viewInput: {
@@ -470,6 +470,7 @@ const Styles = StyleSheet.create({
     customerButonAdd: { borderRadius: 1000 },
     backgroundColorF5F5F5: { backgroundColor: '#F5F5F5' },
     viewItemProduct: { padding: 3, margin: 5, borderRadius: 10, borderColor: 'silver', borderWidth: 0.5, },
+    viewItemProductOrder: { padding: 3, borderRadius: 0, borderColor: 'silver', borderWidth: 0.5, },
     flexDirection: { flexDirection: 'row' },
     itemViewContent: { flexDirection: 'column', justifyContent: 'space-between', flex: 1, padding: 5, marginLeft: 5 },
     itemViewIcon: { flexDirection: 'column', justifyContent: 'center', alignItems: "center" },

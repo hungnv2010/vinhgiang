@@ -18,48 +18,11 @@ export const STATE = {
 
 export default class OrderModel {
 
-    activity_ids = []
-    company_id = 1
-    currency_id = 23
-    date_order = "2022-05-18 14:52:05"
-    date_planned = "2022-05-18 05:00:00"
-    dest_address_id = false
-    fiscal_position_id = false
-    incoterm_id = 1
-    message_follower_ids = []
-    message_ids = []
+    date_order = moment();
+    // date_planned = "2022-05-18 05:00:00"
     notes = '' // dieu khoan
     order_line = []
-    origin = false
-    partner_id = 7
-    partner_ref = false
-    payment_term_id = 2
-    picking_type_id = 1
-    priority = "0"
-    receipt_reminder_email = false
-    reminder_date_before_receipt = 1
-    user_id = 2
-    // id = 'New';
-    // isRecreated = false;
-    // customer = '';
-    // bill = 0;
-    // lines = [];
-    // note = '';
-    // name = '';
-    // state = '';
-    // mobile = '';
-    // date_nhan = moment();
-    // date_send = moment();
-    // date_order = moment();
-    // date_validity = '';
-    // infor_tranfer = '';
-    // sale_order = {id: false, name: false};
-    // partner_id = 0;
-    // delivery_address = '';
-    // infor_receive = '';
-    // new_order = 0;
-    // ngay_nhan_theo_bao_gia = '';
-    // amount_total: 0;
+    partner_id = null
 
     constructor(data = {}) {
         if (data.order_line && _.isArray(data.order_line)) {
@@ -96,7 +59,7 @@ export default class OrderModel {
 
     Create() {
         const data = this.getRequestData();
-        data.date_send = moment().format('YYYY/MM/D h:mm:ss');
+        //data.date_send = moment().format('YYYY/MM/D h:mm:ss');
         return ApiService.createOrder(data);
     }
 
@@ -108,13 +71,10 @@ export default class OrderModel {
 
     getRequestData() {
         return {
-            infor_receive: this.infor_receive,
-            date_nhan: this.getDate(this.date_nhan),
+            date_order: this.getDate(this.date_order),
+            notes: this.notes, // dieu khoan
+            partner_id: this.partner_id,
             order_line: this.order_line.map(product => product.getRequestData()),
-            infor_tranfer: this.infor_tranfer,
-            is_app_order: true,
-            new_order: false,
-            note: this.note,
         };
     }
 

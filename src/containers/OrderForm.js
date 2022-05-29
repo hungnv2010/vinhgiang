@@ -4,7 +4,6 @@ import {ScrollView, TouchableOpacity, View} from 'react-native';
 import {Styles} from '../configs';
 import {Button, Text} from 'react-native-elements';
 import Select from '../components/Select';
-import {LIST_THONG_TIN_NHAN_HANG} from '../models/OrderModel';
 import {OrderModel} from '../models';
 import {DatePicker, TextArea} from '../components';
 import ProductForm from './ProductForm';
@@ -13,19 +12,41 @@ import {Loading} from './index';
 import {logout, useAuthDispatch} from '../context';
 import {InvalidAccessToken} from '../errors';
 import messageService from '../services/messages';
+import { ApiService } from '../services';
 
 const OrderForm = (props) => {
     const {orderName, mode, onSubmit, loading} = props;
     const [error, setError] = useState([]);
+    const [showLoading, setShowLoading] = useState(false);
     const [showProductForm, setShowProductForm] = useState(false);
     const [order, setOrder] = useState(new OrderModel());
+    const [partnerList, setPartnerList] = useState({});
 
     const updateField = (key, value) => {
         setOrder({...order, [key]: value});
     };
 
+    const selectPartner = (item) => {
+        setOrder({...order, 'partner_name': item.name, 'partner_id': item.id});
+    };
+
+    useEffect(() => {
+        setShowLoading(true)
+        ApiService.getCustomer()
+            .then(res => {
+                console.log("get customer ", res.data);
+                setPartnerList(res.data)
+                setShowLoading(false);
+            })
+            .catch(e => {
+                console.error('get customer error', e);
+                setShowLoading(false);
+            })
+        ;
+    }, []);
+
     const submit = () => {
-        if (order.lines.length === 0) {
+        if (order.order_line.length === 0) {
             messageService.showError('Chưa có sản phẩm nào');
             return;
         }
@@ -36,7 +57,7 @@ const OrderForm = (props) => {
     };
 
     const addProduct = (productData) => {
-        order.lines.push(productData);
+        order.order_line.push(productData);
         setOrder(order);
     };
 
@@ -74,32 +95,28 @@ const OrderForm = (props) => {
                     <Text style={Styles.sectionTitle}>Thông tin đặt hàng</Text>
                 </View>
                 <View style={Styles.viewInput}>
-                    <Select
-                        current={order.infor_receive}
-                        options={LIST_THONG_TIN_NHAN_HANG}
-                        type={'text'}
-                        optionType={'object'}
-                        label={'Thông tin vận chuyển'}
-                        onSelect={(item) => updateField('infor_receive', item.value)}/>
+
+                <Select
+                    label={'Nhà cung cấp'}
+                    options={partnerList}
+                    optionType={'array'}
+                    valueKey={'id'}
+                    type={'text'}
+                    current={order.partner_id}
+                    reload={() => {
+                        // updateProductList(data.type_of_sale);
+                    }}
+                    onSelect={(item) => { selectPartner(item)}}
+                    search/>
                 </View>
 
-                {/*<InputView*/}
-                {/*    label={'Ngày xác nhận'}*/}
-                {/*    value={moment().format('YYYY/MM/D')}/>*/}
-
                 <DatePicker
-                    label={'Ngày muốn nhận'}
-                    date={order.date_nhan}
-                    onChange={(value) => updateField('date_nhan', value)}/>
-
-                {order.infor_receive !== 'khach_lay'
-                && <TextArea
-                    label={'Thông tin giao hàng'}
-                    onChangeText={(val) => updateField('infor_tranfer', val)}/>
-                }
+                    label={'Hạn chốt đặt'}
+                    date={order.date_order}
+                    onChange={(value) => updateField('date_order', value)}/>
 
                 <TextArea
-                    label={'Ghi chú'}
+                    label={'Điều khoản & điều kiện:'}
                     onChangeText={(val) => updateField('note', val)}/>
 
                 <View style={Styles.sectionHeader}>
@@ -115,11 +132,11 @@ const OrderForm = (props) => {
 
                 <ProductList
                     onDelete={index => {
-                        const lines = order.lines;
-                        lines.splice(index, 1);
-                        updateField('lines', lines);
+                        const order_line = order.order_line;
+                        order_line.splice(index, 1);
+                        updateField('order_line', order_line);
                     }}
-                    data={order.lines}/>
+                    data={order.order_line}/>
 
                 <Button
                     title={'Lưu'.toUpperCase()}
