@@ -24,39 +24,35 @@ const ProductItem = (props) => {
 
             <OrderItem
                 dd={'Số lượng'}
-                dt={item.qty_cai}/>
+                dt={item.product_uom_qty}/>
 
             <OrderItem
-                dd={'Chiều cao'}
-                dt={item.chieu_rong}/>
+                dd={'Mô tả'}
+                dt={item.name}/>
 
             <OrderItem
-                dd={'Chiều rộng'}
-                dt={item.chieu_cao}/>
+                dd={'Đã nhận'}
+                dt={item.qty_delivered}/>
 
             <OrderItem
-                dd={'Rộng thông thuỷ'}
-                dt={item.rong_thong_thuy}/>
+                dd={'Đã có hóa đơn'}
+                dt={item.qty_invoiced}/>
 
             <OrderItem
-                dd={'Cao thông thuỷ'}
-                dt={item.cao_thong_thuy}/>
+                dd={'Đơn vị'}
+                dt={item.product_uom.name}/>
 
             <OrderItem
-                dd={'Mã huỳnh cánh giữa'}
-                dt={item.ma_huynh_giua.name}/>
+                dd={'Đơn giá'}
+                dt={item.price_unit}/>
 
             <OrderItem
-                dd={'Mã huỳnh cánh ngoài'}
-                dt={item.ma_huynh_ngoai.name}/>
+                dd={'Thuế'}
+                dt={item.tax_id.name}/>
 
             <OrderItem
-                dd={'Phụ kiện'}
-                dt={item.choose_product_attach}/>
-
-            <OrderItem
-                dd={'Chiều mở'}
-                dt={LIST_CHIEU_MO[item.chieu_mo]}/>
+                dd={'Thành tiền'}
+                dt={item.price_subtotal}/>
 
             {!hideDeleteButton
             && <Button

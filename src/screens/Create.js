@@ -20,7 +20,7 @@ const Create = (props) => {
         setLoading(true);
         order.Create(order)
             .then(res => {
-                console.log(res);
+                console.log("order.Create ",res);
                 if (res.error) {
                     messageService.showError('Gặp lỗi khi gửi đơn hàng: ' + res.error.data.message);
                     setLoading(false);
@@ -28,18 +28,7 @@ const Create = (props) => {
                 }
                 messageService.showInfo('Tạo đơn hàng mới thành công');
                goBack();
-                // if (res.message === 'CREATED'
-                //     || (res.status >= 200 && res.status <= 299)) {
-                //     messageService.showInfo('Tạo đơn hàng mới thành công');
-                //     navigation.goBack();
-                // } else {
-                //     let msg = 'Tạo đơn hàng mới thất bại';
-                //     if (res.message) {
-                //         msg += '\n' + res.message;
-                //     }
-                //     messageService.showError(msg);
-                // }
-                setLoading(false);
+               setLoading(false);
             })
             .catch(e => {
                 setLoading(false);

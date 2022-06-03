@@ -126,12 +126,12 @@ const ApiService = {
             .then(res => res.result.data);
     },
     getOrderList: async (search = {}) => {
-        return await post('get_all_request_order', search)
-            .then(res => res.result.data);
+        return await get('sale.order')
+            // .then(res => res.result.data);
     },
     createOrder: async (data) => {
         console.log('create order api', JSON.stringify(data));
-        return await post('create_request_order', data);
+        return await post('sale.order', data);
     },
     editOrder: async (data) => {
         console.log('update order api', JSON.stringify(data));
