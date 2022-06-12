@@ -5,6 +5,7 @@ import { ActivityIndicator, View, Text, Image, RefreshControl, TextInput, Toucha
 import {  Colors, Styles } from '../configs';
 import { FAB } from 'react-native-elements';
 import OrderListItem from '../components/OrderListItem';
+import WareHouseDetail from './WareHouseDetail';
 
 const WareHouseList = (props) => {
     const { navigation, route } = props;
@@ -33,7 +34,7 @@ const WareHouseList = (props) => {
 
     const onClickItem = (item) => {
         console.log("onClickItem ", JSON.stringify(item));
-        // navigation.navigate(AAAA.route, item);
+        navigation.navigate(WareHouseDetail.route, item);
     }
 
     const refresh = useCallback(() => {

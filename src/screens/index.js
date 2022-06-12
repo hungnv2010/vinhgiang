@@ -9,6 +9,8 @@ export { default as Sell } from './Sell';
 export { default as WareHouse } from './WareHouse';
 export { default as CustomerDetail } from './CustomerDetail';
 export { default as WareHouseList } from './WareHouseList';
+export { default as WareHouseDetail } from './WareHouseDetail';
+
 
 
 
