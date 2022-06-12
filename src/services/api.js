@@ -160,6 +160,9 @@ const ApiService = {
     editCustomer: async (body) => {
         return await put('res.partner', body);
     },
+    uploadImage: async (body) => {
+        return await post('upload_attachment', body);
+    },
 
     getStockPickingType: async (body) => {
         return await get('stock.picking.type');

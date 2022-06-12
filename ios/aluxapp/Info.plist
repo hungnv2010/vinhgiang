@@ -35,6 +35,12 @@
 			</dict>
 		</dict>
 	</dict>
+  <key>NSPhotoLibraryUsageDescription</key>
+  <string>Ứng dụng muốn sử dụng thư viện ảnh của bạn.</string>
+  <key>NSMicrophoneUsageDescription</key>
+  <string>Ứng dụng muốn sử dụng microphone của bạn.</string>
+  <key>NSCameraUsageDescription</key>
+  <string>Ứng dụng muốn sử dụng camera của bạn.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Ứng dụng muốn sử dụng vị trí của bạn</string>
 	<key>NSLocationAlwaysUsageDescription</key>
