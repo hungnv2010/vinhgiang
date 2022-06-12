@@ -167,7 +167,12 @@ const ApiService = {
 
     getStockPicking: async (body) => {
         return await get('stock.picking');
-    }
+    },
+
+    getPurchaseList: async (search = {}) => {
+        return await get('purchase.order')
+            // .then(res => res.result.data);
+    },
 };
 
 export default ApiService;

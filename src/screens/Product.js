@@ -119,7 +119,7 @@ const Product = (props) => {
     }
 
     return (
-        <Screen header={title}>
+        <Screen header={title}  showLogoutButton={true}>
             <View style={Styles.productViewFilter}>
                 <TouchableOpacity onPress={() => { setShowModal(!showModal) }} style={Styles.productViewFilterCategori}>
                     <MaterialCommunityIcons name={"menu"} color={Colors.gray_aaa} size={20} />

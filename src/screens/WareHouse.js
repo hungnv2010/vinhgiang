@@ -74,7 +74,7 @@ const WareHouse = (props) => {
     }
 
     return (
-        <Screen header={title}>
+        <Screen header={title}  showLogoutButton={true}>
             {listCustomer.length > 0 ?
                 <FlatList
                     refreshControl={<RefreshControl

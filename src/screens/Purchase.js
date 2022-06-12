@@ -3,7 +3,6 @@ import {RefreshControl, ScrollView, Text, TouchableOpacity, View, FlatList} from
 import {Colors, Styles} from '../configs';
 import Screen from '../containers/Screen';
 import {Button} from 'react-native-elements';
-import {OrderItem} from '../containers';
 import {OrderModel} from '../models';
 import {logout, useAuthDispatch} from '../context';
 import {Create, Detail} from './index';
@@ -11,8 +10,11 @@ import {InvalidAccessToken} from '../errors';
 import Pagination from '../components/Pagination';
 import messageService from '../services/messages';
 import { FAB } from 'react-native-elements';
+import { OrderListItem } from '../components';
+import { STATE } from '../models/OrderModel';
+import { DurationDate, NumberFormat } from '../configs/Utils';
 
-const Sell = (props) => {
+const Purchase = (props) => {
     const {navigation} = props;
     const [data, setData] = useState({
         data: [],
@@ -41,7 +43,7 @@ const Sell = (props) => {
 
     useEffect(() => {
         setRefreshing(true);
-        OrderModel.GetOrderList(1)
+        OrderModel.GetPurchaseList(1)
             .then(res => {
                 if (res) {
                     setData(res);
@@ -67,7 +69,7 @@ const Sell = (props) => {
 
     const refresh = useCallback(() => {
         setRefreshing(true);
-        OrderModel.GetOrderList(1)
+        OrderModel.GetPurchaseList(1)
             .then(res => {
                 setRefreshing(false);
                 if (res) {
@@ -85,7 +87,7 @@ const Sell = (props) => {
                         });
                     });
                 }
-                let msg = 'Lấy danh sách bán hàng thất bại!';
+                let msg = 'Lấy danh sách mua hàng thất bại!';
                 if (err.message) {
                     msg += '\n' + err.message;
                 }
@@ -93,6 +95,47 @@ const Sell = (props) => {
                 setRefreshing(false);
             });
     }, [dispatch]);
+
+    const renderItem = (item, index, onClickItem) => {
+        return (
+            <TouchableOpacity onPress={() => onClickItem(item)} key={index} 
+            style={{ borderRadius: 10, margin: 3, backgroundColor: 'white',
+                flexDirection: "column", alignItems: "center", borderBottomColor: "#ddd", borderBottomWidth: 1, paddingVertical: 5, paddingHorizontal: 10 }}>
+                <Text style={{...Styles.listItemTitle, alignSelf:'flex-start', fontSize: 16}}>
+                    {item.name}
+                </Text>
+                <OrderListItem
+                        // type={'date'}
+                        dd={'Nhà cung cấp'}
+                        dt={item.partner_id[1]}/>
+                    <OrderListItem
+                        //type={'date'}
+                        dd={'Đại diện mua hàng'}
+                        dt={item.user_id[1]}/>
+                <View style={{ flex: 1, flexDirection: "row", }}>
+                    <View style={{ flex: 1 }}>
+    
+                        <OrderListItem
+                            dd={'Hạn chốt đặt'}
+                            dt={parseInt(DurationDate(item.date_order).asDays()) + " ngày"}/>
+                        <OrderListItem
+                            type={'text'}
+                            dd={'Trạng thái'}
+                            dt={STATE[item.state]}/>
+                    </View>
+    
+                    <View style={{ flex: 0.05}}/>
+                    <View style={{ flex: 0.8 }}>
+                        <Text/>
+                        <OrderListItem
+                            dd={'Tổng tiền'}
+                            dt={NumberFormat(item.amount_total) + ' đ'}/>
+                    </View>
+                </View>
+            </TouchableOpacity>
+    
+        )
+        }
 
     return (
         <Screen 
@@ -107,7 +150,7 @@ const Sell = (props) => {
                     data={data.data}
                     onEndReachedThreshold={0.3}
                     onEndReached={filterMore}
-                    renderItem={({ item, index }) => OrderItem(item, index, onClickItem)}
+                    renderItem={({ item, index }) => renderItem(item, index, onClickItem)}
                     keyExtractor={(item, index) => index.toString()}
                     ListFooterComponent={loadMore ? <ActivityIndicator color={Colors.primary} /> : null}
                     style={Styles.productList}
@@ -116,8 +159,8 @@ const Sell = (props) => {
                 refreshing={refreshing}
                 onRefresh={refresh}>
                 <TouchableOpacity onPress={createOrder} style={Styles.noOrder}>
-                    <Text style={Styles.textNormal}>Chưa có đơn bán hàng nào!</Text>
-                    <Text style={Styles.textNormal}>Hãy tạo đơn bán hàng!</Text>
+                    <Text style={Styles.textNormal}>Chưa có đơn mua hàng nào!</Text>
+                    <Text style={Styles.textNormal}>Hãy tạo đơn mua hàng!</Text>
                 </TouchableOpacity>
             </RefreshControl>
             }
@@ -132,5 +175,5 @@ const Sell = (props) => {
         </Screen>
     );
 };
-Sell.route = 'Sell';
-export default Sell;
+Purchase.route = 'Purchase';
+export default Purchase;
