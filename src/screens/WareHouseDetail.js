@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Screen} from '../containers';
-import {FlatList, Text, View} from 'react-native';
+import {FlatList, Text, View, TouchableOpacity} from 'react-native';
 import {Styles, Colors} from '../configs';
 import {NumberFormat} from '../configs/Utils'
 import {ScrollView} from 'react-native-gesture-handler';
@@ -22,9 +22,19 @@ const WareHouseDetail = (props) => {
         )
     }
 
+    const onClickItem = (item) => {
+        console.log("onClickItem ", JSON.stringify(item));
+        navigation.navigate(WareHouseDetail.route, item);
+    }
+
+    const onClickInItem = (item) => {//nhap hang
+        console.log("onClickInItem ", JSON.stringify(item));
+    }
+
     const renderItem = (item, index) => {
         return (
-            <View style={{ padding: 2, borderRadius: 0, borderColor: 'silver', borderWidth: 0.5, }}>
+            <TouchableOpacity onPress={() => onClickItem(item)} key={index} 
+                    style={{ padding: 2, borderRadius: 0, borderColor: 'silver', borderWidth: 0.5, }}>
                 <View style={Styles.flexDirection}>
                     <View style={Styles.itemViewContent}>
                         <Text style={Styles.textSize14}>{item.product_id[1]??""}</Text>
@@ -40,7 +50,30 @@ const WareHouseDetail = (props) => {
                         </View>
                     </View>
                 </View>
-            </View>
+            </TouchableOpacity>
+        )
+    }
+
+    const renderInItem = (item, index) => {
+        return (
+            <TouchableOpacity onPress={() => onClickInItem(item)} key={index} 
+                    style={{ padding: 2, borderRadius: 0, borderColor: 'silver', borderWidth: 0.5, }}>
+                <View style={Styles.flexDirection}>
+                    <View style={Styles.itemViewContent}>
+                        <Text style={Styles.textSize14}>{item.product_id[1]??""}</Text>
+
+                        <View style={{ flex: 1, flexDirection: "row", justifyContent:'space-between'}}>
+                            {renderTextItem("Hoàn thành: ",  NumberFormat(item.product_uom_qty) +"/"+ NumberFormat(item.qty_done) )}
+                            {renderTextItem("Số lô/sê-ri: ", item.lot_id[1]??"")}
+                        </View>
+
+                        <View style={{ flex: 1, flexDirection: "row", justifyContent:'space-between'}}>
+                            {renderTextItem("Gói nguồn: ", item.result_package_id[1]??"")}
+                            {renderTextItem("Tới: ", item.location_id[1]??"")}
+                        </View>
+                    </View>
+                </View>
+            </TouchableOpacity>
         )
     }
 
@@ -97,7 +130,8 @@ const WareHouseDetail = (props) => {
                     {stockPicking.move_line_ids_without_package && stockPicking.move_line_ids_without_package.length > 0 ?
                             <FlatList
                                 data={stockPicking.move_line_ids_without_package??[]}
-                                renderItem={({ item, index }) => renderItem(item, index)}
+                                renderItem={({ item, index }) => stockPicking.name.includes("IN")? 
+                                                            renderInItem(item, index) : renderItem(item, index)}
                                 keyExtractor={(item, index) => index.toString()}
                                 style={Styles.productList}
                             />
