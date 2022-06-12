@@ -23,12 +23,11 @@ const WareHouseDetail = (props) => {
     }
 
     const onClickItem = (item) => {
-        console.log("onClickItem ", JSON.stringify(item));
-        navigation.navigate(WareHouseDetail.route, item);
+        console.log("onClickItem ", item);
     }
 
     const onClickInItem = (item) => {//nhap hang
-        console.log("onClickInItem ", JSON.stringify(item));
+        console.log("onClickInItem ", item);
     }
 
     const renderItem = (item, index) => {
@@ -40,7 +39,7 @@ const WareHouseDetail = (props) => {
                         <Text style={Styles.textSize14}>{item.product_id[1]??""}</Text>
 
                         <View style={{ flex: 1, flexDirection: "row", justifyContent:'space-between'}}>
-                            {renderTextItem("Hoàn thành: ", NumberFormat(item.qty_done) +"/"+ NumberFormat(item.product_uom_qty))}
+                            {renderTextItem("Hoàn thành: ", NumberFormat(item.product_uom_qty) +"/"+ NumberFormat(item.qty_done))}
                             {renderTextItem("Số lô/sê-ri: ", item.lot_id[1]??"")}
                         </View>
 
@@ -130,7 +129,7 @@ const WareHouseDetail = (props) => {
                     {stockPicking.move_line_ids_without_package && stockPicking.move_line_ids_without_package.length > 0 ?
                             <FlatList
                                 data={stockPicking.move_line_ids_without_package??[]}
-                                renderItem={({ item, index }) => stockPicking.name.includes("IN")? 
+                                renderItem={({ item, index }) => stockPicking.name.includes("IN/")? 
                                                             renderInItem(item, index) : renderItem(item, index)}
                                 keyExtractor={(item, index) => index.toString()}
                                 style={Styles.productList}
