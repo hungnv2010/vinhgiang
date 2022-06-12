@@ -55,7 +55,7 @@ const Customer = (props) => {
                 <View style={Styles.viewItemProduct}>
                     <View style={Styles.flexDirection}>
                         <View style={Styles.itemViewIcon}>
-                            <MaterialCommunityIcons name={"account"} color={Colors.t_cyan} size={70} />
+                            <MaterialCommunityIcons name={"account"} color={Colors.secondaryLight} size={70} />
                         </View>
                         <View style={Styles.itemViewContent}>
                             <Text style={Styles.textSize14}>{item.name}</Text>

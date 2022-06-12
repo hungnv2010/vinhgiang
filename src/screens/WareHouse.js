@@ -64,10 +64,10 @@ const WareHouse = (props) => {
                 <View style={{ minHeight: 120,  flexDirection: 'column', justifyContent: 'space-around', flex: 1,
                     padding: 3, margin: 5, borderRadius: 10, borderColor: 'silver', borderWidth: 0.5, }}>
                         <View style={Styles.itemViewIcon}>
-                            <MaterialCommunityIcons name={getIcon(item)} color={Colors.t_cyan} size={50} />
+                            <MaterialCommunityIcons name={getIcon(item)} color={Colors.primaryLight} size={50} />
                         </View>
                         <Text style={{ fontSize: 18 , textAlign:'center'}}>{item.name}</Text>
-                        <Text style={{ fontSize: 14 , textAlign:'center', color: Colors.primary}}>{item.count_picking_ready} cần xử lý</Text>
+                        <Text style={{ fontSize: 14 , textAlign:'center', color: Colors.secondary}}>{item.count_picking_ready} cần xử lý</Text>
                 </View>
             </TouchableOpacity>
         )

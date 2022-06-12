@@ -311,7 +311,7 @@ const Styles = StyleSheet.create({
         backgroundColor: Colors.white,
     },
     listItemTitle: {
-        color: Colors.primary,
+        color: Colors.secondary,
         fontWeight: 'bold',
     },
     listItemContent: {},
@@ -377,7 +377,7 @@ const Styles = StyleSheet.create({
     },
     accordionContent: {
         padding: 10,
-        backgroundColor: Colors.t_cyan,
+        backgroundColor: Colors.secondary,
     },
     accordionCollapseContent: {
         height: 0,
