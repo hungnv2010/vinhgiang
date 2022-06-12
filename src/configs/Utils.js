@@ -1,3 +1,6 @@
+import moment from 'moment';
+import { duration } from 'moment';
+
 export const NumberFormat = value => {
     if (!value || (value && value == "")) {
       value = "0";
@@ -23,3 +26,17 @@ export const NumberFormat = value => {
     str = str.trim();
     return str;
   }
+
+  export const DurationDate = (from, to) => {
+    let momentFrom = moment()
+    let momentTo = moment()
+    if (moment(from, 'YYYY-MM-D h:mm:ss', false).isValid()) {
+      momentFrom = moment(from, 'YYYY-MM-D h:mm:ss', false);
+    }
+
+    if (moment(to, 'YYYY-MM-D h:mm:ss', false).isValid()) {
+      momentTo = moment(to, 'YYYY-MM-D h:mm:ss', false);
+    }
+
+    return duration(momentTo.diff(momentFrom))
+  };

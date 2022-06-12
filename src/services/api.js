@@ -161,9 +161,21 @@ const ApiService = {
         return await put('res.partner', body);
     },
     uploadImage: async (body) => {
-        // http://157.119.248.179:8181/api/upload_attachment
         return await post('upload_attachment', body);
-    }
+    },
+
+    getStockPickingType: async (body) => {
+        return await get('stock.picking.type');
+    },
+
+    getStockPicking: async (body) => {
+        return await get('stock.picking');
+    },
+
+    getPurchaseList: async (search = {}) => {
+        return await get('purchase.order')
+            // .then(res => res.result.data);
+    },
 };
 
 export default ApiService;

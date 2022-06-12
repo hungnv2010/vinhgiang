@@ -18,10 +18,16 @@ export const navy = '#005082';
 export const gray_t = '#BDBDBD77';
 export const t_cyan = '#56CCF244';
 
-export const primary = '#7C7BAD';
+export const primary = '#347deb';
+export const primaryLight = '#65a1fc';
+export const secondary = '#ebc334';
+export const secondaryLight = '#fadb3e';
 
 const Colors = {
     primary,
+    secondary,
+    primaryLight,
+    secondaryLight,
     // primary: red,
     green,
     gray1,

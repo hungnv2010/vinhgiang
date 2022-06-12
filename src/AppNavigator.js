@@ -1,7 +1,7 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useAuthState } from './context';
-import { Create, Detail, Edit, Home, Login, Customer, Sell, Product, WareHouse, CustomerDetail } from './screens';
+import { Create, Detail, Edit, Home, Login, Customer, Sell, Product, WareHouse, CustomerDetail, WareHouseList, WareHouseDetail, Purchase } from './screens';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Colors } from './configs';
@@ -24,7 +24,8 @@ export const BottomTabNavigator = () => {
     >
       <Tab.Screen name={Customer.route} component={Customer} options={optionsTab('Khách hàng', 'account')} />
       <Tab.Screen name={Product.route} component={Product} options={optionsTab('Sản phẩm', 'cube-outline')} />
-      <Tab.Screen name={Sell.route} component={Sell} options={optionsTab('Bán hàng', 'cart-outline')} />
+      <Tab.Screen name={Sell.route} component={Sell} options={optionsTab('Bán hàng', 'cart-arrow-right')} />
+      <Tab.Screen name={Purchase.route} component={Purchase} options={optionsTab('Mua hàng', 'cart-arrow-down')} />
       <Tab.Screen name={WareHouse.route} component={WareHouse} options={optionsTab('Kho vận', 'store-outline')} />
     </Tab.Navigator >
   );
@@ -67,6 +68,9 @@ const AppNavigator = (props) => {
     <Stack.Screen options={options} name={Edit.route} component={Edit} />
     <Stack.Screen options={options} name={Detail.route} component={Detail} />
     <Stack.Screen options={options} name={CustomerDetail.route} component={CustomerDetail} />
+    <Stack.Screen options={options} name={WareHouseList.route} component={WareHouseList} />
+    <Stack.Screen options={options} name={WareHouseDetail.route} component={WareHouseDetail} />
+
   </Stack.Navigator>;
 };
 

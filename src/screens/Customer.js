@@ -51,11 +51,11 @@ const Customer = (props) => {
 
     const renderCustomer = (item, index) => {
         return (
-            <TouchableOpacity key={index.toString()} onPress={() => onClickItem(item)} style={Styles.backgroundColorF5F5F5}>
+            <TouchableOpacity key={index.toString()} onPress={() => onClickItem(item)} >
                 <View style={Styles.viewItemProduct}>
                     <View style={Styles.flexDirection}>
                         <View style={Styles.itemViewIcon}>
-                            <MaterialCommunityIcons name={"account"} color={Colors.t_cyan} size={70} />
+                            <MaterialCommunityIcons name={"account"} color={Colors.secondaryLight} size={70} />
                         </View>
                         <View style={Styles.itemViewContent}>
                             <Text style={Styles.textSize14}>{item.name}</Text>
@@ -71,7 +71,7 @@ const Customer = (props) => {
     }
 
     return (
-        <Screen header={title}>
+        <Screen header={title}  showLogoutButton={true}>
             {listCustomer.length > 0 ?
                 <FlatList
                     refreshControl={<RefreshControl
