@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { OrderForm, Screen } from '../containers';
 import { ApiService } from '../services';
-import { Platform, ToastAndroid, PermissionsAndroid, ActivityIndicator, View, Text, Image, RefreshControl, TextInput, TouchableOpacity, FlatList } from 'react-native';
+import { Linking, Platform, ToastAndroid, PermissionsAndroid, ActivityIndicator, View, Text, Image, RefreshControl, TextInput, TouchableOpacity, FlatList } from 'react-native';
 import { Asset, Colors, Styles } from '../configs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons'
@@ -27,6 +27,36 @@ const CustomerDetail = (props) => {
         }
         navigation.goBack();
     };
+
+    const hasPermissionIOS = async () => {
+        const openSetting = () => {
+          Linking.openSettings().catch(() => {
+            Alert.alert('Unable to open settings');
+          });
+        };
+        const status = await Geolocation.requestAuthorization('whenInUse');
+    
+        if (status === 'granted') {
+          return true;
+        }
+    
+        if (status === 'denied') {
+          Alert.alert('Location permission denied');
+        }
+    
+        if (status === 'disabled') {
+          Alert.alert(
+            `Turn on Location Services to allow "${appConfig.displayName}" to determine your location.`,
+            '',
+            [
+              { text: 'Go to Settings', onPress: openSetting },
+              { text: "Don't Use Location", onPress: () => {} },
+            ],
+          );
+        }
+    
+        return false;
+      };
 
     const hasLocationPermission = async () => {
         if (Platform.OS === 'ios') {
