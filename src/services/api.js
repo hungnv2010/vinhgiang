@@ -159,6 +159,10 @@ const ApiService = {
     },
     editCustomer: async (body) => {
         return await put('res.partner', body);
+    },
+    uploadImage: async (body) => {
+        // http://157.119.248.179:8181/api/upload_attachment
+        return await post('upload_attachment', body);
     }
 };
 
