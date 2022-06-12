@@ -57,7 +57,7 @@ const Product = (props) => {
 
     const renderProduct = (item, index) => {
         return (
-            <TouchableOpacity key={index.toString()} onPress={() => onClickItem(item)} style={Styles.backgroundColorF5F5F5}>
+            <TouchableOpacity key={index.toString()} onPress={() => onClickItem(item)}>
                 <View style={Styles.viewItemProduct}>
                     <View style={Styles.flexDirection}>
                         <View style={Styles.itemViewIcon}>

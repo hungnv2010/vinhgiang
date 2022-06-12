@@ -159,6 +159,14 @@ const ApiService = {
     },
     editCustomer: async (body) => {
         return await put('res.partner', body);
+    },
+
+    getStockPickingType: async (body) => {
+        return await get('stock.picking.type');
+    },
+
+    getStockPicking: async (body) => {
+        return await get('stock.picking');
     }
 };
 
