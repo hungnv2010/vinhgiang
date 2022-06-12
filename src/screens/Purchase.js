@@ -5,7 +5,7 @@ import Screen from '../containers/Screen';
 import {Button} from 'react-native-elements';
 import {OrderModel} from '../models';
 import {logout, useAuthDispatch} from '../context';
-import {Create, Detail} from './index';
+import {Create} from './index';
 import {InvalidAccessToken} from '../errors';
 import Pagination from '../components/Pagination';
 import messageService from '../services/messages';
@@ -13,6 +13,7 @@ import { FAB } from 'react-native-elements';
 import { OrderListItem } from '../components';
 import { STATE } from '../models/OrderModel';
 import { DurationDate, NumberFormat } from '../configs/Utils';
+import PurchaseDetail from './PurchaseDetail';
 
 const Purchase = (props) => {
     const {navigation} = props;
@@ -38,7 +39,7 @@ const Purchase = (props) => {
     }
 
     const onClickItem = (item) => {
-        navigation.navigate(Detail.route, {data: item, mode: 'view'});
+        navigation.navigate(PurchaseDetail.route, {data: item, mode: 'view'});
     }
 
     useEffect(() => {

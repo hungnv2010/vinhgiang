@@ -97,7 +97,7 @@ const Sell = (props) => {
     return (
         <Screen 
         showLogoutButton={true}
-        header={'Mua hàng'}>
+        header={'Bán hàng'}>
             
             {!refreshing && data.count > 0 && data.data.length > 0 ?
                 <FlatList
