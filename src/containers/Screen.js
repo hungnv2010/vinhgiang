@@ -1,5 +1,5 @@
 import React from 'react';
-import {KeyboardAvoidingView, ScrollView, Text, View} from 'react-native';
+import {KeyboardAvoidingView, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import {PropTypes} from '../base';
 import {Colors, Styles} from '../configs';
 import {Header, Icon} from 'react-native-elements';
@@ -9,7 +9,9 @@ const Screen = (props) => {
     const dispatch = useAuthDispatch();
     const {header, children, goBack, showLogoutButton} = props;
     const leftComponent = goBack
-        ? <Icon name={'arrow-left'} color={'white'} onPress={() => goBack()}/>
+        ? <TouchableOpacity onPress={() => goBack()} style= {{ width:40}}>
+            <Icon name={'chevron-left'} color={'white'}/>
+        </TouchableOpacity>
         : '';
     const rightComponent = showLogoutButton
         ? <Icon name={'logout'}
