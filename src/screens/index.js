@@ -12,6 +12,6 @@ export { default as WareHouseList } from './WareHouseList';
 export { default as WareHouseDetail } from './WareHouseDetail';
 export { default as Purchase } from './Purchase';
 export { default as PurchaseDetail } from './PurchaseDetail';
-
+export { default as ScanBarcode } from './ScanBarcode';
 
 

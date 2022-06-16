@@ -21,7 +21,7 @@ const WareHouseList = (props) => {
 
     const getData = async () => {
         let getDatas = await ApiService.getStockPicking()
-        let dataFilter = getDatas.data.filter(data => data.name.includes(route?.params?.sequence_code))
+        let dataFilter = getDatas.data.filter(data => data.name.includes(route?.params?.sequence_code + "/"))
 
         console.log("WareHouseList ", JSON.stringify(dataFilter));
         setStockPickings(dataFilter)

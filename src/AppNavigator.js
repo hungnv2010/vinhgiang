@@ -1,8 +1,10 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useAuthState } from './context';
-import { Create, Detail, Edit, Home, Login, Customer, Sell, Product, WareHouse, CustomerDetail, WareHouseList, WareHouseDetail,
-   Purchase, PurchaseDetail } from './screens';
+import {
+  Create, Detail, Edit, Home, Login, Customer, Sell, Product, WareHouse, CustomerDetail, WareHouseList, WareHouseDetail,
+  Purchase, PurchaseDetail, ScanBarcode
+} from './screens';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Colors } from './configs';
@@ -72,6 +74,7 @@ const AppNavigator = (props) => {
     <Stack.Screen options={options} name={WareHouseList.route} component={WareHouseList} />
     <Stack.Screen options={options} name={WareHouseDetail.route} component={WareHouseDetail} />
     <Stack.Screen options={options} name={PurchaseDetail.route} component={PurchaseDetail} />
+    <Stack.Screen options={options} name={ScanBarcode.route} component={ScanBarcode} />
   </Stack.Navigator>;
 };
 

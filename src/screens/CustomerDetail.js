@@ -202,39 +202,6 @@ const CustomerDetail = (props) => {
     }
 
     const onClickUpImage = () => {
-        // ImagePicker.openPicker({
-        //     multiple: true
-        // }).then(images => {
-        //     console.log(images);
-        // });
-        // ImagePicker.openPicker({
-        //     multiple: true,
-        //     waitAnimationEnd: false,
-        //     includeExif: true,
-        //     forceJpg: true,
-        // }).then(images => {
-        //     this.setState({
-        //         image: null,
-        //         images: images.map(i => {
-        //             console.log('received image', i);
-        //             return {uri: i.path, width: i.width, height: i.height, mime: i.mime};
-        //         })
-        //     });
-        // }).catch(e => alert(e));
-        // ImagePicker.openPicker({
-        //     width: 300,
-        //     height: 400,
-        //     cropping: true
-        //   }).then(image => {
-        //     console.log(image);
-        //   });
-        // ImagePicker.openCamera({
-        //     width: 300,
-        //     height: 400,
-        //     cropping: true,
-        // }).then(image => {
-        //     console.log(image);
-        // });
         setShowModal(true);
     }
 
