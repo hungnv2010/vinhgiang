@@ -17,7 +17,10 @@ const ScanBarcode = (props) => {
      */
 
     const onSuccess = e => {
-        console.log("onSuccess e ", JSON.stringify(e));
+        if(e.data) {
+            route.params.onReturn(e.data)
+            navigation.goBack()
+        }
     };
 
     /**
@@ -39,7 +42,7 @@ const ScanBarcode = (props) => {
     return (
         <Screen header={title} goBack={navigation.goBack}>
             <QRCodeScanner
-                onRead={() => onSuccess()}
+                onRead={(value) => onSuccess(value)}
             // flashMode={RNCamera.Constants.FlashMode.torch}
             // topContent={
             //     <Text style={styles.centerText}>
