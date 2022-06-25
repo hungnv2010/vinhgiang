@@ -168,14 +168,15 @@ const ApiService = {
         return await get('stock.picking.type');
     },
 
-    getStockPicking: async (body) => {
-        return await get('stock.picking');
+    getStockPicking: async (picking_type_id) => {
+        return await get('stock.picking', {'picking_type_id': picking_type_id});
     },
 
     getPurchaseList: async (search = {}) => {
         return await get('purchase.order')
             // .then(res => res.result.data);
     },
+<<<<<<< HEAD
     getCountry: async () => {
         return await get('res.country')
     },
@@ -185,6 +186,21 @@ const ApiService = {
     getWard: async () => {
         return await get('res.ward')
     },
+=======
+
+    getPallet: async () => {
+        return await get('stock.quant.package')
+    },
+
+    importInPicking: async (data) => {
+        return await post('purchase_order/import_in_picking', data);
+    },
+
+    confirmImportInPicking: async (data) => {
+        return await post('purchase_order/confirm_import_in_picking', data);
+    },
+
+>>>>>>> 59cb839229f3f8d8274ae47fe2c014818ee65011
 };
 
 export default ApiService;
