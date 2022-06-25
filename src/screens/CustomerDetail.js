@@ -29,6 +29,11 @@ const listImage = [
 ]
 var ImagePicker = NativeModules.ImageCropPicker;
 
+const MODAL_UPLOAD = 1
+const MODAL_PROVINCE = 2
+const MODAL_DISTRICT = 3
+const MODAL_WARDS = 4
+
 const CustomerDetail = (props) => {
     const { navigation, route, params } = props;
     const title = 'Chi tiết khách hàng';
@@ -36,6 +41,15 @@ const CustomerDetail = (props) => {
     const [longitude, setLongitude] = useState("")
     const [customer, setCustomer] = useState(route.params ? route.params : {})
     const [showModal, setShowModal] = useState(false);
+    const [listProvice, setListProvice] = useState([]);
+    const [provice, setProvice] = useState('');
+
+    const [district, setDistrict] = useState('');
+
+    const [wards, setWards] = useState('');
+
+    const typeModal = useRef(0);
+    const listDataProvice = useRef([]);
 
     const goBack = () => {
         if (route?.params?.goBack) {
@@ -104,7 +118,21 @@ const CustomerDetail = (props) => {
 
     useEffect(() => {
         getPosition()
+        getDataCountry()
     }, []);
+
+    const getDataCountry = async () => {
+        let getCountry = await ApiService.getCountry()
+        let getCountryState = await ApiService.getCountryState()
+        let getWard = await ApiService.getWard()
+        if (getCountry.data && getCountry.data.length > 0) {
+            listDataProvice.current = getCountry.data
+        }
+        console.log("getCountry ", JSON.stringify(getCountry));
+        console.log("getCountryState ", JSON.stringify(getCountryState));
+        console.log("getWard ", JSON.stringify(getWard));
+
+    }
 
     const getPosition = async () => {
         const hasPermission = await hasLocationPermission();
@@ -143,9 +171,9 @@ const CustomerDetail = (props) => {
             "name": customer.name,
             "street": customer.street ? customer.street : "",
             "street2": customer.street2 ? customer.street2 : "",
-            // "ward_id": 1,
-            "state_id": 1,
-            "country_id": 1,
+            // "ward_id": wards != "" ? wards.id : -1,
+            "state_id": district != "" ? district.id : -1,
+            "country_id": provice != "" ? provice.id : -1,
             "vehicle_route": 1,
             "name_store": customer.name_store ? customer.name_store : "",
             "code_ch_vg": customer.code_ch_vg ? customer.code_ch_vg : "",//"Ma cua hang vinhgiang",
@@ -176,12 +204,6 @@ const CustomerDetail = (props) => {
                 console.log("addCustomer err ", JSON.stringify(err));
             })
         }
-        // await ApiService.addCustomer(body).then(res => {
-        //     messageService.showSuccess(`${customer.id ? 'Cập nhật' : 'Thêm mới'} khách hàng thành công`);
-        //     goBack()
-        // }).catch(err => {
-        //     console.log("addCustomer err ", JSON.stringify(err));
-        // })
     }
 
     const checkDataApply = () => {
@@ -202,6 +224,33 @@ const CustomerDetail = (props) => {
     }
 
     const onClickUpImage = () => {
+        typeModal.current = MODAL_UPLOAD;
+        setShowModal(true);
+    }
+
+    const onOpenSelectAdress = (type) => {
+        typeModal.current = type;
+        let listTmp = []
+        switch (typeModal.current) {
+            case MODAL_PROVINCE:
+                setListProvice([...listDataProvice.current]);
+                setDistrict("")
+                setWards("")
+                break;
+            case MODAL_DISTRICT:
+                if (provice == "") return;
+                listTmp = listDataProvice.current.filter(item => item.id == provice.id)[0]
+                setListProvice(listTmp.state_ids);
+                setWards("")
+                break;
+            case MODAL_WARDS:
+                if (district == "" || listProvice.length == 0) return;
+                listTmp = listProvice.filter(item => item.id == district.id)[0].ward_ids
+                setListProvice([...listTmp]);
+                break;
+            default:
+                break;
+        }
         setShowModal(true);
     }
 
@@ -245,16 +294,50 @@ const CustomerDetail = (props) => {
         console.log("uploadToServer ", JSON.stringify(uploadToServer));
     }
 
+    const onClickProvice = (item) => {
+        switch (typeModal.current) {
+            case MODAL_PROVINCE:
+                setProvice(item)
+                break;
+            case MODAL_DISTRICT:
+                setDistrict(item)
+                break;
+            case MODAL_WARDS:
+                setWards(item)
+                break;
+            default:
+                break;
+        }
+        setShowModal(false)
+    }
+
     const renderCategori = () => {
-        return <View style={Styles.productViewModalCategori}>
-            <MaterialCommunityIcons onPress={() => { setShowModal(false) }} style={Styles.productIconCloseModalCategori} name={"close"} color={Colors.gray_aaa} size={26} />
-            <TouchableOpacity onPress={() => onClickCamera()} style={[Styles.productViewApply, { marginTop: 25, height: 50 }]}>
-                <Text style={Styles.productTextApply}>Camera</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => onClickGallery()} style={[Styles.productViewApply, { marginVertical: 20, height: 50 }]}>
-                <Text style={Styles.productTextApply}>Thư viện</Text>
-            </TouchableOpacity>
-        </View>
+        if (typeModal.current == MODAL_UPLOAD)
+            return <View style={Styles.productViewModalCategori}>
+                <MaterialCommunityIcons onPress={() => { setShowModal(false) }} style={Styles.productIconCloseModalCategori} name={"close"} color={Colors.gray_aaa} size={26} />
+                <TouchableOpacity onPress={() => onClickCamera()} style={[Styles.productViewApply, { marginTop: 25, height: 50 }]}>
+                    <Text style={Styles.productTextApply}>Camera</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => onClickGallery()} style={[Styles.productViewApply, { marginVertical: 20, height: 50 }]}>
+                    <Text style={Styles.productTextApply}>Thư viện</Text>
+                </TouchableOpacity>
+            </View>
+        if (typeModal.current == MODAL_PROVINCE || typeModal.current == MODAL_DISTRICT || typeModal.current == MODAL_WARDS)
+            return <View style={Styles.productViewModalCategori}>
+                <MaterialCommunityIcons onPress={() => { setShowModal(false) }} style={[Styles.productIconCloseModalCategori, {marginBottom: 0, paddingBottom: 0}]} name={"close"} color={Colors.gray_aaa} size={26} />
+                <ScrollView>
+
+                    {
+                        listProvice.map(item => {
+                            return <TouchableOpacity onPress={() => onClickProvice(item)} style={[Styles.productViewApply, { marginVertical: 10, height: 50, marginBottom: 10 }]}>
+                                <Text style={Styles.productTextApply}>{item.name}</Text>
+                            </TouchableOpacity>
+                        })
+                    }
+
+                </ScrollView>
+            </View>
+
     }
 
     return (
@@ -287,6 +370,20 @@ const CustomerDetail = (props) => {
                 <View style={Styles.detailCustomerViewTextInput}>
                     <TextInput value={customer.code_ch_ncc3} placeholder='Mã cửa hàng nhà cung cấp 3' style={Styles.detailCustomerInput} onChangeText={(text) => setCustomer({ ...customer, code_ch_nc3: text })} />
                 </View>
+                <View style={{ flexDirection: "row" }}>
+                    <TouchableOpacity onPress={() => { onOpenSelectAdress(MODAL_PROVINCE) }} style={[Styles.detailCustomerViewTextInput, { padding: 0, flex: 1, marginRight: 0 }]}>
+                        <Text numberOfLines={1} ellipsizeMode="tail" pointerEvents="none" style={{ paddingLeft: 10 }}>{provice != "" ? provice.name : "Tỉnh / thành"}</Text>
+                        <MaterialCommunityIcons onPress={() => { setShowModal(false) }} style={{}} name={"menu-down"} color={Colors.black} size={26} />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => { onOpenSelectAdress(MODAL_DISTRICT) }} style={[Styles.detailCustomerViewTextInput, { padding: 0, flex: 1, marginRight: 0 }]}>
+                        <Text numberOfLines={1} ellipsizeMode="tail" pointerEvents="none" style={{ paddingLeft: 10 }}>{district != "" ? district.name : "Quận / huyện"}</Text>
+                        <MaterialCommunityIcons onPress={() => { setShowModal(false) }} style={{}} name={"menu-down"} color={Colors.black} size={26} />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => { onOpenSelectAdress(MODAL_WARDS) }} style={[Styles.detailCustomerViewTextInput, { padding: 0, flex: 1 }]}>
+                        <Text numberOfLines={1} ellipsizeMode="tail" pointerEvents="none" style={{ paddingLeft: 10 }}>{wards != "" ? wards.name : "Xã / phường"}</Text>
+                        <MaterialCommunityIcons onPress={() => { setShowModal(false) }} style={{}} name={"menu-down"} color={Colors.black} size={26} />
+                    </TouchableOpacity>
+                </View>
                 <ScrollView
                     style={{ padding: 10 }}
                     horizontal={true}
@@ -307,7 +404,6 @@ const CustomerDetail = (props) => {
                 </TouchableOpacity>
             </ScrollView>
             <FSModal visible={showModal} children={renderCategori()} />
-
         </Screen>
     );
 };

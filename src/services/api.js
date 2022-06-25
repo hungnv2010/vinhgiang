@@ -176,6 +176,15 @@ const ApiService = {
         return await get('purchase.order')
             // .then(res => res.result.data);
     },
+    getCountry: async () => {
+        return await get('res.country')
+    },
+    getCountryState: async () => {
+        return await get('res.country.state')
+    },
+    getWard: async () => {
+        return await get('res.ward')
+    },
 };
 
 export default ApiService;
