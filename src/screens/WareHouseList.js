@@ -6,6 +6,8 @@ import {  Colors, Styles } from '../configs';
 import { FAB } from 'react-native-elements';
 import OrderListItem from '../components/OrderListItem';
 import WareHouseDetail from './WareHouseDetail';
+import WareHouseDetailInt from './WareHouseDetailInt';
+
 
 const WareHouseList = (props) => {
     const { navigation, route } = props;
@@ -23,7 +25,7 @@ const WareHouseList = (props) => {
         let getDatas = await ApiService.getStockPicking(route?.params?.id)
         let dataFilter = getDatas.data.filter(data => !data.date_done)
 
-        console.log("WareHouseList ", JSON.stringify(dataFilter));
+        console.log("WareHouseList ", dataFilter);
         setStockPickings(dataFilter)
         setRefreshing(false);
     }
@@ -33,8 +35,10 @@ const WareHouseList = (props) => {
     }
 
     const onClickItem = (item) => {
-        console.log("onClickItem ", JSON.stringify(item));
-        navigation.navigate(WareHouseDetail.route, item);
+        console.log("onClickItem ", item);
+
+        if (item.name.includes("IN/")) navigation.navigate(WareHouseDetail.route, item);
+        else if (item.name.includes("INT/")) navigation.navigate(WareHouseDetailInt.route, item);
     }
 
     const refresh = useCallback(() => {

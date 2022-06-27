@@ -18,15 +18,6 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { forEach } from 'lodash';
 // import ImagePicker from 'react-native-image-crop-picker';
 
-const listImageValue = [
-    // { link: "https://vcdn1-dulich.vnecdn.net/2021/07/16/3-1-1626444927.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=0nww5sftrDimoUxyn9lM5g" },
-    // { link: "https://1.bp.blogspot.com/-hN0NCoAmEDY/X8z1OcRjXmI/AAAAAAAAlc0/hHqbHzqOPhIABiVomzpYacPeEufV816QQCNcBGAsYHQ/w350-h265-p-k-no-nu/hinh-nen-may-cuc-dep.jpg" },
-    // { link: "https://media.travelmag.vn/files/thuannguyen/2020/04/25/cach-chup-anh-dep-tai-da-lat-1-2306.jpeg" },
-    // { link: "https://vcdn1-dulich.vnecdn.net/2021/07/16/3-1-1626444927.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=0nww5sftrDimoUxyn9lM5g" },
-    // { link: "https://1.bp.blogspot.com/-hN0NCoAmEDY/X8z1OcRjXmI/AAAAAAAAlc0/hHqbHzqOPhIABiVomzpYacPeEufV816QQCNcBGAsYHQ/w350-h265-p-k-no-nu/hinh-nen-may-cuc-dep.jpg" },
-    // { link: "https://vcdn1-dulich.vnecdn.net/2021/07/16/3-1-1626444927.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=0nww5sftrDimoUxyn9lM5g" },
-    // { link: "https://vcdn1-dulich.vnecdn.net/2021/07/16/3-1-1626444927.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=0nww5sftrDimoUxyn9lM5g" },
-]
 var ImagePicker = NativeModules.ImageCropPicker;
 
 const MODAL_UPLOAD = 1
@@ -47,7 +38,7 @@ const CustomerDetail = (props) => {
     const title = 'Chi tiết khách hàng';
     const [latitude, setLatitude] = useState("")
     const [longitude, setLongitude] = useState("")
-    const [listImage, setListImage] = useState(listImageValue)
+    const [listImage, setListImage] = useState([])
 
     const [customer, setCustomer] = useState(route.params ? route.params : {})
     const [showModal, setShowModal] = useState(false);
@@ -60,6 +51,26 @@ const CustomerDetail = (props) => {
 
     const typeModal = useRef(0);
     const listDataProvice = useRef([]);
+
+    useEffect(() => {
+        getListImage();
+    }, []);
+
+    const getListImage = async () => {
+        if(!customer.id) return
+        let getImages = await ApiService.getImages(customer.id)
+        if(getImages.data && getImages.data.length){
+            let listDatas = getImages.data
+            listDatas.forEach(element => {
+                 if(element.datas.slice(0, 2) == "b'") element.data = element.datas.slice(2)
+
+            })
+            console.log("getImages data", listDatas);
+
+            setListImage(listDatas)
+        }
+    }
+
 
     const goBack = () => {
         if (route?.params?.goBack) {

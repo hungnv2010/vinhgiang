@@ -164,6 +164,10 @@ const ApiService = {
         return await post('upload_attachment', body);
     },
 
+    getImages:  async (partnerId) => {
+        return await get('ir.attachment', {'partner_id': partnerId});
+    },
+
     getStockPickingType: async (body) => {
         return await get('stock.picking.type');
     },
@@ -194,8 +198,16 @@ const ApiService = {
         return await post('purchase_order/import_in_picking', data);
     },
 
+    getStockLocation: async () => {
+        return await get('stock.location')
+    },
+
     confirmImportInPicking: async (data) => {
         return await post('purchase_order/confirm_import_in_picking', data);
+    },
+
+    importIntPicking: async (data) => {
+        return await post('purchase_order/import_int_picking', data);
     },
 
 };
