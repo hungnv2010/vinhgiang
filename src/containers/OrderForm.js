@@ -116,7 +116,7 @@ const OrderForm = (props) => {
                     onChange={(value) => updateField('date_order', value)}/>
 
                 <TextArea
-                    label={'Điều khoản & điều kiện:'}
+                    label={'Điều khoản & điều kiện'}
                     onChangeText={(val) => updateField('note', val)}/>
 
                 <View style={Styles.sectionHeader}>

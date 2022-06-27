@@ -176,7 +176,6 @@ const ApiService = {
         return await get('purchase.order')
             // .then(res => res.result.data);
     },
-<<<<<<< HEAD
     getCountry: async () => {
         return await get('res.country')
     },
@@ -186,7 +185,6 @@ const ApiService = {
     getWard: async () => {
         return await get('res.ward')
     },
-=======
 
     getPallet: async () => {
         return await get('stock.quant.package')
@@ -200,7 +198,6 @@ const ApiService = {
         return await post('purchase_order/confirm_import_in_picking', data);
     },
 
->>>>>>> 59cb839229f3f8d8274ae47fe2c014818ee65011
 };
 
 export default ApiService;

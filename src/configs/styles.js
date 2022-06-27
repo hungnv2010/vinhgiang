@@ -462,7 +462,7 @@ const Styles = StyleSheet.create({
     productViewItemModalCategori: { padding: 0, flexDirection: "row", alignItems: "center", justifyContent: "center", },
     productItemNameCategori: { padding: 0, alignSelf: "center", flex: 1 },
     productCheckBox: { padding: 0, margin: 10 },
-    detailCustomerViewTextInput: { flexDirection: "row", paddingHorizontal: 5, alignItems: "center", justifyContent: "center", borderWidth: 0.5, borderColor: "#aaa", borderRadius: 7, height: 40, margin: 10, marginBottom: 0 },
+    detailCustomerViewTextInput: { flexDirection: "row", paddingHorizontal: 5, alignItems: "center", justifyContent: "center", borderWidth: 0.5, borderColor: "#aaa", borderRadius: 7, height: 40, margin: 5, marginBottom: 0 },
     detailCustomerInput: { flex: 1 },
     detailCustomerApply: { padding: 5, flexDirection: "row", alignItems: "center", justifyContent: "center", borderWidth: 0, backgroundColor: Colors.primary, borderRadius: 7, height: 40, margin: 10 },
     detailCustomerTextApply: { color: Colors.white },
