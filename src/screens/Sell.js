@@ -1,5 +1,5 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import {RefreshControl, ScrollView, Text, TouchableOpacity, View, FlatList} from 'react-native';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {RefreshControl, ScrollView, Text, TouchableOpacity, View, FlatList, TextInput} from 'react-native';
 import {Colors, Styles} from '../configs';
 import Screen from '../containers/Screen';
 import {Button} from 'react-native-elements';
@@ -11,6 +11,8 @@ import {InvalidAccessToken} from '../errors';
 import Pagination from '../components/Pagination';
 import messageService from '../services/messages';
 import { FAB } from 'react-native-elements';
+import Ionicons from 'react-native-vector-icons/Ionicons'
+import { ChangeAlias } from '../configs/Utils';
 
 const Sell = (props) => {
     const {navigation} = props;
@@ -24,6 +26,7 @@ const Sell = (props) => {
     const dispatch = useAuthDispatch();
     const [refreshing, setRefreshing] = useState(false);
     const [loadMore, setLoadMore] = useState(false)
+    const listAllData = useRef([])
 
     const createOrder = () => {
         navigation.navigate(Create.route, {
@@ -45,6 +48,7 @@ const Sell = (props) => {
             .then(res => {
                 if (res) {
                     setData(res);
+                    listAllData.current = res;
                 }
                 setRefreshing(false);
             })
@@ -64,6 +68,11 @@ const Sell = (props) => {
                 setRefreshing(false);
             });
     }, [dispatch]);
+
+    const onChangeTextSearch = (text) => {
+        let listFilter = listAllData.current.data.filter(item => (item.name && ChangeAlias(item.name).indexOf(ChangeAlias(text)) > -1 ))
+        setData({...data, data: listFilter})
+    }
 
     const refresh = useCallback(() => {
         setRefreshing(true);
@@ -98,6 +107,14 @@ const Sell = (props) => {
         <Screen 
         showLogoutButton={true}
         header={'Bán hàng'}>
+            <View style={Styles.productViewFilter}>
+                <View style={Styles.productViewSearch}>
+                    <TextInput style={{ flex: 1, textAlign: "center"}}
+                        placeholder={"Tìm kiếm đơn mua hàng..."}
+                        onChangeText={(text) => onChangeTextSearch(text)} />
+                    <Ionicons name={"search"} color={Colors.gray_aaa} size={20} />
+                </View>
+            </View>
             
             {!refreshing && data.count > 0 && data.data.length > 0 ?
                 <FlatList

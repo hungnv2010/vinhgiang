@@ -197,7 +197,7 @@ const CustomerDetail = (props) => {
             "country_id": provice != "" ? provice.id : -1,
             "vehicle_route": 1,
             "name_store": customer.name_store ? customer.name_store : "",
-            "code_ch_vg": customer.code_ch_vg ? customer.code_ch_vg : "",//"Ma cua hang vinhgiang",
+            // "code_ch_vg": customer.code_ch_vg ? customer.code_ch_vg : "",//"Ma cua hang vinhgiang",
             "code_ch_ncc1": customer.code_ch_ncc1 ? customer.code_ch_ncc1 : "", //"Ma cua hang ncc1",
             "code_ch_ncc2": customer.code_ch_ncc2 ? customer.code_ch_ncc2 : "",//"Ma cua hang ncc2",
             "code_ch_ncc3": customer.code_ch_ncc3 ? customer.code_ch_ncc3 : "",//"Ma cua hang ncc3",
@@ -236,9 +236,6 @@ const CustomerDetail = (props) => {
             return false
         } else if (!customer.name_store || customer.name_store.trim() == "") {
             messageService.showError('Vui lòng nhập tên cửa hàng');
-            return false
-        } else if (!customer.code_ch_vg || customer.code_ch_vg.trim() == "") {
-            messageService.showError('Vui lòng nhập mã cửa hàng Vĩnh Giang');
             return false
         }
         return true;
@@ -279,16 +276,16 @@ const CustomerDetail = (props) => {
         let listTmp = []
         switch (typeModal.current) {
             case MODAL_PROVINCE:
-                setListProvice([...listDataProvice.current].filter(value => value.name.includes(filterKey)));
+                setListProvice([...listDataProvice.current].filter(value => ChangeAlias(value.name).toUpperCase().includes(filterKey)));
                 break;
             case MODAL_DISTRICT:
                 if (provice == "") return;
-                listTmp = listDataProvice.current.filter(item => item.id == provice.id)[0].state_ids.filter(value => value.name.includes(filterKey))
+                listTmp = listDataProvice.current.filter(item => item.id == provice.id)[0].state_ids.filter(value => ChangeAlias(value.name).includes(filterKey))
                 setListProvice(listTmp)
                 break;
             case MODAL_WARDS:
                 if (district == "") return;
-                listTmp = listDataProvice.current.filter(item => item.id == provice.id)[0].state_ids.filter(item => item.id == district.id)[0].ward_ids.filter(value => value.name.includes(filterKey))
+                listTmp = listDataProvice.current.filter(item => item.id == provice.id)[0].state_ids.filter(item => item.id == district.id)[0].ward_ids.filter(value => ChangeAlias(value.name).includes(filterKey))
                 setListProvice([...listTmp]);
                 break;
             default:
@@ -380,7 +377,7 @@ const CustomerDetail = (props) => {
                     placeholder='Tìm kiếm...'
                     autoFocus={true}
                     onChangeText={(val) => {
-                        filterSelectAdress(val)
+                        filterSelectAdress(ChangeAlias(val).toUpperCase())
                     }}
                     style={{color: Colors.black, height: 36, borderWidth: 1, borderRadius: 10, marginHorizontal: 10, marginVertical:5, borderColor: Colors.primary,}}/>
                 {/* <MaterialCommunityIcons onPress={() => { setShowModal(false) }} style={[Styles.productIconCloseModalCategori, {marginBottom: 0, paddingBottom: 0}]} name={"close"} color={Colors.gray_aaa} size={26} /> */}
@@ -415,9 +412,9 @@ const CustomerDetail = (props) => {
                 <View style={Styles.detailCustomerViewTextInput}>
                     <TextInput value={customer.name_store} placeholder='Tên cửa hàng' style={Styles.detailCustomerInput} onChangeText={(text) => setCustomer({ ...customer, name_store: text })} />
                 </View>
-                <View style={Styles.detailCustomerViewTextInput}>
+                {/* <View style={Styles.detailCustomerViewTextInput}>
                     <TextInput value={customer.code_ch_vg} placeholder='Mã cửa hàng Vĩnh Giang' style={Styles.detailCustomerInput} onChangeText={(text) => setCustomer({ ...customer, code_ch_vg: text })} />
-                </View>
+                </View> */}
                 <View style={Styles.detailCustomerViewTextInput}>
                     <TextInput value={customer.code_ch_ncc1} placeholder='Mã cửa hàng nhà cung cấp 1' style={Styles.detailCustomerInput} onChangeText={(text) => setCustomer({ ...customer, code_ch_ncc1: text })} />
                 </View>

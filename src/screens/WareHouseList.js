@@ -7,6 +7,8 @@ import { FAB } from 'react-native-elements';
 import OrderListItem from '../components/OrderListItem';
 import WareHouseDetail from './WareHouseDetail';
 import WareHouseDetailInt from './WareHouseDetailInt';
+import Ionicons from 'react-native-vector-icons/Ionicons'
+import { ChangeAlias } from '../configs/Utils';
 
 
 const WareHouseList = (props) => {
@@ -16,6 +18,7 @@ const WareHouseList = (props) => {
     const [refreshing, setRefreshing] = useState(false);
     const [stockPickings, setStockPickings] = useState([])
     const [loadMore, setLoadMore] = useState(false)
+    const listAllData = useRef([])
 
     useEffect(() => {
         getData();
@@ -24,10 +27,16 @@ const WareHouseList = (props) => {
     const getData = async () => {
         let getDatas = await ApiService.getStockPicking(route?.params?.id)
         let dataFilter = getDatas.data.filter(data => !data.date_done)
+        listAllData.current = dataFilter;
 
         console.log("WareHouseList ", dataFilter);
         setStockPickings(dataFilter)
         setRefreshing(false);
+    }
+
+    const onChangeTextSearch = (text) => {
+        let listFilter = listAllData.current.filter(item => (item.name && ChangeAlias(item.name).indexOf(ChangeAlias(text)) > -1 ))
+        setStockPickings(listFilter)
     }
 
     const filterMore = () => {
@@ -92,6 +101,14 @@ const WareHouseList = (props) => {
 
     return (
         <Screen header={title} goBack={navigation.goBack}>
+            <View style={Styles.productViewFilter}>
+                <View style={Styles.productViewSearch}>
+                    <TextInput style={{ flex: 1, textAlign: "center"}}
+                        placeholder={"Tìm kiếm ..."}
+                        onChangeText={(text) => onChangeTextSearch(text)} />
+                    <Ionicons name={"search"} color={Colors.gray_aaa} size={20} />
+                </View>
+            </View>
             {stockPickings.length > 0 ?
                 <FlatList
                     refreshControl={<RefreshControl

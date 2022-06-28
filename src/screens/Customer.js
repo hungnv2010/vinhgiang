@@ -19,6 +19,7 @@ const Customer = (props) => {
     const [refreshing, setRefreshing] = useState(false);
     const [listCustomer, setListCustomer] = useState([])
     const [loadMore, setLoadMore] = useState(false)
+    const listAllData = useRef([])
 
     useEffect(() => {
         getData();
@@ -28,7 +29,13 @@ const Customer = (props) => {
         let getCustomer = await ApiService.getCustomer()
         console.log("getCustomer ", JSON.stringify(getCustomer));
         setListCustomer(getCustomer.data)
+        listAllData.current = getCustomer.data;
         setRefreshing(false);
+    }
+
+    const onChangeTextSearch = (text) => {
+        let listFilter = listAllData.current.filter(item => (ChangeAlias(item.name).indexOf(ChangeAlias(text)) > -1 || (item.phone && item.phone.indexOf(text) > -1)))
+        setListCustomer(listFilter)
     }
 
     const filterMore = () => {
@@ -57,12 +64,22 @@ const Customer = (props) => {
                         <View style={Styles.itemViewIcon}>
                             <MaterialCommunityIcons name={"account"} color={Colors.secondaryLight} size={70} />
                         </View>
-                        <View style={Styles.itemViewContent}>
+                        <View style={{ flexDirection: 'column', justifyContent: 'space-around', flex: 1, padding: 5, marginLeft: 5}}>
                             <Text style={Styles.textSize14}>{item.name}</Text>
-                            <View style={Styles.flexDirection}>
-                                <Text style={Styles.itemProductText}>{item.email ? item.email : (item.country_id[1] ? item.country_id[1] : "")}</Text>
+
+                            <View style={{flexDirection:"row", justifyContent: 'space-between'}}>
+                                <View style={{flexDirection: 'row', alignItems:'center'}}>
+                                    <MaterialCommunityIcons name={ item.email ? "email" : "home"} color={Colors.primaryLight} size={16} />
+                                    <Text style={{color: Colors.gray_aaa, fontSize: 12, marginLeft: 2}}>{item.email ? item.email : (item.country_id[1] ? item.country_id[1] : "")}</Text>
+                                </View>
+                                { item.phone ?
+                                    <View style={{flexDirection:"row", justifyContent: 'space-between'}}>
+                                        <MaterialCommunityIcons name={"phone"} color={Colors.primaryLight} size={16} />
+                                        <Text style={{color: Colors.gray_aaa, fontSize: 12, marginLeft: 2}}>{ item.phone }</Text>
+                                    </View>
+                                : null
+                                }
                             </View>
-                            <Text style={Styles.itemProductText}></Text>
                         </View>
                     </View>
                 </View>
@@ -72,6 +89,14 @@ const Customer = (props) => {
 
     return (
         <Screen header={title}  showLogoutButton={true}>
+            <View style={Styles.productViewFilter}>
+                <View style={Styles.productViewSearch}>
+                    <TextInput style={{ flex: 1, textAlign: "center"}}
+                        placeholder={"Tìm kiếm khách hàng..."}
+                        onChangeText={(text) => onChangeTextSearch(text)} />
+                    <Ionicons name={"search"} color={Colors.gray_aaa} size={20} />
+                </View>
+            </View>
             {listCustomer.length > 0 ?
                 <FlatList
                     refreshControl={<RefreshControl
