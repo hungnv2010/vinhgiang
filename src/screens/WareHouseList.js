@@ -46,8 +46,8 @@ const WareHouseList = (props) => {
     const onClickItem = (item) => {
         console.log("onClickItem ", item);
 
-        if (item.name.includes("IN/")) navigation.navigate(WareHouseDetail.route, item);
-        else if (item.name.includes("INT/")) navigation.navigate(WareHouseDetailInt.route, item);
+        if (item.name.includes("IN/")) navigation.navigate(WareHouseDetail.route,  {data: item, onRefresh: ()=> refresh()});
+        else if (item.name.includes("INT/")) navigation.navigate(WareHouseDetailInt.route, {data: item, onRefresh:()=> refresh()});
     }
 
     const refresh = useCallback(() => {

@@ -16,16 +16,16 @@ import moment from 'moment';
 
 const WareHouseDetail = (props) => {
     const { route, navigation } = props;
-    const [stockPicking, setStockPicking] = useState(route?.params);
+    const [stockPicking, setStockPicking] = useState(route?.params?.data);
     const [showModal, setShowModal] = useState(false);
     const pallets = useRef([])
     const itemSelect = useRef({})
     const indexSelect = useRef(0)
     const indexElmSelect = useRef(0)
 
-    const goBack = () => {
-        if (route?.params?.goBack) {
-            route.params.goBack();
+    const goBack = (refresh) => {
+        if (route?.params?.onRefresh && refresh) {
+            route.params.onRefresh();
         }
         navigation.goBack();
     };
@@ -92,7 +92,7 @@ const WareHouseDetail = (props) => {
 
         await ApiService.confirmImportInPicking(body).then(res => {
             messageService.showSuccess(`Xác nhận thành công`);
-            goBack()
+            goBack(true)
         }).catch(err => {
             messageService.showError(`Có lỗi trong quá trình xử lý \n ${err}`);
             console.log("confirmImportInPicking err ", err);

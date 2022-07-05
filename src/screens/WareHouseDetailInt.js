@@ -14,15 +14,15 @@ import messageService from '../services/messages';
 
 const WareHouseDetailInt = (props) => {
     const { route, navigation } = props;
-    const [stockPicking, setStockPicking] = useState(route?.params);
+    const [stockPicking, setStockPicking] = useState(route?.params?.data);
     const [showModal, setShowModal] = useState(false);
     const stockLocations = useRef([])
     const itemSelect = useRef({})
     const indexSelect = useRef(0)
 
-    const goBack = () => {
-        if (route?.params?.goBack) {
-            route.params.goBack();
+    const goBack = (refresh) => {
+        if (route?.params?.onRefresh && refresh) {
+            route.params.onRefresh();
         }
         navigation.goBack();
     };
@@ -49,13 +49,12 @@ const WareHouseDetailInt = (props) => {
 
     const onClickSave = async () => {
         let moveIds = []
-        stockPicking.move_ids_without_package.forEach(product => {
-          product.move_line_nosuggest_ids.forEach(elm => {
+        stockPicking.move_line_ids_without_package.forEach(elm => {
             moveIds.push({
-                product_id: product.product_id[0],
+                product_id: elm.product_id[0],
                 location_dest_id: elm.location_dest_id[0],
+                qty_done: elm.qty_done,
             })
-          })
         });
 
         let body = {
@@ -84,7 +83,7 @@ const WareHouseDetailInt = (props) => {
 
         await ApiService.confirmImportInPicking(body).then(res => {
             messageService.showSuccess(`Xác nhận thành công`);
-            goBack()
+            goBack(true)
         }).catch(err => {
             messageService.showError(`Có lỗi trong quá trình xử lý \n ${err}`);
             console.log("confirmImportIntPicking err ", err);
@@ -143,8 +142,15 @@ const WareHouseDetailInt = (props) => {
                         <Text style={{ color: Colors.gray_aaa, fontSize: 15 }}>Số lô/sê-ri: </Text>
                         <Text style={{ color: Colors.black, fontSize: 15 }}>{elm.lot_id[1] ?? ""}</Text>
                     </View>
-                    <TouchableOpacity onPress={() => onClickOpenScanBarcode()}>
-                        <TextInput defaultValue={elm.location_dest_id[1] ?? ""} editable={false} placeholder='Tới' style={{ marginBottom: 10, height: 45, borderRadius: 5, borderWidth: 1, borderColor: Colors.gray_aaa, color: Colors.black }} />
+                    <View style={{ ...Styles.itemDl, backgroundColor: "white", marginTop: 10, marginBottom: 10 }}>
+                        <Text style={{ color: Colors.gray_aaa, fontSize: 15, textAlignVertical:'center' }}>Số lượng: </Text>
+                        <TextInput defaultValue={`${elm.qty_done}`} placeholder='Số lượng' 
+                            keyboardType={'numeric'} style={{ flex:1, height: 45, borderRadius: 5, borderWidth: 1, borderColor: Colors.gray_aaa }} 
+                            onChangeText={(text) => elm.qty_done = text}/>
+                    </View>
+                    <TouchableOpacity onPress={() => onClickOpenScanBarcode()} style={{ ...Styles.itemDl, backgroundColor: "white", marginTop: 10, marginBottom: 20 }}>
+                        <Text style={{ color: Colors.gray_aaa, fontSize: 15, textAlignVertical:'center' }}>Tói:            </Text>
+                        <TextInput defaultValue={elm.location_dest_id[1] ?? ""} editable={false} placeholder='Tới' style={{flex:1, height: 45, borderRadius: 5, borderWidth: 1, borderColor: Colors.gray_aaa, color: Colors.black }} />
                     </TouchableOpacity>
                     {/* <TextInput defaultValue={elm.location_dest_id[1] ?? ""} placeholder='Tới' style={{ height: 45, borderRadius: 5, borderWidth: 1, borderColor: Colors.gray_aaa }} /> */}
                 </View>
