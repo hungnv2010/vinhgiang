@@ -25,6 +25,7 @@ const removeAccents = (str) => {
     return str;
 };
 
+// options : list(object) bắt buộc có trường 'name' (hiển thị), 'valueKey' là trường duy nhất tương ứng với trường 'current' (giá trị mặc định)
 const Select = (props) => {
     const {onSelect, options, current, label, required, valueKey, reload, loading, search} = props;
     const [showModal, setShowModal] = useState(false);
@@ -119,10 +120,10 @@ const Select = (props) => {
             <Text style={Styles.formLabel}>
                 {label + (required ? ' *' : '')}
             </Text>
-            <Text style={Styles.formTextInput} onPress={() => setShowModal(true)}>
+            <TouchableOpacity style={Styles.formSelectText} onPress={() => setShowModal(true)}>
                 <Text style={Styles.formSelectInput}>{getText()}</Text>
-                <Icon name="arrow-drop-down" size={22} style={Styles.formSelectIcon}/>
-            </Text>
+                <Icon name="arrow-drop-down" size={22} />
+            </TouchableOpacity>
         </View>
         <PSModal
             setModalVisible={setShowModal}

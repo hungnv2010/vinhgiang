@@ -4,9 +4,10 @@ import {Text} from 'react-native-elements';
 import {View, FlatList} from 'react-native';
 import {Colors, Styles} from '../configs';
 import { NumberFormat } from '../configs/Utils';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const ProductList = (props) => {
-    const {data, onDelete, hideDeleteButton} = props;
+    const {onClickItem, data, hideDeleteButton} = props;
 
     const renderTextItem = (title, text) => {
         return (
@@ -19,7 +20,9 @@ const ProductList = (props) => {
 
     const renderProduct = (item, index) => {
         return (
-            <View style={{ padding: 2, borderRadius: 0, borderColor: 'silver', borderWidth: 0.5, }}>
+            <TouchableOpacity style={{ padding: 2, borderRadius: 0, borderColor: 'silver', borderWidth: 0.5, }} 
+                activeOpacity = { onClickItem ? 0.2 : 0.9}
+                onPress={() => onClickItem ? onClickItem(index, item): null}>
                 <View style={Styles.flexDirection}>
                     <View style={Styles.itemViewContent}>
                         <Text style={Styles.textSize14}>{item.product_id.name}</Text>
@@ -32,12 +35,12 @@ const ProductList = (props) => {
                         </View>
 
                         <View style={{ flex: 1, flexDirection: "row", justifyContent:'space-between'}}>
-                            {renderTextItem("Đơn giá: ", NumberFormat(item.price_unit) +"/"+ item.product_uom.name)}
+                            {renderTextItem("Đơn giá: ", NumberFormat(item.price_unit) +"đ/"+ item.product_uom.name)}
                             {renderTextItem("Tổng: ", NumberFormat(item.price_subtotal) + "đ")}
                         </View>
                     </View>
                 </View>
-            </View>
+            </TouchableOpacity>
         )
     }
 

@@ -1,11 +1,11 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {PropTypes} from '../base';
 import {ScrollView, TouchableOpacity, View} from 'react-native';
 import {Styles} from '../configs';
 import {Button, Text} from 'react-native-elements';
 import Select from '../components/Select';
 import {OrderModel} from '../models';
-import {DatePicker, TextArea} from '../components';
+import {DatePicker, FormInput, TextArea} from '../components';
 import ProductForm from './ProductForm';
 import ProductList from './ProductList';
 import {Loading} from './index';
@@ -21,6 +21,7 @@ const OrderForm = (props) => {
     const [showProductForm, setShowProductForm] = useState(false);
     const [order, setOrder] = useState(new OrderModel());
     const [partnerList, setPartnerList] = useState({});
+    const productSelect = useRef({})
 
     const updateField = (key, value) => {
         setOrder({...order, [key]: value});
@@ -57,7 +58,10 @@ const OrderForm = (props) => {
     };
 
     const addProduct = (productData) => {
-        order.order_line.push(productData);
+        if(productSelect.current.index >= 0)
+            order.order_line[productSelect.current.index] = productData;
+        else
+            order.order_line.push(productData);
         setOrder(order);
     };
 
@@ -97,7 +101,7 @@ const OrderForm = (props) => {
                 <View style={Styles.viewInput}>
 
                 <Select
-                    label={'Nhà cung cấp'}
+                    label={'Khách hàng'}
                     options={partnerList}
                     optionType={'array'}
                     valueKey={'id'}
@@ -109,6 +113,12 @@ const OrderForm = (props) => {
                     onSelect={(item) => { selectPartner(item)}}
                     search/>
                 </View>
+
+                <FormInput
+                        keyboardType={'numeric'}
+                        label={'Số điện thoại'}
+                        value={`${order.phone}`}
+                        onChangeText={(val) => updateField('phone', val)}/>
 
                 <DatePicker
                     label={'Hạn chốt đặt'}
@@ -122,7 +132,11 @@ const OrderForm = (props) => {
                 <View style={Styles.sectionHeader}>
                     <Text style={Styles.sectionTitle}>Thông tin sản phẩm</Text>
                     <TouchableOpacity
-                        onPress={() => setShowProductForm(true)}
+                        onPress={() => {
+                            productSelect.current = {index: -1}
+                            setShowProductForm(true)
+                         }
+                        }
                         style={Styles.rightButton}>
                         <Text style={Styles.rightButtonText}>
                             + Thêm sản phẩm
@@ -131,11 +145,12 @@ const OrderForm = (props) => {
                 </View>
 
                 <ProductList
-                    onDelete={index => {
-                        const order_line = order.order_line;
-                        order_line.splice(index, 1);
-                        updateField('order_line', order_line);
+                    onClickItem={(index, item) => {
+                        productSelect.current = {index: index, product: item}
+                        console.log("add ProductList ", productSelect.current);
+                        setShowProductForm(true)
                     }}
+                
                     data={order.order_line}/>
 
                 <Button
@@ -147,6 +162,7 @@ const OrderForm = (props) => {
             </View>
         </ScrollView>
         <ProductForm
+            product={productSelect.current.product}
             visible={showProductForm}
             onSubmit={addProduct}
             onClose={() => setShowProductForm(false)}/>

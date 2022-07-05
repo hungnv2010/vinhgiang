@@ -276,16 +276,16 @@ const CustomerDetail = (props) => {
         let listTmp = []
         switch (typeModal.current) {
             case MODAL_PROVINCE:
-                setListProvice([...listDataProvice.current].filter(value => ChangeAlias(value.name).toUpperCase().includes(filterKey)));
+                setListProvice([...listDataProvice.current].filter(value => ChangeAlias(value.name).toLowerCase().includes(filterKey)));
                 break;
             case MODAL_DISTRICT:
                 if (provice == "") return;
-                listTmp = listDataProvice.current.filter(item => item.id == provice.id)[0].state_ids.filter(value => ChangeAlias(value.name).includes(filterKey))
+                listTmp = listDataProvice.current.filter(item => item.id == provice.id)[0].state_ids.filter(value => ChangeAlias(value.name).toLowerCase().includes(filterKey))
                 setListProvice(listTmp)
                 break;
             case MODAL_WARDS:
                 if (district == "") return;
-                listTmp = listDataProvice.current.filter(item => item.id == provice.id)[0].state_ids.filter(item => item.id == district.id)[0].ward_ids.filter(value => ChangeAlias(value.name).includes(filterKey))
+                listTmp = listDataProvice.current.filter(item => item.id == provice.id)[0].state_ids.filter(item => item.id == district.id)[0].ward_ids.filter(value => ChangeAlias(value.name).toLowerCase().includes(filterKey))
                 setListProvice([...listTmp]);
                 break;
             default:
@@ -377,7 +377,7 @@ const CustomerDetail = (props) => {
                     placeholder='Tìm kiếm...'
                     autoFocus={true}
                     onChangeText={(val) => {
-                        filterSelectAdress(ChangeAlias(val).toUpperCase())
+                        filterSelectAdress(ChangeAlias(val).toLowerCase())
                     }}
                     style={{color: Colors.black, height: 36, borderWidth: 1, borderRadius: 10, marginHorizontal: 10, marginVertical:5, borderColor: Colors.primary,}}/>
                 {/* <MaterialCommunityIcons onPress={() => { setShowModal(false) }} style={[Styles.productIconCloseModalCategori, {marginBottom: 0, paddingBottom: 0}]} name={"close"} color={Colors.gray_aaa} size={26} /> */}

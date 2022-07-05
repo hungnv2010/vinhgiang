@@ -86,6 +86,12 @@ const Styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 20,
     },
+    sectionTitleSmall: {
+        color: Colors.primary,
+        lineHeight: 30,
+        fontWeight: 'bold',
+        fontSize: 16,
+    },
     leftItem: {
         alignItems: 'flex-start',
         lineHeight: 46,
@@ -132,6 +138,16 @@ const Styles = StyleSheet.create({
     },
     buttonTitleLarge: {
         textTransform: 'uppercase',
+    },
+    buttonCustom: {
+        height: 80,
+        textAlignVertical: 'top',
+        paddingHorizontal: 10,
+        flex: 1,
+        borderColor: Colors.primary,
+        backgroundColor: Colors.white_t,
+        borderWidth: 1,
+        borderRadius: 8,
     },
     rightButton: {
         lineHeight: 46,
@@ -267,6 +283,18 @@ const Styles = StyleSheet.create({
     },
     formTextInput: {
         flex: 1,
+        borderColor: Colors.primary,
+        color: Colors.black,
+        borderWidth: 1,
+        borderRadius: 8,
+        paddingHorizontal: 10,
+        height: 36,
+    },
+    formSelectText: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent:'space-between',
+        alignItems:'center',
         borderColor: Colors.primary,
         color: Colors.black,
         borderWidth: 1,

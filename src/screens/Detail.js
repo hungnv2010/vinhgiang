@@ -12,7 +12,7 @@ import {loginUser, logout, useAuthDispatch} from '../context';
 import ProductList from '../containers/ProductList';
 import Edit from './Edit';
 import {showMessage} from 'react-native-flash-message';
-import {STATE} from '../models/OrderModel';
+import {INVOICE_STATUS, STATE} from '../models/OrderModel';
 
 const Detail = (props) => {
     const {route, navigation} = props;
@@ -46,6 +46,11 @@ const Detail = (props) => {
                             type={'text'}
                             dd={'Trạng thái'}
                             dt={STATE[order.state]}/>
+                        <OrderListItem
+                            flexDt ={1}
+                            type={'text'}
+                            dd={'Vận chuyển'}
+                            dt={INVOICE_STATUS[order.invoice_status]}/>
                         
                         <OrderListItem
                             flexDt ={1}
@@ -62,7 +67,7 @@ const Detail = (props) => {
                     <View style={{width:'100%', flexDirection: "column", paddingTop: 4}}>
                         <OrderListItem
                                 flexDt ={1}
-                                dd={'Nhà cung cấp'}
+                                dd={'Khách hàng'}
                                 dt={order.partner_id.name}/>
                 
                         <OrderListItem

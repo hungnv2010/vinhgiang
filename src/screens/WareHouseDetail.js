@@ -4,13 +4,15 @@ import { FlatList, Text, View, TouchableOpacity, TextInput } from 'react-native'
 import { Styles, Colors } from '../configs';
 import { NumberFormat } from '../configs/Utils'
 import { ScrollView } from 'react-native-gesture-handler';
-import { OrderListItem, OrderItem } from '../components';
+import { OrderListItem, OrderItem, DatePicker } from '../components';
 import { loginUser, logout, useAuthDispatch } from '../context';
 import FSModal from '../components/FSModal';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { ScanBarcode } from '.';
 import { ApiService } from '../services';
 import messageService from '../services/messages';
+import DatePickerNull from '../components/DatePickerNull';
+import moment from 'moment';
 
 const WareHouseDetail = (props) => {
     const { route, navigation } = props;
@@ -56,23 +58,26 @@ const WareHouseDetail = (props) => {
                 product_id: product.product_id[0],
                 result_package_id: elm.result_package_id[0],
                 qty_done: elm.qty_done,
-                lot_name: elm.lot_name
+                lot_name: elm.lot_name,
+                expiration_date: elm.expiration_date
             })
           })
         });
 
         let body = {
             picking_id : stockPicking.id,
-            move_ids: moveIds
+            move_ids: moveIds,
+
         }
 
         console.log("onClickSave ", body );
 
         await ApiService.importInPicking(body).then(res => {
+            console.log("importInPicking", res);
             messageService.showSuccess(`Lưu thành công`);
             // goBack()
         }).catch(err => {
-            messageService.showError('Có lỗi trong quá trình xử lý');
+            messageService.showError(`Có lỗi trong quá trình xử lý \n ${err}`);
             console.log("importInPicking err ", JSON.stringify(err));
         })
     }
@@ -89,7 +94,7 @@ const WareHouseDetail = (props) => {
             messageService.showSuccess(`Xác nhận thành công`);
             goBack()
         }).catch(err => {
-            messageService.showError('Có lỗi trong quá trình xử lý');
+            messageService.showError(`Có lỗi trong quá trình xử lý \n ${err}`);
             console.log("confirmImportInPicking err ", err);
         })
     }
@@ -172,8 +177,14 @@ const WareHouseDetail = (props) => {
                     <TouchableOpacity onPress={() => onClickOpenScanBarcode()}>
                         <TextInput defaultValue={elm.result_package_id[1] ?? ""} editable={false} placeholder='Gói nguồn' style={{ marginBottom: 10, height: 45, borderRadius: 5, borderWidth: 1, borderColor: Colors.gray_aaa, color: Colors.black }} />
                     </TouchableOpacity>
-                    <TextInput defaultValue={elm.location_dest_id[1] ?? ""} placeholder='Tới' style={{ height: 45, borderRadius: 5, borderWidth: 1, borderColor: Colors.gray_aaa }} />
-                </View>
+                    <DatePickerNull
+                        label={'Ngày hết hạn'}
+                        date = {elm.expiration_date}
+                        onChange={(value) => {
+                            console.log("het han ", value);
+                            elm.expiration_date =  value
+                        }}/>                
+                    </View>
                 <TouchableOpacity onPress={() => { onClickApply(elm)}} style={[Styles.productViewApply, { marginTop: 25, height: 50, marginLeft: 0 }]}>
                     <Text style={Styles.productTextApply}>Áp dụng</Text>
                 </TouchableOpacity>
@@ -234,6 +245,7 @@ const WareHouseDetail = (props) => {
                                         {renderTextItem("Số lô/sê-ri: ", elm.lot_name ?? "")}
                                         {renderTextItem("Số lượng: ",  NumberFormat(elm.qty_done) ?? "")}
                                     </View>
+                                    {renderTextItem("Ngày hết hạn: ", elm.expiration_date? moment(elm.expiration_date).format("YYYY/MM/D") : "")}
                                 </TouchableOpacity>
                                 }
                              )

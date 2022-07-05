@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Screen} from '../containers';
-import {Text, View} from 'react-native';
+import {FlatList, Text, View} from 'react-native';
 import {Styles, Colors} from '../configs';
 import {NumberFormat} from '../configs/Utils'
 import {ScrollView} from 'react-native-gesture-handler';
@@ -25,8 +25,8 @@ const PurchaseDetail = (props) => {
         return (
             <View style={{ padding: 2, borderRadius: 0, borderColor: 'silver', borderWidth: 0.5, }}>
                 <View style={Styles.flexDirection}>
-                    {/* <View style={Styles.itemViewContent}>
-                        <Text style={Styles.textSize14}>{item.product_id.name}</Text>
+                    <View style={Styles.itemViewContent}>
+                        <Text style={Styles.textSize14}>{item.name}</Text>
 
                         <View style={{ flex: 1, flexDirection: "row", justifyContent:'space-between'}}>
                             {renderTextItem("Số lượng: ", NumberFormat(item.product_uom_qty))}
@@ -36,10 +36,10 @@ const PurchaseDetail = (props) => {
                         </View>
 
                         <View style={{ flex: 1, flexDirection: "row", justifyContent:'space-between'}}>
-                            {renderTextItem("Đơn giá: ", NumberFormat(item.price_unit) +"/"+ item.product_uom.name)}
+                            {renderTextItem("Đơn giá: ", NumberFormat(item.price_unit) +"đ/"+ item.product_uom.name)}
                             {renderTextItem("Tổng: ", NumberFormat(item.price_subtotal) + "đ")}
                         </View>
-                    </View> */}
+                    </View>
                 </View>
             </View>
         )
@@ -82,9 +82,9 @@ const PurchaseDetail = (props) => {
 
                 </View>
                 <View style={Styles.orderProducts}>
-                    {purchase.length > 0 ?
+                    {purchase.order_line.length > 0 ?
                         <FlatList
-                            data={purchase}
+                            data={purchase.order_line}
                             renderItem={({ item, index }) => renderProduct(item, index)}
                             keyExtractor={(item, index) => index.toString()}
                             style={Styles.productList}

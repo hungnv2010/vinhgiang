@@ -41,15 +41,16 @@ export const post = async (uri, data = {}) => {
         },
     })
         .then(res => {
-            if (res.status === 401) {
-                throw new InvalidAccessToken(res.data?.message);
+            let result = res.data.result? JSON.parse(res.data.result) : {}
+            if (result.status === 401) {
+                throw new InvalidAccessToken(result.message);
             }
-            if (res.status === 400) {
+            if (result.status === 400) {
                 console.log('post response InvalidRequest ===============', url);
                 console.log(JSON.stringify(data));
                 console.log(res.data);
                 console.log('======================');
-                throw new InvalidRequest(res.data.result);
+                throw new InvalidRequest(result);
             }
             return res.data;
         })
@@ -209,6 +210,11 @@ const ApiService = {
     importIntPicking: async (data) => {
         return await post('purchase_order/import_int_picking', data);
     },
+
+    confirmImportIntPicking: async (data) => {
+        return await post('purchase_order/confirm_import_int_picking', data);
+    },
+
 
 };
 

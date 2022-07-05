@@ -21,29 +21,13 @@ const Create = (props) => {
         order.Create(order)
             .then(res => {
                 console.log("order.Create ",res);
-                if (res.error) {
-                    messageService.showError('Gặp lỗi khi gửi đơn hàng: ' + res.error.data.message);
-                    setLoading(false);
-                    return;
-                }
-                messageService.showInfo('Tạo đơn hàng mới thành công');
-               goBack();
-               setLoading(false);
+                messageService.showSuccess(`Tạo đơn thành công`);
+                goBack()
             })
-            .catch(e => {
+            .catch(err => {
                 setLoading(false);
-                if (InvalidAccessToken.compare(e)) {
-                    logout(dispatch).catch(le => console.error('logout error', le));
-                    return;
-                }
-                if (InvalidRequest.compare(e)) {
-                    console.log('invalid request', JSON.stringify(e));
-                    let msg = e.message;
-                    msg += '\n' + 'Nếu lỗi liên quan đến sai thông tin sản phẩm, xin hãy xoá sản phẩm và tạo lại!';
-                    messageService.showError(msg);
-                    return;
-                }
-                console.log(e.message);
+                messageService.showError(`Có lỗi trong quá trình xử lý \n ${err}`);
+                console.log("confirmImportInPicking err ", err);
             });
     };
 

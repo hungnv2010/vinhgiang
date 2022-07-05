@@ -3,26 +3,25 @@ import moment from 'moment';
 import _ from 'lodash';
 import ProductModel from './ProductModel';
 
-export const LIST_THONG_TIN_NHAN_HANG = {
-    khach_lay: 'Tại nhà máy',
-    send: 'Nhà máy gửi hàng',
-    ship: 'Nhà máy vận chuyển',
-    '': '',
+export const STATE = {
+    'draft': 'Báo giá',
+    'sent': 'Đã gửi báo giá',
+    'sale': 'Đơn bán hàng',
 };
 
-export const STATE = {
-    'sale': 'Đơn bán hàng',
-    'draft': 'Nháp',
-    'send': 'Gửi',
+export const INVOICE_STATUS = {
+    'no': 'Chưa chuyển cho giao vận',
+    'to invoice': 'Giao hàng thành công',
 };
 
 export default class OrderModel {
 
     date_order = moment();
     // date_planned = "2022-05-18 05:00:00"
-    notes = '' // dieu khoan
+    note = '' // dieu khoan
     order_line = []
     partner_id = null
+    phone = ''
 
     constructor(data = {}) {
         if (data.order_line && _.isArray(data.order_line)) {
@@ -37,7 +36,7 @@ export default class OrderModel {
 
     getDate(date) {
         if (date.format) {
-            return date.format('YYYY/MM/D h:mm:ss');
+            return date.format('YYYY-MM-DD hh:mm:ss');
         }
         console.log('date', date);
         return date;
@@ -81,9 +80,10 @@ export default class OrderModel {
     getRequestData() {
         return {
             date_order: this.getDate(this.date_order),
-            notes: this.notes, // dieu khoan
+            note: this.note, // dieu khoan
             partner_id: this.partner_id,
             order_line: this.order_line.map(product => product.getRequestData()),
+            phone: this.phone
         };
     }
 

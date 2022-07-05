@@ -49,7 +49,9 @@ const Purchase = (props) => {
         OrderModel.GetPurchaseList(1)
             .then(res => {
                 if (res) {
+                    res.data.reverse();
                     setData(res);
+                    console.log("get purchaseList", res);
                     listAllData.current = res;
                 }
                 setRefreshing(false);
@@ -72,7 +74,10 @@ const Purchase = (props) => {
     }, [dispatch]);
 
     const onChangeTextSearch = (text) => {
-        let listFilter = listAllData.current.data.filter(item => (item.name && ChangeAlias(item.name).indexOf(ChangeAlias(text)) > -1 ))
+        let listFilter = listAllData.current.data.filter(item => 
+                (item.name && ChangeAlias(item.name.toLowerCase()).indexOf(ChangeAlias(text)) > -1 )
+                || (item.partner_id && ChangeAlias(item.partner_id[1].toLowerCase()).indexOf(ChangeAlias(text)) > -1 )
+            )
         setData({...data, data: listFilter})
     }
 
@@ -153,8 +158,8 @@ const Purchase = (props) => {
             <View style={Styles.productViewFilter}>
                 <View style={Styles.productViewSearch}>
                     <TextInput style={{ flex: 1, textAlign: "center"}}
-                        placeholder={"Tìm kiếm đơn mua hàng..."}
-                        onChangeText={(text) => onChangeTextSearch(text)} />
+                        placeholder={"Tìm kiếm mã đơn hàng, khách hàng..."}
+                        onChangeText={(text) => onChangeTextSearch(text.toLowerCase())} />
                     <Ionicons name={"search"} color={Colors.gray_aaa} size={20} />
                 </View>
             </View>

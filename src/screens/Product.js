@@ -34,7 +34,7 @@ const Product = (props) => {
         let getProductCategory = await ApiService.getProductCategory()
         // console.log("getProductCategory ", JSON.stringify(getProductCategory));
         let getProductAll = await ApiService.getProductAll()
-        console.log("getProductAll ", JSON.stringify(getProductAll));
+        console.log("getProductAll ", getProductAll);
         setRefreshing(false);
         setListProduct(getProductAll.data)
         setListCategori(getProductCategory.data)
@@ -88,7 +88,10 @@ const Product = (props) => {
     }
 
     const onChangeTextSearch = (text) => {
-        let listProductFilter = listAllData.current.filter(item => (ChangeAlias(item.name).indexOf(ChangeAlias(text)) > -1))
+        let listProductFilter = listAllData.current.filter(item => 
+                (ChangeAlias(item.name).toLowerCase().indexOf(ChangeAlias(text)) > -1) || (item.code.toLowerCase().indexOf(text) > -1) 
+                || (item.lst_price  && `${item.lst_price}`.indexOf(text) > -1)
+            )
         setListProduct(listProductFilter)
     }
 
@@ -126,7 +129,7 @@ const Product = (props) => {
                     <Text style={Styles.productTextFilterCategori} >Nhóm theo</Text>
                 </TouchableOpacity>
                 <View style={Styles.productViewSearch}>
-                    <TextInput style={Styles.productInputSearch} onChangeText={(text) => onChangeTextSearch(text)} />
+                    <TextInput style={Styles.productInputSearch} onChangeText={(text) => onChangeTextSearch(text.toLowerCase())} />
                     <Ionicons name={"search"} color={Colors.gray_aaa} size={20} />
                 </View>
             </View>

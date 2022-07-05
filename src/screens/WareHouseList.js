@@ -126,13 +126,13 @@ const WareHouseList = (props) => {
                     <Text>Chưa có dữ liệu</Text>
                 </View>
             }
-            <FAB
+            {/* <FAB
                 onPress={() => onClickAddItem()}
                 icon={{ name: 'add', color: 'white' }}
                 color={Colors.primary}
                 buttonStyle={Styles.customerButonAdd}
                 containerStyle={Styles.customerAdd}
-            />
+            /> */}
         </Screen>
     );
 };

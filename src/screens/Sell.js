@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {RefreshControl, ScrollView, Text, TouchableOpacity, View, FlatList, TextInput} from 'react-native';
 import {Colors, Styles} from '../configs';
 import Screen from '../containers/Screen';
-import {Button} from 'react-native-elements';
+import {Button, CheckBox} from 'react-native-elements';
 import {OrderItem} from '../containers';
 import {OrderModel} from '../models';
 import {logout, useAuthDispatch} from '../context';
@@ -13,6 +13,9 @@ import messageService from '../services/messages';
 import { FAB } from 'react-native-elements';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import { ChangeAlias } from '../configs/Utils';
+import FSModal from '../components/FSModal';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { INVOICE_STATUS, STATE } from '../models/OrderModel';
 
 const Sell = (props) => {
     const {navigation} = props;
@@ -26,6 +29,8 @@ const Sell = (props) => {
     const dispatch = useAuthDispatch();
     const [refreshing, setRefreshing] = useState(false);
     const [loadMore, setLoadMore] = useState(false)
+    const [filterState, setFilterState] = useState({show: false, state: null, invoice_status: null});
+
     const listAllData = useRef([])
 
     const createOrder = () => {
@@ -33,10 +38,6 @@ const Sell = (props) => {
             goBack: refresh,
         });
     };
-
-    const filterMore = () => {
-
-    }
 
     const onClickItem = (item) => {
         navigation.navigate(Detail.route, {data: item, mode: 'view'});
@@ -47,7 +48,9 @@ const Sell = (props) => {
         OrderModel.GetOrderList(1)
             .then(res => {
                 if (res) {
+                    res.data.reverse();
                     setData(res);
+                    console.log("get orderList", res);
                     listAllData.current = res;
                 }
                 setRefreshing(false);
@@ -69,9 +72,18 @@ const Sell = (props) => {
             });
     }, [dispatch]);
 
+    const getListFilter = () => {
+        return listAllData.current.data.filter(item =>
+            (!filterState.state || item.state == filterState.state) && (!filterState.invoice_status || item.invoice_status == filterState.invoice_status)
+        )
+    }
+
     const onChangeTextSearch = (text) => {
-        let listFilter = listAllData.current.data.filter(item => (item.name && ChangeAlias(item.name).indexOf(ChangeAlias(text)) > -1 ))
-        setData({...data, data: listFilter})
+        let listSearch = getListFilter().filter(item => 
+            (item.name && ChangeAlias(item.name.toLowerCase()).indexOf(ChangeAlias(text)) > -1 )
+            || (item.partner_id.name && ChangeAlias(item.partner_id.name.toLowerCase()).indexOf(ChangeAlias(text)) > -1 )
+        )
+        setData({...data, data: listSearch})
     }
 
     const refresh = useCallback(() => {
@@ -103,15 +115,72 @@ const Sell = (props) => {
             });
     }, [dispatch]);
 
+    const itemFilterState = (state, index) => {
+        return <TouchableOpacity key={index.toString()} onPress={() => setFilterState({...filterState, state: state}) } style={Styles.productViewItemModalCategori}>
+        <CheckBox
+            containerStyle={Styles.productCheckBox}
+            center
+            checkedColor={Colors.primary}
+            checked={filterState.state == state}
+            onPress={() => setFilterState({...filterState, state: state})}
+        />
+        <Text style={Styles.productItemNameCategori} >{state? STATE[state]: 'Tất cả'}</Text>
+    </TouchableOpacity>
+    }
+
+    const itemFilterInvoiceStatus = (invoice_status, index) => {
+        return <TouchableOpacity key={index.toString()} onPress={() => setFilterState({...filterState, invoice_status: invoice_status}) } style={Styles.productViewItemModalCategori}>
+        <CheckBox
+            containerStyle={Styles.productCheckBox}
+            center
+            checkedColor={Colors.primary}
+            checked={filterState.invoice_status == invoice_status}
+            onPress={() => setFilterState({...filterState, invoice_status: invoice_status})}
+        />
+        <Text style={Styles.productItemNameCategori} >{invoice_status? INVOICE_STATUS[invoice_status]: 'Tất cả'}</Text>
+    </TouchableOpacity>
+    }
+
+    const renderSelectStatus = () => {
+        return <View style={Styles.productViewModalCategori}>
+            <MaterialCommunityIcons onPress={() => {
+                setFilterState({...filterState, show: false})
+                setData({...data, data: getListFilter()})}} 
+                style={Styles.productIconCloseModalCategori} name={"close"} color={Colors.gray_aaa} size={26} />
+            <Text style={Styles.sectionTitleSmall}>Lọc trạng thái đơn hàng</Text>
+
+            {
+                [ null, 'draft','sent' ,'sale'].map((state, index) => itemFilterState(state, index) )
+            }
+            
+            <Text style={Styles.sectionTitleSmall}>Lọc trạng thái vận chuyển</Text>
+
+            {
+                [ null, 'no','to invoice'].map((invoice_status, index) => itemFilterInvoiceStatus(invoice_status, index) )
+            }
+            <TouchableOpacity onPress={() => {
+                setFilterState({...filterState, show: false})
+                setData({...data, data: getListFilter()})}} style={[Styles.productViewApply, { marginTop: 25, height: 50 }]}>
+                <Text style={Styles.productTextApply}>Xong</Text>
+            </TouchableOpacity>
+        
+        </View>
+    }
+
     return (
         <Screen 
         showLogoutButton={true}
         header={'Bán hàng'}>
             <View style={Styles.productViewFilter}>
+                <TouchableOpacity onPress={() => setFilterState({...filterState, show: true})} 
+                    style={{...Styles.productViewFilterCategori, borderColor: (filterState.state || filterState.invoice_status) ? Colors.primary : "#aaa"}}>
+                    <MaterialCommunityIcons name={"menu"} color={(filterState.state || filterState.invoice_status) ? Colors.primary : "#aaa"} size={20} />
+                    <Text style={{...Styles.productTextFilterCategori, color: (filterState.state || filterState.invoice_status) ? Colors.primary : "#aaa"}} >{'Lọc theo'}</Text>
+                </TouchableOpacity>
                 <View style={Styles.productViewSearch}>
                     <TextInput style={{ flex: 1, textAlign: "center"}}
-                        placeholder={"Tìm kiếm đơn mua hàng..."}
-                        onChangeText={(text) => onChangeTextSearch(text)} />
+                        placeholder={"Tìm kiếm mã đơn hàng, khách hàng..."}
+                        onChangeText={(text) => onChangeTextSearch(text.toLowerCase())} />
                     <Ionicons name={"search"} color={Colors.gray_aaa} size={20} />
                 </View>
             </View>
@@ -123,7 +192,7 @@ const Sell = (props) => {
                         onRefresh={refresh} />}
                     data={data.data}
                     onEndReachedThreshold={0.3}
-                    onEndReached={filterMore}
+                    onEndReached={()=>{}}
                     renderItem={({ item, index }) => OrderItem(item, index, onClickItem)}
                     keyExtractor={(item, index) => index.toString()}
                     ListFooterComponent={loadMore ? <ActivityIndicator color={Colors.primary} /> : null}
@@ -146,6 +215,9 @@ const Sell = (props) => {
                 buttonStyle={Styles.customerButonAdd}
                 containerStyle={Styles.customerAdd}
             />
+
+            <FSModal visible={filterState.show} children={renderSelectStatus()} />
+
         </Screen>
     );
 };

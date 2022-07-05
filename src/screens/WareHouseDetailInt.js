@@ -86,8 +86,8 @@ const WareHouseDetailInt = (props) => {
             messageService.showSuccess(`Xác nhận thành công`);
             goBack()
         }).catch(err => {
-            messageService.showError('Có lỗi trong quá trình xử lý');
-            console.log("confirmImportInPicking err ", err);
+            messageService.showError(`Có lỗi trong quá trình xử lý \n ${err}`);
+            console.log("confirmImportIntPicking err ", err);
         })
     }
 
@@ -99,9 +99,9 @@ const WareHouseDetailInt = (props) => {
     }
 
     const onClickApply = (elm) => {
-        itemSelect.current.move_line_nosuggest_ids[indexElmSelect.current] = elm
+        itemSelect.current = elm
 
-        stockPicking.move_ids_without_package[indexSelect.current] = itemSelect.current
+        stockPicking.move_line_ids_without_package[indexSelect.current] = itemSelect.current
         setStockPicking(stockPicking)
         setShowModal(false)
     }
@@ -112,7 +112,7 @@ const WareHouseDetailInt = (props) => {
                 let find = stockLocations.current.find(stockLocation => stockLocation.name == data)
                 if(find) {
 
-                    itemSelect.current.move_line_nosuggest_ids[0].location_dest_id = [find.id ,find.name]
+                    itemSelect.current.location_dest_id = [find.id ,find.name]
 
                     messageService.showInfo(data)
                     setShowModal(false);
@@ -126,8 +126,6 @@ const WareHouseDetailInt = (props) => {
 
     const renderContentModal = () => {
         let elm = itemSelect.current
-        let location = elm.move_line_nosuggest_ids ? elm.move_line_nosuggest_ids[0].location_dest_id[1] : elm.location_id[1]
-
 
         if (JSON.stringify(itemSelect.current) != "{}")
             return <View style={Styles.productViewModalCategori}>
@@ -146,7 +144,7 @@ const WareHouseDetailInt = (props) => {
                         <Text style={{ color: Colors.black, fontSize: 15 }}>{elm.lot_id[1] ?? ""}</Text>
                     </View>
                     <TouchableOpacity onPress={() => onClickOpenScanBarcode()}>
-                        <TextInput defaultValue={location ?? ""} editable={false} placeholder='Tới' style={{ marginBottom: 10, height: 45, borderRadius: 5, borderWidth: 1, borderColor: Colors.gray_aaa, color: Colors.black }} />
+                        <TextInput defaultValue={elm.location_dest_id[1] ?? ""} editable={false} placeholder='Tới' style={{ marginBottom: 10, height: 45, borderRadius: 5, borderWidth: 1, borderColor: Colors.gray_aaa, color: Colors.black }} />
                     </TouchableOpacity>
                     {/* <TextInput defaultValue={elm.location_dest_id[1] ?? ""} placeholder='Tới' style={{ height: 45, borderRadius: 5, borderWidth: 1, borderColor: Colors.gray_aaa }} /> */}
                 </View>
@@ -174,13 +172,13 @@ const WareHouseDetailInt = (props) => {
                         </View>
 
                         <View style={{ flex: 1, flexDirection: "row", justifyContent: 'space-between' }}>
-                            {renderTextItem("Hoàn thành: ", NumberFormat(item.product_uom_qty) + "/" + NumberFormat(item.qty_done))}
+                            {renderTextItem("Hoàn thành: ", NumberFormat(item.qty_done) + "/" + NumberFormat(item.product_uom_qty))}
                             {renderTextItem("Số lô/sê-ri: ", item.lot_id[1] ?? "")}
                         </View>
 
                         <View style={{ flex: 1, flexDirection: "row", justifyContent: 'space-between' }}>
                             {renderTextItem("Gói nguồn: ", item.result_package_id[1] ?? "")}
-                            {renderTextItem("Tới: ", item.location_id[1] ?? "")}
+                            {renderTextItem("Tới: ", item.location_dest_id[1] ?? "")}
                         </View>
                         
                     </View>
@@ -252,12 +250,12 @@ const WareHouseDetailInt = (props) => {
                     }
                 </View>
                 <View style={{ flex: 1, flexDirection: "row", justifyContent: "flex-end", paddingVertical: 2, }}>
-                    <Text style={{ color: Colors.gray4, marginTop: 4, fonSize: 13 }}>Tổng: </Text>
+                    {/* <Text style={{ color: Colors.gray4, marginTop: 4, fonSize: 13 }}>Tổng: </Text>
                     <View style={{ flex: 0.05 }} />
                     <Text style={{
                         color: Colors.black, marginTop: 4, fontSize: 13, alignItems: 'flex-end',
                         justifyContent: 'center', marginEnd: 10
-                    }}>0</Text>
+                    }}>0</Text> */}
 
                 </View>
 
