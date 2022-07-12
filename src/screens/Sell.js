@@ -40,7 +40,7 @@ const Sell = (props) => {
     };
 
     const onClickItem = (item) => {
-        navigation.navigate(Detail.route, {data: item, mode: 'view'});
+        navigation.navigate(Detail.route, {data: item, mode: 'view',  goBack: refresh,});
     }
 
     useEffect(() => {
@@ -92,6 +92,7 @@ const Sell = (props) => {
             .then(res => {
                 setRefreshing(false);
                 if (res) {
+                    res.data.reverse();
                     setData(res);
                 }
             })

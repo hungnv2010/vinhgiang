@@ -13,24 +13,36 @@ import ProductList from '../containers/ProductList';
 import Edit from './Edit';
 import {showMessage} from 'react-native-flash-message';
 import {INVOICE_STATUS, STATE} from '../models/OrderModel';
+import { ApiService } from '../services';
+import { TouchableOpacity } from 'react-native';
+import messageService from '../services/messages';
 
 const Detail = (props) => {
     const {route, navigation} = props;
     const order = route?.params?.data;
 
+    const goBack = () => {
+        if (route?.params?.goBack) {
+            route.params.goBack();
+        }
+        navigation.goBack();
+    };
+
     const dispatch = useAuthDispatch();
 
-    const editOrder = () => {
-        navigation.navigate(Edit.name, {data: order});
+    const onConfirm = () => {
+        ApiService.confirmOrder(order.id)
+            .then(res => {
+                console.log("order.confirm ",res);
+                messageService.showSuccess(`Xác nhận đơn thành công`);
+                goBack()
+            })
+            .catch(err => {
+                messageService.showError(`Có lỗi trong quá trình xử lý \n ${err}`);
+                console.log("confirmImportInPicking err ", err);
+            });
     };
-    const getInforReceive = (order) => {
-        if (!order.infor_receive) return "";
-        switch (order.infor_receive) {
-            case "khach_lay": return "Khách đến lấy";
-        
-            default: return "";
-        }
-    }
+
     return <Screen header={'Đơn hàng - ' + order.name} goBack={navigation.goBack}>
         <ScrollView 
         keyboardShouldPersistTaps='always' 
@@ -105,22 +117,13 @@ const Detail = (props) => {
                     </View>
                     
 
-                    {/*{*/}
-                    {/*    (order.state === 'darft' || order.state === 'draft')*/}
-                    {/*        ? <Button*/}
-                    {/*            title={'Sửa đơn hàng'.toUpperCase()}*/}
-                    {/*            buttonStyle={Styles.button}*/}
-                    {/*            containerStyle={[Styles.formTouchContent, Styles.buttonContainer]}*/}
-                    {/*            onPress={editOrder}/>*/}
-                    {/*        : <>*/}
-                    {/*            <Button*/}
-                    {/*                buttonStyle={Styles.button}*/}
-                    {/*                containerStyle={[Styles.formTouchContent, Styles.buttonContainer]}*/}
-                    {/*                title={'Sửa đơn hàng'.toUpperCase()}*/}
-                    {/*                disabled/>*/}
-                    {/*            <Text style={Styles.alert}>Đơn hàng đã được xử lý</Text>*/}
-                    {/*        </>*/}
-                    {/*}*/}
+                    {
+                    (order.state === 'draft' || order.state === 'sent')
+                    ?  <TouchableOpacity onPress={onConfirm} style={{ padding: 5, flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: Colors.primary, borderRadius: 7, height: 40, margin: 10, marginTop: 10, height: 50 }}>
+                    <Text style={{color: Colors.white}}>Xác nhận đơn </Text>
+                </TouchableOpacity>
+                    : null
+                    }
 
             </View>
         </ScrollView>

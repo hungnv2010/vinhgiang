@@ -20,11 +20,6 @@ const DatePickerNull = (props) => {
     const {label, date, onChange} = props;
     const [data, setData] = React.useState({show: false, val: getDate(date? date : moment()), isNull: date? false: true});
 
-    React.useEffect(()=>{
-        console.log("aaaa data ", data)
-
-    },[])
-
     const onDateChange = (_event, selectedDate) => {
         let newDate = moment(selectedDate).format("YYYY-MM-DD hh:mm:ss")
         onChange(newDate);

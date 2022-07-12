@@ -7,6 +7,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { FAB } from 'react-native-elements';
 import { CustomerDetail } from '.';
 import WareHouseList from './WareHouseList';
+import PalletList from './PalletList';
 
 const WareHouse = (props) => {
     const {navigation, route} = props;
@@ -14,7 +15,7 @@ const WareHouse = (props) => {
     const title = 'Kho vận';
     const [loading, setLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
-    const [listCustomer, setListCustomer] = useState([])
+    const [listData, setListData] = useState([])
     const [loadMore, setLoadMore] = useState(false)
 
     useEffect(() => {
@@ -23,8 +24,10 @@ const WareHouse = (props) => {
 
     const getData = async () => {
         let getStockPickingType = await ApiService.getStockPickingType()
-        console.log("getStockPickingType ", JSON.stringify(getStockPickingType));
-        setListCustomer(getStockPickingType.data)
+        getStockPickingType.data.push({name: "Danh sách pallet", id: 11})
+        console.log("getStockPickingType ", getStockPickingType);
+
+        setListData(getStockPickingType.data.filter(item => [1, 2, 3, 4, 5, 10, 11].includes(item.id) ));
         setRefreshing(false);
     }
 
@@ -34,7 +37,10 @@ const WareHouse = (props) => {
 
     const onClickItem = (item) => {
         console.log("onClickItem ", JSON.stringify(item));
-        navigation.navigate(WareHouseList.route, item);
+        if(item.id == 11)
+            navigation.navigate(PalletList.route);
+        else
+            navigation.navigate(WareHouseList.route, item);
     }
 
     const refresh = useCallback(() => {
@@ -52,7 +58,7 @@ const WareHouse = (props) => {
             break;
             case "Phiếu giao hàng" : return "ballot"
             break;
-            case "Manufacturing" : return "cogs"
+            case "Danh sách pallet" : return "cogs"
             break;
             default: return "arrow-right-bold-circle"
         }
@@ -75,12 +81,12 @@ const WareHouse = (props) => {
 
     return (
         <Screen header={title}  showLogoutButton={true}>
-            {listCustomer.length > 0 ?
+            {listData.length > 0 ?
                 <FlatList
                     refreshControl={<RefreshControl
                         refreshing={refreshing}
                         onRefresh={refresh} />}
-                    data={listCustomer}
+                    data={listData}
                     numColumns={2}
                     renderItem={({ item, index }) => renderStockPickingType(item, index)}
                     keyExtractor={(item, index) => index.toString()}

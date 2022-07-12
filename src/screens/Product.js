@@ -25,34 +25,53 @@ const Product = (props) => {
     const [loadMore, setLoadMore] = useState(false)
     const [showModal, setShowModal] = useState(false);
     const listAllData = useRef([])
+    const offset = useRef(0)
+    const offsetEnd = useRef(false)
 
     useEffect(() => {
         getData();
+        getProducts();
     }, []);
 
     const getData = async () => {
         let getProductCategory = await ApiService.getProductCategory()
         // console.log("getProductCategory ", JSON.stringify(getProductCategory));
-        let getProductAll = await ApiService.getProductAll()
-        console.log("getProductAll ", getProductAll);
         setRefreshing(false);
-        setListProduct(getProductAll.data)
         setListCategori(getProductCategory.data)
-        listAllData.current = getProductAll.data;
+    }
+
+    const getProducts = async() => {
+        let getProducts = await ApiService.getProductAll(offset.current)
+        console.log(`getProducts offset: ${offset.current} = `, getProducts);
+        if(getProducts.data.length == 0) {
+            offsetEnd.current = true;
+            return;
+        }
+        if(offset.current == 0) {
+            setListProduct(getProducts.data)
+            listAllData.current = getProducts.data;
+        } else {
+            setListProduct([...listProduct, ...getProducts.data])
+            listAllData.current = [...listAllData.current, ...getProducts.data]; 
+        }
     }
 
 
     const filterMore = () => {
-
+        if(offsetEnd.current) return;
+        offset.current += 10;
+        getProducts()
     }
 
     const onClickItem = (item) => {
 
     }
-
+  
     const refresh = useCallback(() => {
         setRefreshing(true);
+        offset.current = 0;
         getData();
+        getProducts()
     });
 
     const renderProduct = (item, index) => {
@@ -89,7 +108,7 @@ const Product = (props) => {
 
     const onChangeTextSearch = (text) => {
         let listProductFilter = listAllData.current.filter(item => 
-                (ChangeAlias(item.name).toLowerCase().indexOf(ChangeAlias(text)) > -1) || (item.code.toLowerCase().indexOf(text) > -1) 
+                (ChangeAlias(item.name).toLowerCase().indexOf(ChangeAlias(text)) > -1) || (item.code && item.code.toLowerCase().indexOf(text) > -1) 
                 || (item.lst_price  && `${item.lst_price}`.indexOf(text) > -1)
             )
         setListProduct(listProductFilter)

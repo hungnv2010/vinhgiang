@@ -9,6 +9,8 @@ import WareHouseDetail from './WareHouseDetail';
 import WareHouseDetailInt from './WareHouseDetailInt';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import { ChangeAlias } from '../configs/Utils';
+import WareHouseDetailPick from './WareHouseDetailPick';
+import WareHouseDetailIntra from './WareHouseDetailIntra';
 
 
 const WareHouseList = (props) => {
@@ -27,6 +29,7 @@ const WareHouseList = (props) => {
     const getData = async () => {
         let getDatas = await ApiService.getStockPicking(route?.params?.id)
         let dataFilter = getDatas.data.filter(data => !data.date_done)
+        dataFilter.reverse();
         listAllData.current = dataFilter;
 
         console.log("WareHouseList ", dataFilter);
@@ -47,7 +50,9 @@ const WareHouseList = (props) => {
         console.log("onClickItem ", item);
 
         if (item.name.includes("IN/")) navigation.navigate(WareHouseDetail.route,  {data: item, onRefresh: ()=> refresh()});
-        else if (item.name.includes("INT/")) navigation.navigate(WareHouseDetailInt.route, {data: item, onRefresh:()=> refresh()});
+        else if (item.name.includes("INT/")) navigation.navigate(WareHouseDetailInt.route, {data: item, onRefresh:()=> refresh()})
+        else if (item.name.includes("PICK/") || item.name.includes("OUT/")) navigation.navigate(WareHouseDetailPick.route, {data: item, onRefresh:()=> refresh()})
+        else if (item.name.includes("INTRA")) navigation.navigate(WareHouseDetailIntra.route, {data: item, onRefresh:()=> refresh()})
     }
 
     const refresh = useCallback(() => {

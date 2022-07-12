@@ -6,7 +6,6 @@ import messageService from '../services/messages';
 
 const Create = (props) => {
     const {navigation, route} = props;
-    const [loading, setLoading] = useState(false);
     const dispatch = useAuthDispatch();
 
     const goBack = () => {
@@ -16,28 +15,13 @@ const Create = (props) => {
         navigation.goBack();
     };
 
-    const submit = (order) => {
-        setLoading(true);
-        order.Create(order)
-            .then(res => {
-                console.log("order.Create ",res);
-                messageService.showSuccess(`Tạo đơn thành công`);
-                goBack()
-            })
-            .catch(err => {
-                setLoading(false);
-                messageService.showError(`Có lỗi trong quá trình xử lý \n ${err}`);
-                console.log("confirmImportInPicking err ", err);
-            });
-    };
-
     return <Screen
         header={'Tạo đơn hàng mới'}
         goBack={() => goBack()}>
         <OrderForm
             mode={'create'}
-            onSubmit={submit}
-            loading={loading}/>
+            goBack = {goBack}
+        />
     </Screen>;
 };
 

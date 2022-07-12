@@ -35,6 +35,8 @@ const WareHouseDetail = (props) => {
     useEffect(() => {
         ApiService.getPallet().then(res => {
             pallets.current = res.data?? []
+            console.log("pallets ", pallets.current);
+
         }).catch(err => {
             messageService.showError('Không lấy được danh sách pallet');
             console.log("importInPicking err ", JSON.stringify(err));
@@ -131,7 +133,21 @@ const WareHouseDetail = (props) => {
         setShowModal(true)
     }
 
+    const onClickDelete = () => {
+    
+        stockPicking.move_ids_without_package[indexSelect.current].move_line_nosuggest_ids.splice(indexElmSelect.current, 1)
+
+        itemSelect.current = null
+        indexSelect.current = -1
+        indexElmSelect.current =-1
+        setShowModal(false)
+
+        setStockPicking(stockPicking)
+    }
+
+
     const onClickApply = (elm) => {
+
         itemSelect.current.move_line_nosuggest_ids[indexElmSelect.current] = elm
 
         stockPicking.move_ids_without_package[indexSelect.current] = itemSelect.current
@@ -158,7 +174,7 @@ const WareHouseDetail = (props) => {
     }
 
     const renderContentModal = () => {
-        if(!itemSelect.current.move_line_nosuggest_ids) return null
+        if(!itemSelect.current || !itemSelect.current.move_line_nosuggest_ids) return null
         let elm = itemSelect.current.move_line_nosuggest_ids[indexElmSelect.current]
 
         if (JSON.stringify(itemSelect.current) != "{}")
@@ -185,9 +201,17 @@ const WareHouseDetail = (props) => {
                             elm.expiration_date =  value
                         }}/>                
                     </View>
-                <TouchableOpacity onPress={() => { onClickApply(elm)}} style={[Styles.productViewApply, { marginTop: 25, height: 50, marginLeft: 0 }]}>
-                    <Text style={Styles.productTextApply}>Áp dụng</Text>
-                </TouchableOpacity>
+
+                    <View style ={{ flexDirection : "row"}}>
+
+                        <TouchableOpacity onPress={() => onClickDelete()} style={{ padding: 5, flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: Colors.red, borderRadius: 7, height: 40, margin: 10, marginTop: 10, height: 50 }}>
+                            <Text style={{color: Colors.white}}>Xóa</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity onPress={() => { onClickApply(elm)}} style={{ padding: 5, flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: Colors.primary, borderRadius: 7, height: 40, margin: 10, marginTop: 10, height: 50 }}>
+                            <Text style={{color: Colors.white}}>Áp dụng</Text>
+                        </TouchableOpacity>
+                    </View>
             </View>
         else return null;
     }

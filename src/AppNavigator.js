@@ -2,8 +2,8 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useAuthState } from './context';
 import {
-  Create, Detail, Edit, Home, Login, Customer, Sell, Product, WareHouse, CustomerDetail, WareHouseList, WareHouseDetail, WareHouseDetailInt,
-  Purchase, PurchaseDetail, ScanBarcode
+  Create, Detail, Edit, Home, Login, Customer, Sell, Product, WareHouse, CustomerDetail, WareHouseList, WareHouseDetail, WareHouseDetailInt, WareHouseDetailPick,
+  WareHouseDetailIntra, PalletList, Purchase, PurchaseDetail, ScanBarcode
 } from './screens';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -74,6 +74,9 @@ const AppNavigator = (props) => {
     <Stack.Screen options={options} name={WareHouseList.route} component={WareHouseList} />
     <Stack.Screen options={options} name={WareHouseDetail.route} component={WareHouseDetail} />
     <Stack.Screen options={options} name={WareHouseDetailInt.route} component={WareHouseDetailInt} />
+    <Stack.Screen options={options} name={WareHouseDetailPick.route} component={WareHouseDetailPick} />
+    <Stack.Screen options={options} name={WareHouseDetailIntra.route} component={WareHouseDetailIntra} />
+    <Stack.Screen options={options} name={PalletList.route} component={PalletList} />
     <Stack.Screen options={options} name={PurchaseDetail.route} component={PurchaseDetail} />
     <Stack.Screen options={options} name={ScanBarcode.route} component={ScanBarcode} />
   </Stack.Navigator>;

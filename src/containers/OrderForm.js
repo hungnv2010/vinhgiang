@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {PropTypes} from '../base';
 import {ScrollView, TouchableOpacity, View} from 'react-native';
-import {Styles} from '../configs';
+import {Colors, Styles} from '../configs';
 import {Button, Text} from 'react-native-elements';
 import Select from '../components/Select';
 import {OrderModel} from '../models';
@@ -15,7 +15,7 @@ import messageService from '../services/messages';
 import { ApiService } from '../services';
 
 const OrderForm = (props) => {
-    const {orderName, mode, onSubmit, loading} = props;
+    const {orderName, mode, goBack} = props;
     const [error, setError] = useState([]);
     const [showLoading, setShowLoading] = useState(false);
     const [showProductForm, setShowProductForm] = useState(false);
@@ -46,15 +46,44 @@ const OrderForm = (props) => {
         ;
     }, []);
 
-    const submit = () => {
+    const onSubmit = () => {
         if (order.order_line.length === 0) {
             messageService.showError('Chưa có sản phẩm nào');
             return;
         }
         const data = new OrderModel(order);
-        if (onSubmit) {
-            onSubmit(data);
-        }
+        setShowLoading(true);
+        data.Create(data)
+            .then(res => {
+                console.log("order.Create ",res);
+                messageService.showSuccess(`Lưu đơn thành công`);
+                let data = res.result ? JSON.parse(res.result).data : []
+                if(data && data[0] && data[0].id)
+                    setOrder({...order, id: data[0].id})
+                else
+                    goBack()
+            })
+            .catch(err => {
+                setShowLoading(false);
+                messageService.showError(`Có lỗi trong quá trình xử lý \n ${err}`);
+                console.log("confirmImportInPicking err ", err);
+            });
+    
+    };
+
+    const onConfirm = () => {
+        ApiService.confirmOrder(order.id)
+        .then(res => {
+            console.log("order.confirm ",res);
+            messageService.showSuccess(`Xác nhận đơn thành công`);
+            goBack()
+        })
+        .catch(err => {
+            setShowLoading(false);
+            messageService.showError(`Có lỗi trong quá trình xử lý \n ${err}`);
+            console.log("confirmImportInPicking err ", err);
+        });
+    
     };
 
     const addProduct = (productData) => {
@@ -153,12 +182,19 @@ const OrderForm = (props) => {
                 
                     data={order.order_line}/>
 
-                <Button
-                    title={'Lưu'.toUpperCase()}
-                    buttonStyle={Styles.button}
-                    containerStyle={Styles.buttonContainer}
-                    onPress={submit}
-                    loading={loading}/>
+                <View style ={{ flexDirection : "row"}}>
+
+                    <TouchableOpacity onPress={() => onSubmit()} style={{ padding: 5, flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: Colors.primary, borderRadius: 7, height: 40, margin: 10, marginTop: 10, height: 50 }}>
+                        <Text style={{color: Colors.white}}>Lưu</Text>
+                    </TouchableOpacity>
+
+                    { order.id?
+                    <TouchableOpacity onPress={()=> onConfirm()} style={{ padding: 5, flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: Colors.primary, borderRadius: 7, height: 40, margin: 10, marginTop: 10, height: 50 }}>
+                        <Text style={{color: Colors.white}}>Xác nhận</Text>
+                    </TouchableOpacity>
+                    : null
+                    }
+                </View>
             </View>
         </ScrollView>
         <ProductForm

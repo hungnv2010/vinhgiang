@@ -14,6 +14,13 @@ export const INVOICE_STATUS = {
     'to invoice': 'Giao hàng thành công',
 };
 
+//Purchase 
+export const STATE_PURCHASE = {
+    'draft': 'Y/C Báo giá',
+    'sent': 'Đã gửi báo giá',
+    'purchase': 'Đơn bán hàng',
+};
+
 export default class OrderModel {
 
     date_order = moment();

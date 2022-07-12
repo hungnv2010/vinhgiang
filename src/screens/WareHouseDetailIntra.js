@@ -12,10 +12,11 @@ import { ScanBarcode } from '.';
 import { ApiService } from '../services';
 import messageService from '../services/messages';
 
-const WareHouseDetailInt = (props) => {
+const WareHouseDetailIntra = (props) => {
     const { route, navigation } = props;
     const [stockPicking, setStockPicking] = useState(route?.params?.data);
     const [showModal, setShowModal] = useState(false);
+    const pallets = useRef([])
     const stockLocations = useRef([])
     const itemSelect = useRef({})
     const indexSelect = useRef(0)
@@ -30,6 +31,14 @@ const WareHouseDetailInt = (props) => {
     const dispatch = useAuthDispatch();
 
     useEffect(() => {
+        ApiService.getPallet().then(res => {
+            pallets.current = res.data?? []
+            setStockPicking({...stockPicking});
+        }).catch(err => {
+            messageService.showError('Không lấy được danh sách pallet');
+            console.log("importInPicking err ", JSON.stringify(err));
+        })
+
         ApiService.getStockLocation().then(res => {
             stockLocations.current = res.data?? []
             console.log("getStockLocation ", stockLocations.current);
@@ -43,47 +52,47 @@ const WareHouseDetailInt = (props) => {
     const renderTextItem = (title, text) => {
         return (
             <View style={{ ...Styles.itemDl, backgroundColor: "white" }}>
-                <Text style={{ color: Colors.gray_aaa, marginTop: 4, fontSize: 13 }}>{title} </Text>
-                <Text style={{ color: Colors.black, marginTop: 4, fontSize: 13 }}>{text}</Text>
+                <Text style={{ color: Colors.gray_aaa, marginTop: 2, fontSize: 13 }}>{title} </Text>
+                <Text style={{ color: Colors.black, marginTop: 2, fontSize: 13 }}>{text}</Text>
             </View>
         )
     }
 
     const onClickSave = async () => {
         let moveIds = []
-        stockPicking.move_line_ids_without_package.forEach(elm => {
+        stockPicking.package_level_ids_details.forEach(elm => {
             moveIds.push({
-                product_id: elm.product_id[0],
                 location_dest_id: elm.location_dest_id[0],
-                qty_done: elm.qty_done,
+                package_id: elm.package_id[0],
             })
         });
 
         let body = {
-            picking_id : stockPicking.id,
+            picking_type_id : stockPicking.id,
             move_ids: moveIds
         }
 
         console.log("onClickSave ", body );
 
-        await ApiService.importIntPicking(body).then(res => {
+        await ApiService.packageTransfer(body).then(res => {
+            console.log("onClickSaveres ", res );
             messageService.showSuccess(`Lưu thành công`);
             // goBack()
         }).catch(err => {
-            messageService.showError('Có lỗi trong quá trình xử lý');
-            console.log("importInPicking err ", JSON.stringify(err));
+            messageService.showError('Có lỗi trong quá trình xử lý '+err);
+            console.log("importInPicking err ", err);
         })
     }
 
     const onClickConfirm = async () => {
 
         let body = {
-            picking_id : stockPicking.id,
+            picking_type_id : stockPicking.id,
         }
 
         console.log("onClickConfirm ", body );
 
-        await ApiService.confirmImportInPicking(body).then(res => {
+        await ApiService.stockPickingConfirm(body).then(res => {
             messageService.showSuccess(`Xác nhận thành công`);
             goBack(true)
         }).catch(err => {
@@ -102,7 +111,7 @@ const WareHouseDetailInt = (props) => {
     const onClickApply = (elm) => {
         itemSelect.current = elm
 
-        stockPicking.move_line_ids_without_package[indexSelect.current] = itemSelect.current
+        stockPicking.package_level_ids_details[indexSelect.current] = itemSelect.current
         setStockPicking(stockPicking)
         setShowModal(false)
     }
@@ -131,27 +140,17 @@ const WareHouseDetailInt = (props) => {
         if (JSON.stringify(itemSelect.current) != "{}")
             return <View style={Styles.productViewModalCategori}>
                 <View style={{ width: "100%", flexDirection: "row", justifyContent: 'space-between', alignItems:'center' }}>
-                    <Text style={{fontSize: 16}}>{itemSelect.current.product_id[1] ?? ""}</Text>
+                    <Text style={{fontSize: 16}}>{elm.package_id[1] ?? ""}</Text>
                     <MaterialCommunityIcons onPress={() => { setShowModal(false) }} name={"close"} color={Colors.gray_aaa} size={26} />
                 </View>
                 <View style={{ marginTop: 20 }}>
-                    
                     <View style={{ ...Styles.itemDl, backgroundColor: "white", marginVertical: 10 }}>
-                        <Text style={{ color: Colors.gray_aaa, fontSize: 15 }}>Gói nguồn: </Text>
-                        <Text style={{ color: Colors.black,  fontSize: 15 }}>{elm.result_package_id[1] ?? ""}</Text>
+                        <Text style={{ color: Colors.gray_aaa, fontSize: 15 }}>Từ:   </Text>
+                        <Text style={{ color: Colors.black,  fontSize: 15 }}>{elm.location_id ? elm.location_id[1] : ""}</Text>
                     </View>
-                    <View style={{ ...Styles.itemDl, backgroundColor: "white", marginVertical: 10 }}>
-                        <Text style={{ color: Colors.gray_aaa, fontSize: 15 }}>Số lô/sê-ri: </Text>
-                        <Text style={{ color: Colors.black, fontSize: 15 }}>{elm.lot_id[1] ?? ""}</Text>
-                    </View>
-                    <View style={{ ...Styles.itemDl, backgroundColor: "white", marginTop: 10, marginBottom: 10 }}>
-                        <Text style={{ color: Colors.gray_aaa, fontSize: 15, textAlignVertical:'center' }}>Số lượng: </Text>
-                        <TextInput defaultValue={`${elm.qty_done}`} placeholder='Số lượng' 
-                            keyboardType={'numeric'} style={{ flex:1, height: 45, borderRadius: 5, borderWidth: 1, borderColor: Colors.gray_aaa }} 
-                            onChangeText={(text) => elm.qty_done = text}/>
-                    </View>
+                  
                     <TouchableOpacity onPress={() => onClickOpenScanBarcode()} style={{ ...Styles.itemDl, backgroundColor: "white", marginTop: 10, marginBottom: 20 }}>
-                        <Text style={{ color: Colors.gray_aaa, fontSize: 15, textAlignVertical:'center' }}>Tói:            </Text>
+                        <Text style={{ color: Colors.gray_aaa, fontSize: 15, textAlignVertical:'center' }}>Tói:  </Text>
                         <TextInput defaultValue={elm.location_dest_id[1] ?? ""} editable={false} placeholder='Tới' style={{flex:1, height: 45, borderRadius: 5, borderWidth: 1, borderColor: Colors.gray_aaa, color: Colors.black }} />
                     </TouchableOpacity>
                     {/* <TextInput defaultValue={elm.location_dest_id[1] ?? ""} placeholder='Tới' style={{ height: 45, borderRadius: 5, borderWidth: 1, borderColor: Colors.gray_aaa }} /> */}
@@ -164,6 +163,9 @@ const WareHouseDetailInt = (props) => {
     }
 
     const renderInItem = (item, index) => {
+    
+        // if(pallets.current.length == 0) return;
+        // let pallet = pallets.current.find(pall => pall.id == item.id)
         return (
             <TouchableOpacity onPress={() => onClickInItem(index, item)} key={index}
                 style={{ padding: 2, borderRadius: 0, borderColor: 'silver', borderWidth: 0.5, }}>
@@ -171,7 +173,7 @@ const WareHouseDetailInt = (props) => {
                     <View style={Styles.itemViewContent}>
 
                         <View style={{ flex: 1, paddingBottom: 8, flexDirection: "row", justifyContent: 'space-between' }}>
-                            <Text style={{fontSize: 16}}>{item.product_id[1] ?? ""}</Text>
+                            <Text style={{fontSize: 16}}>{item.package_id[1] ?? ""}</Text>
 
                             <View style={{  flexDirection: 'row', backgroundColor: "white" }}>
                                 {/* <Text style={{ color: Colors.gray_aaa, fontSize: 15 }}>Hoàn thành: </Text>
@@ -180,14 +182,29 @@ const WareHouseDetailInt = (props) => {
                         </View>
 
                         <View style={{ flex: 1, flexDirection: "row", justifyContent: 'space-between' }}>
-                            {renderTextItem("Hoàn thành: ", NumberFormat(item.qty_done) + "/" + NumberFormat(item.product_uom_qty))}
-                            {renderTextItem("Số lô/sê-ri: ", item.lot_id[1] ?? "")}
+                            {renderTextItem("Từ: ", item.location_id ? item.location_id[1] : "")}
+                            {renderTextItem("Tới: ", item.location_dest_id ? item.location_dest_id[1] : "")}
                         </View>
 
-                        <View style={{ flex: 1, flexDirection: "row", justifyContent: 'space-between' }}>
-                            {renderTextItem("Gói nguồn: ", item.result_package_id[1] ?? "")}
-                            {renderTextItem("Tới: ", item.location_dest_id[1] ?? "")}
-                        </View>
+                        {
+                            item.move_line_ids.length > 0 ?
+                             item.move_line_ids.map((elm) => {
+                                return <View style={{ padding: 4, borderRadius: 0, borderColor: 'silver', borderWidth: 0.5, }}>
+                                            <View style={{ flex: 1, flexDirection: "row", justifyContent: 'space-between' }}>
+                                        {renderTextItem("Sản phẩm: ", elm.product_id[1] ?? "")}
+                                        {renderTextItem("Số lô/sê-ri: ", elm.lot_id[1] ?? "")}
+                                    </View>
+            
+                                    <View style={{ flex: 1, flexDirection: "row", justifyContent: 'space-between' }}>
+                                        {renderTextItem("Hoàn thành: ",  NumberFormat(item.quantity_done) + "/" + NumberFormat(item.product_uom_qty))}
+                                        {renderTextItem("Đơn vị: ", elm.product_uom_id[1] ?? "")}
+                                    </View>
+                                </View>
+                                }
+                             )
+                            : null
+                        }
+
                         
                     </View>
                 </View>
@@ -238,16 +255,16 @@ const WareHouseDetailInt = (props) => {
                         <OrderListItem
                             flexDt={1}
                             dd={'Giao đến'}
-                            dt={stockPicking.move_line_ids_without_package[0]?.location_id[1] ?? ""} />
+                            dt={stockPicking.package_level_ids_details[0]?.location_id[1] ?? ""} />
                     </View>
 
                     <Text style={{ color: Colors.gray4, marginTop: 4, fonSize: 13 }}>Hoạt động chi tiết </Text>
 
                 </View>
                 <View style={Styles.orderProducts}>
-                    {stockPicking.move_line_ids_without_package && stockPicking.move_line_ids_without_package.length > 0 ?
+                    {stockPicking.package_level_ids_details && stockPicking.package_level_ids_details.length > 0 ?
                         <FlatList
-                            data={stockPicking.move_line_ids_without_package ?? []}
+                            data={stockPicking.package_level_ids_details ?? []}
                             renderItem={({ item, index }) => renderInItem(item, index) }
                             keyExtractor={(item, index) => index.toString()}
                             style={Styles.productList}
@@ -285,6 +302,6 @@ const WareHouseDetailInt = (props) => {
     </Screen>;
 };
 
-WareHouseDetailInt.route = 'WareHouseDetailInt';
+WareHouseDetailIntra.route = 'WareHouseDetailIntra';
 
-export default WareHouseDetailInt;
+export default WareHouseDetailIntra;

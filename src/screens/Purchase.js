@@ -11,10 +11,13 @@ import Pagination from '../components/Pagination';
 import messageService from '../services/messages';
 import { FAB } from 'react-native-elements';
 import { OrderListItem } from '../components';
-import { STATE } from '../models/OrderModel';
+import { STATE_PURCHASE } from '../models/OrderModel';
 import { ChangeAlias, DurationDate, NumberFormat } from '../configs/Utils';
 import PurchaseDetail from './PurchaseDetail';
 import Ionicons from 'react-native-vector-icons/Ionicons'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import FSModal from '../components/FSModal';
+import { CheckBox } from 'react-native-elements/dist/checkbox/CheckBox';
 
 const Purchase = (props) => {
     const {navigation} = props;
@@ -29,6 +32,7 @@ const Purchase = (props) => {
     const [refreshing, setRefreshing] = useState(false);
     const [loadMore, setLoadMore] = useState(false)
     const listAllData = useRef([])
+    const [filterState, setFilterState] = useState({show: false, state: null});
 
     const createOrder = () => {
         navigation.navigate(Create.route, {
@@ -73,8 +77,14 @@ const Purchase = (props) => {
             });
     }, [dispatch]);
 
+    const getListFilter = () => {
+        return listAllData.current.data.filter(item =>
+            (!filterState.state || item.state == filterState.state)
+        )
+    }
+
     const onChangeTextSearch = (text) => {
-        let listFilter = listAllData.current.data.filter(item => 
+        let listFilter = getListFilter().data.filter(item => 
                 (item.name && ChangeAlias(item.name.toLowerCase()).indexOf(ChangeAlias(text)) > -1 )
                 || (item.partner_id && ChangeAlias(item.partner_id[1].toLowerCase()).indexOf(ChangeAlias(text)) > -1 )
             )
@@ -135,7 +145,7 @@ const Purchase = (props) => {
                         <OrderListItem
                             type={'text'}
                             dd={'Trạng thái'}
-                            dt={STATE[item.state]}/>
+                            dt={STATE_PURCHASE[item.state]}/>
                     </View>
     
                     <View style={{ flex: 0.05}}/>
@@ -151,11 +161,50 @@ const Purchase = (props) => {
         )
         }
 
+        const itemFilterState = (state, index) => {
+            return <TouchableOpacity key={index.toString()} onPress={() => setFilterState({...filterState, state: state}) } style={Styles.productViewItemModalCategori}>
+            <CheckBox
+                containerStyle={Styles.productCheckBox}
+                center
+                checkedColor={Colors.primary}
+                checked={filterState.state == state}
+                onPress={() => setFilterState({...filterState, state: state})}
+            />
+            <Text style={Styles.productItemNameCategori} >{state? STATE_PURCHASE[state]: 'Tất cả'}</Text>
+        </TouchableOpacity>
+        }
+
+        const renderSelectStatus = () => {
+            return <View style={Styles.productViewModalCategori}>
+                <MaterialCommunityIcons onPress={() => {
+                    setFilterState({...filterState, show: false})
+                    setData({...data, data: getListFilter()})}} 
+                    style={Styles.productIconCloseModalCategori} name={"close"} color={Colors.gray_aaa} size={26} />
+                <Text style={Styles.sectionTitleSmall}>Lọc trạng thái đơn hàng</Text>
+    
+                {
+                    [ null, 'draft','sent' ,'purchase'].map((state, index) => itemFilterState(state, index) )
+                }
+                
+                <TouchableOpacity onPress={() => {
+                    setFilterState({...filterState, show: false})
+                    setData({...data, data: getListFilter()})}} style={[Styles.productViewApply, { marginTop: 25, height: 50 }]}>
+                    <Text style={Styles.productTextApply}>Xong</Text>
+                </TouchableOpacity>
+            
+            </View>
+        }
+
     return (
         <Screen 
         showLogoutButton={true}
         header={'Mua hàng'}>
             <View style={Styles.productViewFilter}>
+                <TouchableOpacity onPress={() => setFilterState({...filterState, show: true})} 
+                    style={{...Styles.productViewFilterCategori, borderColor: (filterState.state || filterState.invoice_status) ? Colors.primary : "#aaa"}}>
+                    <MaterialCommunityIcons name={"menu"} color={(filterState.state || filterState.invoice_status) ? Colors.primary : "#aaa"} size={20} />
+                    <Text style={{...Styles.productTextFilterCategori, color: (filterState.state || filterState.invoice_status) ? Colors.primary : "#aaa"}} >{'Lọc theo'}</Text>
+                </TouchableOpacity>
                 <View style={Styles.productViewSearch}>
                     <TextInput style={{ flex: 1, textAlign: "center"}}
                         placeholder={"Tìm kiếm mã đơn hàng, khách hàng..."}
@@ -185,14 +234,16 @@ const Purchase = (props) => {
                 </TouchableOpacity>
             </RefreshControl>
             }
-
+{/* 
             <FAB
                 onPress={() => createOrder()}
                 icon={{ name: 'add', color: 'white' }}
                 color={Colors.primary}
                 buttonStyle={Styles.customerButonAdd}
                 containerStyle={Styles.customerAdd}
-            />
+            /> */}
+
+            <FSModal visible={filterState.show} children={renderSelectStatus()} />
         </Screen>
     );
 };

@@ -52,6 +52,14 @@ export const post = async (uri, data = {}) => {
                 console.log('======================');
                 throw new InvalidRequest(result);
             }
+
+            console.log('result.error ==> ', res);
+
+            if (res.data.error && res.data.error.data) {
+                console.log('result.error ==> ', res.error);
+
+                throw new InvalidAccessToken(res.error.data.name);
+            }
             return res.data;
         })
         .catch(e => {
@@ -134,6 +142,9 @@ const ApiService = {
         console.log('create order api', JSON.stringify(data));
         return await post('sale.order', data);
     },
+    confirmOrder: async (id) => {
+        return await post('sale_order/confirm', {sale_order_id: id})
+    },
     editOrder: async (data) => {
         console.log('update order api', JSON.stringify(data));
         return await post('edit_request_order', data);
@@ -142,9 +153,8 @@ const ApiService = {
         return await get('product.category')
         //.then(res => res.data);
     },
-    getProductAll: async () => {
-        return await get('product.product')
-        //.then(res => res.result.data);
+    getProductAll: async (offset) => {
+        return await get('product.product', {limit: 10, offset: offset})
     },
     getAllColors: async () => {
         return await post('get_all_color_code');
@@ -213,6 +223,22 @@ const ApiService = {
 
     confirmImportIntPicking: async (data) => {
         return await post('purchase_order/confirm_import_int_picking', data);
+    },
+
+    importPickOutpicking: async (data) => {
+        return await post( 'sale_order/import_picking', data);
+    },
+
+    confirmPickOutpicking: async (data) => {
+        return await post( 'sale_order/confirm', data);
+    },
+
+    packageTransfer: async (data) => {
+        return await post( 'stock_picking/package_transfer', data);
+    }, 
+
+    stockPickingConfirm: async (data) => {
+        return await post( 'stock_picking/confirm', data);
     },
 
 
