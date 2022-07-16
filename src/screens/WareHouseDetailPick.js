@@ -70,7 +70,7 @@ const WareHouseDetailPick = (props) => {
             messageService.showSuccess(`Lưu thành công`);
             // goBack()
         }).catch(err => {
-            messageService.showError('Có lỗi trong quá trình xử lý');
+            messageService.showError(`Có lỗi trong quá trình xử lý \n ${err}`);
             console.log("importInPicking err ", JSON.stringify(err));
         })
     }
@@ -78,12 +78,12 @@ const WareHouseDetailPick = (props) => {
     const onClickConfirm = async () => {
 
         let body = {
-            sale_order_id : stockPicking.id,
+            picking_id : stockPicking.id,
         }
 
         console.log("onClickConfirm ", body );
 
-        await ApiService.confirmPickOutpicking(body).then(res => {
+        await ApiService.stockPickingConfirm(body).then(res => {
             messageService.showSuccess(`Xác nhận thành công`);
             goBack(true)
         }).catch(err => {
@@ -108,6 +108,7 @@ const WareHouseDetailPick = (props) => {
     }
 
     const onClickOpenScanBarcode = () => {
+        setShowModal(false);
         navigation.navigate(ScanBarcode.route, {
             onReturn: (data) =>{
                 let find = pallets.current.find(pallet => pallet.name == data)
@@ -116,7 +117,7 @@ const WareHouseDetailPick = (props) => {
                     itemSelect.current.result_package_id = [find.id ,find.name]
 
                     messageService.showInfo(data)
-                    setShowModal(false);
+                    setShowModal(true);
                    
                 }
                 else  messageService.showError("Không tìm thấy pallet " + data)

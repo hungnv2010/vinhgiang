@@ -156,6 +156,7 @@ const WareHouseDetail = (props) => {
     }
 
     const onClickOpenScanBarcode = () => {
+        setShowModal(false);
         navigation.navigate(ScanBarcode.route, {
             onReturn: (data) =>{
                 let find = pallets.current.find(pallet => pallet.name == data)
@@ -164,7 +165,7 @@ const WareHouseDetail = (props) => {
                     itemSelect.current.move_line_nosuggest_ids[indexElmSelect.current].result_package_id = [find.id ,find.name]
 
                     messageService.showInfo(data)
-                    setShowModal(false);
+                    setShowModal(true);
                    
                 }
                 else  messageService.showError("Không tìm thấy pallet " + data)

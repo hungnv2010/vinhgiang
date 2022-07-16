@@ -58,36 +58,10 @@ const WareHouseDetailIntra = (props) => {
         )
     }
 
-    const onClickSave = async () => {
-        let moveIds = []
-        stockPicking.package_level_ids_details.forEach(elm => {
-            moveIds.push({
-                location_dest_id: elm.location_dest_id[0],
-                package_id: elm.package_id[0],
-            })
-        });
-
-        let body = {
-            picking_type_id : stockPicking.id,
-            move_ids: moveIds
-        }
-
-        console.log("onClickSave ", body );
-
-        await ApiService.packageTransfer(body).then(res => {
-            console.log("onClickSaveres ", res );
-            messageService.showSuccess(`Lưu thành công`);
-            // goBack()
-        }).catch(err => {
-            messageService.showError('Có lỗi trong quá trình xử lý '+err);
-            console.log("importInPicking err ", err);
-        })
-    }
-
     const onClickConfirm = async () => {
 
         let body = {
-            picking_type_id : stockPicking.id,
+            picking_id : stockPicking.id,
         }
 
         console.log("onClickConfirm ", body );
@@ -108,8 +82,25 @@ const WareHouseDetailIntra = (props) => {
         setShowModal(true)
     }
 
-    const onClickApply = (elm) => {
-        itemSelect.current = elm
+    const onClickApply = async (item) => {
+        if(!item.location_dest_id) messageService.showError("Cần nhập địa điểm đích")
+        itemSelect.current = item
+
+        let body = {
+            location_dest_id: item.location_dest_id[0],
+            package_ids: [{package_id: item.package_id[0]}]
+        }
+
+        console.log("onClickApply ", body );
+
+        await ApiService.packageTransfer(body).then(res => {
+            messageService.showSuccess(`Chuyển pallet thành công`);
+        }).catch(err => {
+            messageService.showError(`Có lỗi trong quá trình xử lý \n ${err}`);
+            console.log("confirmImportIntPicking err ", err);
+        })
+
+        itemSelect.current = item
 
         stockPicking.package_level_ids_details[indexSelect.current] = itemSelect.current
         setStockPicking(stockPicking)
@@ -117,15 +108,16 @@ const WareHouseDetailIntra = (props) => {
     }
 
     const onClickOpenScanBarcode = () => {
+        setShowModal(false);
         navigation.navigate(ScanBarcode.route, {
             onReturn: (data) =>{
                 let find = stockLocations.current.find(stockLocation => stockLocation.barcode == data)
                 if(find) {
 
                     itemSelect.current.location_dest_id = [find.id ,find.name]
+                    setShowModal(true);
 
                     messageService.showInfo(data)
-                    setShowModal(false);
                    
                 }
                 else  messageService.showError("Không tìm thấy địa điểm " + data)
@@ -289,10 +281,6 @@ const WareHouseDetailIntra = (props) => {
         <FSModal visible={showModal} children={renderContentModal()} />
 
         <View style ={{ flexDirection : "row"}}>
-
-            <TouchableOpacity onPress={() => onClickSave()} style={{ padding: 5, flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: Colors.primary, borderRadius: 7, height: 40, margin: 10, marginTop: 10, height: 50 }}>
-                <Text style={{color: Colors.white}}>Lưu</Text>
-            </TouchableOpacity>
 
             <TouchableOpacity onPress={() => onClickConfirm()} style={{ padding: 5, flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: Colors.primary, borderRadius: 7, height: 40, margin: 10, marginTop: 10, height: 50 }}>
                 <Text style={{color: Colors.white}}>Xác nhận</Text>

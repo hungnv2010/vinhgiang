@@ -192,9 +192,9 @@ const CustomerDetail = (props) => {
             "name": customer.name,
             "street": customer.street ? customer.street : "",
             // "street2": customer.street2 ? customer.street2 : "",
-            "ward_id": wards != "" ? wards.id : -1,
-            "state_id": district != "" ? district.id : -1,
-            "country_id": provice != "" ? provice.id : -1,
+            "ward_id": wards != "" ? wards.id : null,
+            "state_id": district != "" ? district.id : null,
+            "country_id": provice != "" ? provice.id : null,
             "vehicle_route": 1,
             "name_store": customer.name_store ? customer.name_store : "",
             // "code_ch_vg": customer.code_ch_vg ? customer.code_ch_vg : "",//"Ma cua hang vinhgiang",
@@ -208,6 +208,8 @@ const CustomerDetail = (props) => {
         if (customer.id && customer.id != "") {
             body["id"] = customer.id
         }
+
+        console.log("add customer ", body);
         if (customer.id && customer.id != "") {
             await ApiService.editCustomer(body).then(res => {
                 messageService.showSuccess(`${customer.id ? 'Cập nhật' : 'Thêm mới'} khách hàng thành công`);
@@ -222,7 +224,7 @@ const CustomerDetail = (props) => {
                 goBack()
             }).catch(err => {
                 messageService.showError('Có lỗi trong quá trình xử lý');
-                console.log("addCustomer err ", JSON.stringify(err));
+                console.log("addCustomer err ", err);
             })
         }
     }

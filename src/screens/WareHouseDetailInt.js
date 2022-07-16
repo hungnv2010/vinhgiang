@@ -108,6 +108,7 @@ const WareHouseDetailInt = (props) => {
     }
 
     const onClickOpenScanBarcode = () => {
+        setShowModal(false);
         navigation.navigate(ScanBarcode.route, {
             onReturn: (data) =>{
                 let find = stockLocations.current.find(stockLocation => stockLocation.barcode == data)
@@ -116,7 +117,7 @@ const WareHouseDetailInt = (props) => {
                     itemSelect.current.location_dest_id = [find.id ,find.name]
 
                     messageService.showInfo(data)
-                    setShowModal(false);
+                    setShowModal(true);
                    
                 }
                 else  messageService.showError("Không tìm thấy địa điểm " + data)

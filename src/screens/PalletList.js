@@ -77,25 +77,35 @@ const PalletList = (props) => {
         itemSelect.current = item
 
         let body = {
-            move_ids: [{package_id: item.id, location_dest_id: item.location_dest_id[0]}]
+            location_dest_id: item.location_dest_id[0],
+            package_ids: [{package_id: item.id}]
         }
 
-        console.log("onClickSave ", body );
+        console.log("onClickApply ", body );
 
-        let res = await ApiService.packageTransfer(body)
-        console.log("onClickSaveres ", res );
+        await ApiService.packageTransfer(body).then(res => {
 
+            let result = JSON.parse(res.result)
 
-        let body2 = {
-            picking_type_id : res.id,
-        }
+            let id = result.data[0].id
 
-        console.log("onClickConfirm ", body2 );
+            let body2 = {
+                picking_id : id,
+            }
 
-        await ApiService.stockPickingConfirm(body).then(res => {
-            messageService.showSuccess(`Xác nhận thành công`);
-            goBack(true)
-        }).catch(err => {
+            console.log("confirm ", body2 );
+
+            ApiService.stockPickingConfirm(body2).then(res => {
+                setShowModal(false);
+                messageService.showSuccess(`Xác nhận thành công`);
+            }).catch(err => {
+                setShowModal(false);
+                messageService.showError(`Có lỗi trong quá trình xử lý \n ${err}`);
+                console.log("confirmImportIntPicking err ", err);
+            })
+        })
+        .catch(err => {
+            setShowModal(false);
             messageService.showError(`Có lỗi trong quá trình xử lý \n ${err}`);
             console.log("confirmImportIntPicking err ", err);
         })
@@ -103,16 +113,14 @@ const PalletList = (props) => {
     }
 
     const onClickOpenScanBarcode = () => {
+        setShowModal(false);
         navigation.navigate(ScanBarcode.route, {
             onReturn: (data) =>{
                 let find = stockLocations.current.find(stockLocation => stockLocation.barcode == data)
                 if(find) {
-
+                    setShowModal(true);
                     itemSelect.current.location_dest_id = [find.id ,find.name]
-
                     messageService.showInfo(data)
-                    setShowModal(false);
-                   
                 }
                 else  messageService.showError("Không tìm thấy địa điểm " + data)
 

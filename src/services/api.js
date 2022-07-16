@@ -43,6 +43,7 @@ export const post = async (uri, data = {}) => {
         .then(res => {
             let result = res.data.result? JSON.parse(res.data.result) : {}
             if (result.status === 401) {
+                console.log('post response InvalidRequest 400', url);
                 throw new InvalidAccessToken(result.message);
             }
             if (result.status === 400) {
@@ -51,6 +52,11 @@ export const post = async (uri, data = {}) => {
                 console.log(res.data);
                 console.log('======================');
                 throw new InvalidRequest(result);
+            }
+
+            if (result.status === 404) {
+                console.log('post response InvalidRequest 404', result);
+                throw new InvalidAccessToken(result.message);
             }
 
             console.log('result.error ==> ', res);
@@ -226,7 +232,7 @@ const ApiService = {
     },
 
     importPickOutpicking: async (data) => {
-        return await post( 'sale_order/import_picking', data);
+        return await post( 'sale_order/import_picking', data)
     },
 
     confirmPickOutpicking: async (data) => {
