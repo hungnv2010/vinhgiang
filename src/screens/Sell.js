@@ -32,6 +32,8 @@ const Sell = (props) => {
     const [filterState, setFilterState] = useState({show: false, state: null, invoice_status: null});
 
     const listAllData = useRef([])
+    const offset = useRef(0)
+    const offsetEnd = useRef(false)
 
     const createOrder = () => {
         navigation.navigate(Create.route, {
@@ -43,15 +45,27 @@ const Sell = (props) => {
         navigation.navigate(Detail.route, {data: item, mode: 'view',  goBack: refresh,});
     }
 
-    useEffect(() => {
-        setRefreshing(true);
-        OrderModel.GetOrderList(1)
+    const getData = () => {
+        OrderModel.GetOrderList(offset.current)
             .then(res => {
                 if (res) {
-                    res.data.reverse();
-                    setData(res);
-                    console.log("get orderList", res);
-                    listAllData.current = res;
+                    console.log("get orderList offset = "+ offset.current , res);
+                    if(res.data.length == 0) {
+                        offsetEnd.current = true;
+                        return;
+                    }
+                    if(offset.current == 0) {
+                        setData(res);
+                        listAllData.current = res;
+                    } else {
+                        console.log("get orderListsss  " , data);
+
+                        let list = [...data.data, ...res.data]
+                        console.log("get orderList  " , list);
+
+                        setData({...res, data: list})
+                        listAllData.current = {...listAllData.current, data : [...listAllData.current.data, ...res.data]}
+                    }
                 }
                 setRefreshing(false);
             })
@@ -70,7 +84,17 @@ const Sell = (props) => {
                 messageService.showError(msg);
                 setRefreshing(false);
             });
+    }
+
+    useEffect(() => {
+        getData()
     }, [dispatch]);
+
+    const filterMore = () => {
+        if(offsetEnd.current) return;
+        offset.current += 10;
+        getData()
+    }
 
     const getListFilter = () => {
         return listAllData.current.data.filter(item =>
@@ -86,35 +110,12 @@ const Sell = (props) => {
         setData({...data, data: listSearch})
     }
 
-    const refresh = useCallback(() => {
+    const refresh = () => {
         setRefreshing(true);
-        OrderModel.GetOrderList(1)
-            .then(res => {
-                setRefreshing(false);
-                if (res) {
-                    res.data.reverse();
-                    setData(res);
-                }
-            })
-            .catch(err => {
-                setRefreshing(false);
-                if (InvalidAccessToken.compare(err)) {
-                    logout(dispatch).then(() => {
-                        logout(dispatch).then(() => {
-                            const msg = 'Phiên đăng nhập hết hạn!\n' +
-                                'Xin hãy đăng nhập lại!';
-                            messageService.showError(msg);
-                        });
-                    });
-                }
-                let msg = 'Lấy danh sách bán hàng thất bại!';
-                if (err.message) {
-                    msg += '\n' + err.message;
-                }
-                messageService.showError(msg);
-                setRefreshing(false);
-            });
-    }, [dispatch]);
+        offsetEnd.current = false;
+        offset.current = 0;
+        getData()
+    };
 
     const itemFilterState = (state, index) => {
         return <TouchableOpacity key={index.toString()} onPress={() => setFilterState({...filterState, state: state}) } style={Styles.productViewItemModalCategori}>
@@ -193,7 +194,7 @@ const Sell = (props) => {
                         onRefresh={refresh} />}
                     data={data.data}
                     onEndReachedThreshold={0.3}
-                    onEndReached={()=>{}}
+                    onEndReached={filterMore}
                     renderItem={({ item, index }) => OrderItem(item, index, onClickItem)}
                     keyExtractor={(item, index) => index.toString()}
                     ListFooterComponent={loadMore ? <ActivityIndicator color={Colors.primary} /> : null}

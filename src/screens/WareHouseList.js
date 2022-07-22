@@ -29,10 +29,8 @@ const WareHouseList = (props) => {
     const getData = async () => {
         let getDatas = await ApiService.getStockPicking(route?.params?.id)
         let dataFilter = getDatas.data.filter(data => !data.date_done)
-        dataFilter.reverse();
         listAllData.current = dataFilter;
 
-        console.log("WareHouseList ", dataFilter);
         setStockPickings(dataFilter)
         setRefreshing(false);
     }

@@ -69,6 +69,7 @@ const Product = (props) => {
   
     const refresh = useCallback(() => {
         setRefreshing(true);
+        offsetEnd.current = false;
         offset.current = 0;
         getData();
         getProducts()
