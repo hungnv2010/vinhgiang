@@ -46,7 +46,7 @@ export default class ProductModel {
     }
 
     static async getProducts() {
-      await ApiService.getProductAll()
+      await ApiService.getProducts()
     }
 
     static resetData(data) {

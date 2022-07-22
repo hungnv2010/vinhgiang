@@ -41,7 +41,7 @@ const Product = (props) => {
     }
 
     const getProducts = async() => {
-        let getProducts = await ApiService.getProductAll(offset.current)
+        let getProducts = await ApiService.getProducts(offset.current)
         console.log(`getProducts offset: ${offset.current} = `, getProducts);
         if(getProducts.data.length == 0) {
             offsetEnd.current = true;

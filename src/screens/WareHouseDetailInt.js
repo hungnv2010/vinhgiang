@@ -55,12 +55,13 @@ const WareHouseDetailInt = (props) => {
             moveIds.push({
                 product_id: elm.product_id[0],
                 location_dest_id: elm.location_dest_id[0],
-                qty_done: elm.qty_done,
+                qty_done: elm.product_uom_qty,
             })
         });
 
         let body = {
             picking_id : stockPicking.id,
+            note: stockPicking.note? stockPicking.note : '',
             move_ids: moveIds
         }
 
@@ -145,12 +146,12 @@ const WareHouseDetailInt = (props) => {
                         <Text style={{ color: Colors.gray_aaa, fontSize: 15 }}>Số lô/sê-ri: </Text>
                         <Text style={{ color: Colors.black, fontSize: 15 }}>{elm.lot_id[1] ?? ""}</Text>
                     </View>
-                    <View style={{ ...Styles.itemDl, backgroundColor: "white", marginTop: 10, marginBottom: 10 }}>
+                    {/* <View style={{ ...Styles.itemDl, backgroundColor: "white", marginTop: 10, marginBottom: 10 }}>
                         <Text style={{ color: Colors.gray_aaa, fontSize: 15, textAlignVertical:'center' }}>Số lượng: </Text>
                         <TextInput defaultValue={`${elm.qty_done}`} placeholder='Số lượng' 
                             keyboardType={'numeric'} style={{ flex:1, height: 45, borderRadius: 5, borderWidth: 1, borderColor: Colors.gray_aaa }} 
                             onChangeText={(text) => elm.qty_done = text}/>
-                    </View>
+                    </View> */}
                     <TouchableOpacity onPress={() => onClickOpenScanBarcode()} style={{ ...Styles.itemDl, backgroundColor: "white", marginTop: 10, marginBottom: 20 }}>
                         <Text style={{ color: Colors.gray_aaa, fontSize: 15, textAlignVertical:'center' }}>Tói:            </Text>
                         <TextInput defaultValue={elm.location_dest_id[1] ?? ""} editable={false} placeholder='Tới' style={{flex:1, height: 45, borderRadius: 5, borderWidth: 1, borderColor: Colors.gray_aaa, color: Colors.black }} />
@@ -240,6 +241,14 @@ const WareHouseDetailInt = (props) => {
                             flexDt={1}
                             dd={'Giao đến'}
                             dt={stockPicking.move_line_ids_without_package[0]?.location_id[1] ?? ""} />
+
+                        <Text style={{ flex: 1, color: Colors.gray4}}>Ghi chú: </Text>
+                        <TextInput
+                            style={Styles.formTextAreaSmall}
+                            multiline
+                            onChangeText={(val) => setStockPicking({...stockPicking, note: val})}
+                            value={`${stockPicking.note??""}`}/>
+                     
                     </View>
 
                     <Text style={{ color: Colors.gray4, marginTop: 4, fonSize: 13 }}>Hoạt động chi tiết </Text>

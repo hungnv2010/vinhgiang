@@ -248,6 +248,13 @@ const WareHouseDetailIntra = (props) => {
                             flexDt={1}
                             dd={'Giao đến'}
                             dt={stockPicking.package_level_ids_details[0]?.location_id[1] ?? ""} />
+
+                        {/* <Text style={{ flex: 1, color: Colors.gray4}}>Ghi chú: </Text>
+                        <TextInput
+                            style={Styles.formTextAreaSmall}
+                            multiline
+                            onChangeText={(val) => setStockPicking({...stockPicking, note: val})}
+                            value={`${stockPicking.note??""}`}/> */}
                     </View>
 
                     <Text style={{ color: Colors.gray4, marginTop: 4, fonSize: 13 }}>Hoạt động chi tiết </Text>

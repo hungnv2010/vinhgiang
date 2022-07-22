@@ -15,7 +15,7 @@ const ProductForm = (props) => {
     const [errors, setErrors] = useState([]);
     const [data, setData] = useState(product? product: new ProductModel());
     const [loading, setLoading] = useState(false);
-    const [productList, setProductList] = useState({});
+    const [productList, setProductList] = useState([]);
     const listUnit = useRef([])
 
     const updateField = (key, value) => {
@@ -27,7 +27,7 @@ const ProductForm = (props) => {
     };
 
     useEffect(()=>{
-        if(productList.length > 0 && product) {
+        if(productList && productList.length > 0 && product) {
             productList.forEach(item => {
                 if (item.id == product.product_id.id) 
                     listUnit.current = [{id: item.uom_id[0], name: item.uom_id[1]}, {id: item.uom_po_id[0], name: item.uom_po_id[1]}]

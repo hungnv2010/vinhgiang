@@ -251,6 +251,17 @@ const Styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 8,
     },
+    formTextAreaSmall: {
+        minHeight:40,
+        maxHeight:100,
+        textAlignVertical: 'top',
+        paddingHorizontal: 10,
+        flex: 1,
+        borderColor: Colors.primary,
+        backgroundColor: Colors.white_t,
+        borderWidth: 0.5,
+        borderRadius: 8,
+    },
     formInputContainer: {
         flex: 1,
         padding: 0,

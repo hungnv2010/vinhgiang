@@ -159,7 +159,10 @@ const ApiService = {
         return await get('product.category')
         //.then(res => res.data);
     },
-    getProductAll: async (offset) => {
+    getProductAll: async () => {
+        return await get('product.product')
+    },
+    getProducts: async (offset) => {
         return await get('product.product', {limit: 10, offset: offset})
     },
     getAllColors: async () => {

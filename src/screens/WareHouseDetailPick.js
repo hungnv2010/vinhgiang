@@ -61,6 +61,7 @@ const WareHouseDetailPick = (props) => {
 
         let body = {
             picking_id : stockPicking.id,
+            note: stockPicking.note? stockPicking.note : '',
             move_line_ids: moveIds
         }
 
@@ -242,6 +243,13 @@ const WareHouseDetailPick = (props) => {
                             flexDt={1}
                             dd={'Liên hệ'}
                             dt={stockPicking.partner_id[1]?? ""} />
+
+                        <Text style={{ flex: 1, color: Colors.gray4}}>Ghi chú: </Text>
+                        <TextInput
+                            style={Styles.formTextAreaSmall}
+                            multiline
+                            onChangeText={(val) => setStockPicking({...stockPicking, note: val})}
+                            value={`${stockPicking.note??""}`}/>
                     </View>
 
                     <Text style={{ color: Colors.gray4, marginTop: 4, fonSize: 13 }}>Hoạt động chi tiết </Text>

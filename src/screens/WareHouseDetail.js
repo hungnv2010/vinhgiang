@@ -68,6 +68,7 @@ const WareHouseDetail = (props) => {
 
         let body = {
             picking_id : stockPicking.id,
+            note: stockPicking.note? stockPicking.note : '',
             move_ids: moveIds,
 
         }
@@ -247,14 +248,14 @@ const WareHouseDetail = (props) => {
                 <View style={Styles.flexDirection}>
                     <View style={Styles.itemViewContent}>
 
-                        <View style={{ flex: 1, paddingBottom: 8, flexDirection: "row", justifyContent: 'space-between' }}>
+                        {/* <View style={{ flex: 1, paddingBottom: 8, flexDirection: "row", justifyContent: 'space-between' }}> */}
                             <Text style={{fontSize: 16}}>{item.product_id[1] ?? ""}</Text>
 
                             <View style={{  flexDirection: 'row', backgroundColor: "white" }}>
                                 <Text style={{ color: Colors.gray_aaa, fontSize: 15 }}>Hoàn thành: </Text>
                                 <Text style={{ color: Colors.black, fontSize: 15 }}>{ NumberFormat(item.quantity_done) + "/" + NumberFormat(item.product_uom_qty)}</Text>
                             </View>
-                        </View>
+                        {/* </View> */}
 
                         {
                             item.move_line_nosuggest_ids.length > 0 ?
@@ -331,6 +332,13 @@ const WareHouseDetail = (props) => {
                             flexDt={1}
                             dd={'Giao đến'}
                             dt={stockPicking.move_line_ids_without_package[0]?.location_id[1] ?? ""} />
+
+                        <Text style={{ flex: 1, color: Colors.gray4}}>Ghi chú: </Text>
+                        <TextInput
+                            style={Styles.formTextAreaSmall}
+                            multiline
+                            onChangeText={(val) => setStockPicking({...stockPicking, note: val})}
+                            value={`${stockPicking.note??""}`}/>
                     </View>
 
                     <Text style={{ color: Colors.gray4, marginTop: 4, fonSize: 13 }}>Hoạt động chi tiết </Text>
