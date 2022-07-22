@@ -142,12 +142,12 @@ const OrderForm = (props) => {
                     onSelect={(item) => { selectPartner(item)}}
                     search/>
                 </View>
-
+{/* 
                 <FormInput
                         keyboardType={'numeric'}
                         label={'Số điện thoại'}
                         value={`${order.phone}`}
-                        onChangeText={(val) => updateField('phone', val)}/>
+                        onChangeText={(val) => updateField('phone', val)}/> */}
 
                 <DatePicker
                     label={'Hạn chốt đặt'}
