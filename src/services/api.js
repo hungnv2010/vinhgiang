@@ -140,8 +140,8 @@ const ApiService = {
         return await post('get_detail_request_order', { name })
             .then(res => res.result.data);
     },
-    getOrderList: async (search = {}) => {
-        return await get('sale.order')
+    getOrderList: async (offset) => {
+        return await get('sale.order',{order: 'id desc', limit: 10, offset: offset})
             // .then(res => res.result.data);
     },
     createOrder: async (data) => {
@@ -172,7 +172,7 @@ const ApiService = {
         return await post('get_product_attach');
     },
     getCustomer: async () => {
-        return await get('res.partner');
+        return await get('res.partner', {'order': 'id desc'});
     },
     addCustomer: async (body) => {
         return await post('res.partner', body);
@@ -193,11 +193,11 @@ const ApiService = {
     },
 
     getStockPicking: async (picking_type_id) => {
-        return await get('stock.picking', {'picking_type_id': picking_type_id});
+        return await get('stock.picking', {'picking_type_id': picking_type_id, 'order': 'id desc'});
     },
 
     getPurchaseList: async (search = {}) => {
-        return await get('purchase.order')
+        return await get('purchase.order', {'order': 'id desc'})
             // .then(res => res.result.data);
     },
     getCountry: async () => {

@@ -53,7 +53,6 @@ const Purchase = (props) => {
         OrderModel.GetPurchaseList(1)
             .then(res => {
                 if (res) {
-                    res.data.reverse();
                     setData(res);
                     console.log("get purchaseList", res);
                     listAllData.current = res;
