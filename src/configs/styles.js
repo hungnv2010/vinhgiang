@@ -524,6 +524,7 @@ const Styles = StyleSheet.create({
     itemViewIcon: { flexDirection: 'column', justifyContent: 'center', alignItems: "center" },
     itemProductText: { color: Colors.gray_aaa, marginTop: 5, fontSize: 12 },
     textSize14: { fontSize: 14 },
+    salesmanStyle: { padding: 5, flexDirection: "row", alignItems: "center", justifyContent: "center", borderWidth: 0.5, borderColor: "#aaa", borderRadius: 10, height: 40, margin: 10, marginBottom: 0, marginRight: 0 },
 });
 
 export default Styles;

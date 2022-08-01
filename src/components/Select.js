@@ -6,6 +6,7 @@ import {Styles} from '../configs';
 import PSModal from './PSModal';
 import _ from 'lodash';
 import {Loading} from '../containers';
+import { NumberFormat } from '../configs/Utils';
 
 const removeAccents = (str) => {
     var AccentsMap = [
@@ -93,7 +94,7 @@ const Select = (props) => {
                                     { isProduct ?
                                     <ListItem.Title
                                         style={item[valueKey] === current ? Styles.selectedSubItem : Styles.normalSubItem}>
-                                        {`[${item.code}]    -   Tồn kho: ${item.cart_qty}`}
+                                        {`[${item.code}]    -   Tồn kho: ${NumberFormat(item.qty_available)}`}
                                     </ListItem.Title>
                                     : null
                                     }

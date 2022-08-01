@@ -72,16 +72,16 @@ const Sell = (props) => {
                 setRefreshing(false);
             })
             .catch(err => {
-                if (InvalidAccessToken.compare(err)) {
-                    logout(dispatch).then(() => {
-                        const msg = 'Phiên đăng nhập hết hạn!\n' +
-                            'Xin hãy đăng nhập lại!';
-                        messageService.showError(msg);
-                    });
-                }
+                // if (InvalidAccessToken.compare(err)) {
+                //     logout(dispatch).then(() => {
+                //         const msg = 'Phiên đăng nhập hết hạn!\n' +
+                //             'Xin hãy đăng nhập lại!';
+                //         messageService.showError(msg);
+                //     });
+                // }
                 let msg = 'Lấy danh sách yêu cầu mua hàng thất bại!';
                 if (err.message) {
-                    msg += '\n' + err.message;
+                    msg += '\n' + err;
                 }
                 messageService.showError(msg);
                 setRefreshing(false);

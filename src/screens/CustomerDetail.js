@@ -22,7 +22,7 @@ import Select from '../components/Select';
 
 var ImagePicker = NativeModules.ImageCropPicker;
 
-const MODAL_UPLOAD = 1
+const MODAL_SALE_MAN = 1
 const MODAL_PROVINCE = 2
 const MODAL_DISTRICT = 3
 const MODAL_WARDS = 4
@@ -45,12 +45,17 @@ const CustomerDetail = (props) => {
     const [customer, setCustomer] = useState(route.params ? route.params : {})
     const [showModal, setShowModal] = useState(false);
     const [listProvice, setListProvice] = useState([]);
+    const [listSalesman, setListSalesman] = useState([]);
+
     const [provice, setProvice] = useState(customer.country_id ? { id: customer.country_id[0], name: customer.country_id[1] } : '');
 
     const [district, setDistrict] = useState(customer.state_id ? { id: customer.state_id[0], name: customer.state_id[1] } : '');
 
     const [wards, setWards] = useState(customer.ward_id ? { id: customer.ward_id[0], name: customer.ward_id[1] } : '');
 
+    const [salesmanIds, setSalesmanIds] = useState(customer.salesman_ids?? []);
+
+    console.log("customer ", customer);
     const typeModal = useRef(0);
     const listDataProvice = useRef([]);
     const listDataUsers = useRef([]);
@@ -163,6 +168,7 @@ const CustomerDetail = (props) => {
         let getUsers = await ApiService.getUsers()
         if (getUsers.data && getUsers.data.length > 0) {
             listDataUsers.current = getUsers.data
+            setSalesmanIds([...salesmanIds])
         }
         console.log("getDataUsers ", listDataUsers.current);
     }
@@ -203,13 +209,14 @@ const CustomerDetail = (props) => {
         const userIdString = await AsyncStorage.getItem('userId');
         const userId = parseInt(userIdString);
         let body = {
-            "user_id": userId,
+            "user_id": (customer.user_id && customer.user_id[0])? customer.user_id[0] : userId,
             "phone": customer.phone,
             "name": customer.name,
             "street": customer.street ? customer.street : "",
             "ward_id": wards != "" ? wards.id : null,
             "state_id": district != "" ? district.id : null,
             "country_id": provice != "" ? provice.id : null,
+            "salesman_ids": salesmanIds ?? [],
             "vehicle_route": 1,
             "name_store": customer.name_store ? customer.name_store : "",
             "code_ch_ncc1": customer.code_ch_ncc1 ? customer.code_ch_ncc1 : "", //"Ma cua hang ncc1",
@@ -314,6 +321,29 @@ const CustomerDetail = (props) => {
         }
     }
 
+    const onOpenSelectSaleman = () => {
+        typeModal.current = MODAL_SALE_MAN;
+        setListSalesman([...listDataUsers.current]);
+        
+        setShowModal(true);
+    }
+
+    const filterSelectSaleman = (filterKey) => {
+        setListSalesman([...listDataUsers.current].filter(value => ChangeAlias(value.name).toLowerCase().includes(filterKey)));
+    }
+
+    const onClickSaleman = (item) => {
+        setSalesmanIds([...salesmanIds, item.id]);
+        setShowModal(false)
+    }
+
+    const removeSaleman = (index) => {
+        if(salesmanIds && salesmanIds.length > index) {
+            salesmanIds.splice(index, 1)
+            setSalesmanIds([...salesmanIds]);
+        }
+    }
+
     const onClickCamera = () => {
         ImagePicker.openCamera({
             width: 50,
@@ -404,6 +434,31 @@ const CustomerDetail = (props) => {
 
                 </ScrollView>
             </View>
+        } else if (typeModal.current == MODAL_SALE_MAN) {
+            return <View style={Styles.productViewModalCategori}>
+                <View style={{ width: "100%", flexDirection: "row", justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Text style={{ flex: 1, marginLeft: 10, textAlign: 'center', fontSize: 16, color: Colors.primary }}>Chọn nhân Viên Tiếp Thị</Text>
+                    <MaterialCommunityIcons onPress={() => { setShowModal(false) }} name={"close"} color={Colors.gray_aaa} size={26} />
+                </View>
+                <TextInput
+                    paddingLeft={10}
+                    placeholder='Tìm kiếm...'
+                    autoFocus={true}
+                    onChangeText={(val) => {
+                        filterSelectSaleman(ChangeAlias(val).toLowerCase())
+                    }}
+                    style={{ color: Colors.black, height: 36, borderWidth: 1, borderRadius: 10, marginHorizontal: 10, marginVertical: 5, borderColor: Colors.primary, }} />
+                <ScrollView>
+                    {
+                        listSalesman.map(item => {
+                            return <TouchableOpacity onPress={() => onClickSaleman(item)} style={[Styles.productViewApply, { marginVertical: 10, height: 50, marginBottom: 10 }]}>
+                                <Text style={Styles.productTextApply}>{item.name}</Text>
+                            </TouchableOpacity>
+                        })
+                    }
+
+                </ScrollView>
+            </View>
         }
 
     }
@@ -437,18 +492,25 @@ const CustomerDetail = (props) => {
                     <TextInput value={customer.code_ch_ncc3} placeholder='Mã cửa hàng nhà cung cấp 3' style={Styles.detailCustomerInput} onChangeText={(text) => setCustomer({ ...customer, code_ch_nc3: text })} />
                 </View>
 
-                 <Select
-                    label={'Nhân viên'}
-                    options={listDataUsers.current}
-                    optionType={'array'}
-                    valueKey={'id'}
-                    type={'text'}
-                    current={customer.salesman_ids}
-                    reload={() => {
-                        // updateProductList(data.type_of_sale);
-                    }}
-                    onSelect={(item) => { }}
-                    search/>
+                <Text style={{ color: Colors.primary, marginTop: 10, marginLeft: 5, fontSize: 15 }}>Nhân viên tiếp thị</Text>
+
+                <View style={{ flexDirection: "row", flexWrap:'wrap' }}>
+                    {salesmanIds && salesmanIds.length > 0 && listDataUsers.current?
+                        salesmanIds.map( (salesmanId, index) => {
+                            let find = listDataUsers.current.find((user) => user.id == salesmanId)
+                            return <TouchableOpacity onPress={() => { removeSaleman(index)}} style={Styles.salesmanStyle}>
+                                <MaterialCommunityIcons name={"close-thick"} color={Colors.gray_aaa} size={20} />
+                                <Text style={Styles.productTextFilterCategori} >{(find && find.name)? find.name : ""}</Text>
+                            </TouchableOpacity>
+                        })
+                        : null
+                    }
+                </View>
+
+                <TouchableOpacity onPress={onOpenSelectSaleman} style={[Styles.detailCustomerViewTextInput, { padding: 0, flex: 1 }]}>
+                    <Text numberOfLines={1} ellipsizeMode="tail" pointerEvents="none" style={{ paddingLeft: 10 }}>{"Thêm nhân viên tiếp thị"}</Text>
+                    <MaterialCommunityIcons onPress={() => { setShowModal(false) }} style={{}} name={"menu-down"} color={Colors.black} size={26} />
+                </TouchableOpacity>
 
                 <Text style={{ color: Colors.primary, marginTop: 10, marginLeft: 5, fontSize: 15 }}>Địa chỉ</Text>
 
@@ -475,7 +537,7 @@ const CustomerDetail = (props) => {
                         horizontal={true}>
 
                         <TouchableOpacity onPress={() => onClickCamera()} style={{ width: 100, height: 100, borderStyle: 'dashed', justifyContent: "center", alignItems: "center", borderColor: "#ddd", borderWidth: 1, borderRadius: 5 }}>
-                            <SimpleLineIcons name={"cloud-upload"} color={Colors.gray_aaa} size={40} />
+                            <MaterialCommunityIcons name={"camera-plus-outline"} color={Colors.gray_aaa} size={40} />
                         </TouchableOpacity>
                         {
                             listImage.map(item => {

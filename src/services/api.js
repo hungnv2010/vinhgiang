@@ -30,6 +30,52 @@ export const unsecuredPost = (uri, param = {}) => {
         });
 };
 
+export const put = async (uri, data = {}) => {
+    const token = await AsyncStorage.getItem('token');
+    const url = `${API_ROOT}/${uri}`;
+    return axios.put(url, data, {
+        validateStatus: false,
+        headers: {
+            'Content-Type': 'application/json',
+            'access_token': token,
+        },
+    })
+        .then(res => {
+            let result = res.data.result? JSON.parse(res.data.result) : {}
+            if (result.status === 401) {
+                console.log('post response InvalidRequest 400', url);
+                throw new InvalidAccessToken(result.message);
+            }
+            if (result.status === 400) {
+                console.log('post response InvalidRequest ===============', url);
+                console.log(JSON.stringify(data));
+                console.log(res.data);
+                console.log('======================');
+                throw new InvalidRequest(result);
+            }
+
+            if (result.status === 404) {
+                console.log('post response InvalidRequest 404', result);
+                throw new InvalidAccessToken(result.message);
+            }
+
+            console.log('result.error ==> ', res);
+
+            if (res.data.error && res.data.error.data) {
+                console.log('result.error ==> ', res.error);
+
+                throw new InvalidAccessToken(res.error.data.name);
+            }
+            return res.data;
+        })
+        .catch(e => {
+            if (e.message?.includes('Accesstoken is not valid')) {
+                throw new InvalidAccessToken(e.message);
+            }
+            throw e;
+        });
+};
+
 export const post = async (uri, data = {}) => {
     const token = await AsyncStorage.getItem('token');
     const url = `${API_ROOT}/${uri}`;
