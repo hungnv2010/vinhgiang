@@ -430,9 +430,18 @@ const Styles = StyleSheet.create({
         color: Colors.red,
         fontWeight: 'bold',
     },
+    selectedSubItem: {
+        fontWeight: 'bold',
+        fontSize: 14,
+        color: Colors.primary,
+    },
     selectedItem: {
         fontWeight: 'bold',
         color: Colors.primary,
+    },
+    normalSubItem: {
+        color: Colors.gray4,
+        fontSize: 14,
     },
     normalItem: {},
     filterInput: {

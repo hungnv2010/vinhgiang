@@ -11,6 +11,7 @@ export const loginUser = async (dispatch, loginPayload) => {
         if (res.success) {
             dispatch({type: LOGIN_SUCCESS, payload: {token: res.access_token, user: username}});
             await AsyncStorage.setItem('token', res.access_token);
+            await AsyncStorage.setItem('userId', `${res.uid}`);
             await AsyncStorage.setItem('currentUser', username);
             if (savePassword) {
                 await AsyncStorage.setItem('save_password', 'true');
@@ -43,5 +44,6 @@ export const restorePassword = async (dispatch) => {
 export const logout = async (dispatch) => {
     dispatch({type: LOGOUT});
     await AsyncStorage.removeItem('token');
+    await AsyncStorage.removeItem('userId');
     await AsyncStorage.removeItem('currentUser');
 };

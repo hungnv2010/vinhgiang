@@ -18,6 +18,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FSModal from '../components/FSModal';
 import { CheckBox } from 'react-native-elements/dist/checkbox/CheckBox';
+import DatePickerNull from '../components/DatePickerNull';
 
 const Purchase = (props) => {
     const {navigation} = props;
@@ -32,7 +33,7 @@ const Purchase = (props) => {
     const [refreshing, setRefreshing] = useState(false);
     const [loadMore, setLoadMore] = useState(false)
     const listAllData = useRef([])
-    const [filterState, setFilterState] = useState({show: false, state: null});
+    const [filterState, setFilterState] = useState({show: false, state: null, startDate: null, endDate: null});
 
     const createOrder = () => {
         navigation.navigate(Create.route, {
@@ -79,6 +80,8 @@ const Purchase = (props) => {
     const getListFilter = () => {
         return listAllData.current.data.filter(item =>
             (!filterState.state || item.state == filterState.state)
+            && (!filterState.startDate || moment(filterState.startDate).subtract(1, "days").isBefore(item.date_order, 'day'))
+            && (!filterState.endDate || moment(filterState.endDate).add(1, "days").isAfter(item.date_order, 'day'))
         )
     }
 
@@ -179,6 +182,18 @@ const Purchase = (props) => {
                     setFilterState({...filterState, show: false})
                     setData({...data, data: getListFilter()})}} 
                     style={Styles.productIconCloseModalCategori} name={"close"} color={Colors.gray_aaa} size={26} />
+                <Text style={Styles.sectionTitleSmall}>Lọc theo ngày chốt đặt</Text>
+
+                <View>
+                    <DatePickerNull
+                            label={'    Từ ngày:'}
+                            date={filterState.startDate}
+                            onChange={(value) => {filterState.startDate = value}}/> 
+                    <DatePickerNull
+                            label={'    Đến ngày:'}
+                            date={filterState.endDate}
+                            onChange={(value) => {filterState.endDate = value}}/> 
+                </View>
                 <Text style={Styles.sectionTitleSmall}>Lọc trạng thái đơn hàng</Text>
     
                 {

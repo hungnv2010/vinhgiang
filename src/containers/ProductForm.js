@@ -137,7 +137,8 @@ const ProductForm = (props) => {
                         }}
                         loading={loading}
                         onSelect={(item) => selectItem(item)}
-                        search/>
+                        search
+                        isProduct/>
 
                     <View style={Styles.formItem}>
                         <Text style={Styles.formLabel}>

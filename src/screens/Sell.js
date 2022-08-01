@@ -16,6 +16,8 @@ import { ChangeAlias } from '../configs/Utils';
 import FSModal from '../components/FSModal';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { INVOICE_STATUS, STATE } from '../models/OrderModel';
+import DatePickerNull from '../components/DatePickerNull';
+import moment from 'moment';
 
 const Sell = (props) => {
     const {navigation} = props;
@@ -29,7 +31,7 @@ const Sell = (props) => {
     const dispatch = useAuthDispatch();
     const [refreshing, setRefreshing] = useState(false);
     const [loadMore, setLoadMore] = useState(false)
-    const [filterState, setFilterState] = useState({show: false, state: null, invoice_status: null});
+    const [filterState, setFilterState] = useState({show: false, state: null, invoice_status: null, startDate: null, endDate: null});
 
     const listAllData = useRef([])
     const offset = useRef(0)
@@ -98,7 +100,10 @@ const Sell = (props) => {
 
     const getListFilter = () => {
         return listAllData.current.data.filter(item =>
-            (!filterState.state || item.state == filterState.state) && (!filterState.invoice_status || item.invoice_status == filterState.invoice_status)
+            (!filterState.state || item.state == filterState.state) 
+            && (!filterState.invoice_status || item.invoice_status == filterState.invoice_status)
+            && (!filterState.startDate || moment(filterState.startDate).subtract(1, "days").isBefore(item.expected_date, 'day'))
+            && (!filterState.endDate || moment(filterState.endDate).add(1, "days").isAfter(item.expected_date, 'day'))
         )
     }
 
@@ -149,6 +154,19 @@ const Sell = (props) => {
                 setFilterState({...filterState, show: false})
                 setData({...data, data: getListFilter()})}} 
                 style={Styles.productIconCloseModalCategori} name={"close"} color={Colors.gray_aaa} size={26} />
+            <Text style={Styles.sectionTitleSmall}>Lọc theo ngày tạo</Text>
+
+            <View>
+                <DatePickerNull
+                        label={'    Từ ngày:'}
+                        date={filterState.startDate}
+                        onChange={(value) => {filterState.startDate = value}}/> 
+                <DatePickerNull
+                        label={'    Đến ngày:'}
+                        date={filterState.endDate}
+                        onChange={(value) => {filterState.endDate = value}}/> 
+            </View>
+
             <Text style={Styles.sectionTitleSmall}>Lọc trạng thái đơn hàng</Text>
 
             {

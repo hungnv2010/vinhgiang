@@ -78,6 +78,7 @@ export const post = async (uri, data = {}) => {
 
 export const get = async (uri, param = {}) => {
     const token = await AsyncStorage.getItem('token');
+    console.log("aaaa token ", token);
 
     let jsonParam = { ...param }
     let params = jsonParam ? convertJsonToPrameter(jsonParam) : "";
@@ -250,6 +251,9 @@ const ApiService = {
         return await post( 'stock_picking/confirm', data);
     },
 
+    getUsers: async () => {
+        return await get( 'res.users');
+    }, 
 
 };
 

@@ -27,7 +27,7 @@ const removeAccents = (str) => {
 
 // options : list(object) bắt buộc có trường 'name' (hiển thị), 'valueKey' là trường duy nhất tương ứng với trường 'current' (giá trị mặc định)
 const Select = (props) => {
-    const {onSelect, options, current, label, required, valueKey, reload, loading, search} = props;
+    const {onSelect, options, current, label, required, valueKey, reload, loading, search, isProduct} = props;
     const [showModal, setShowModal] = useState(false);
     const [showSearch, setShowSearch] = useState(false);
     const [keyword, setKeyword] = useState('');
@@ -50,7 +50,7 @@ const Select = (props) => {
         if (_.isObject(options)) {
             const opts = Object.keys(options).map(key => ({value: key, name: options[key]}));
             if (isFilter) {
-                return opts.filter(item => removeAccents(item.name).includes(removeAccents(keyword)));
+                return opts.filter(item => removeAccents(isProduct? item.display_name : item.name).includes(removeAccents(keyword)));
             }
             return opts;
         }
@@ -90,6 +90,13 @@ const Select = (props) => {
                             onPress={() => select(item)}>
                             <ListItem key={item[valueKey] + index}>
                                 <ListItem.Content>
+                                    { isProduct ?
+                                    <ListItem.Title
+                                        style={item[valueKey] === current ? Styles.selectedSubItem : Styles.normalSubItem}>
+                                        {`[${item.code}]    -   Tồn kho: ${item.cart_qty}`}
+                                    </ListItem.Title>
+                                    : null
+                                    }
                                     <ListItem.Title
                                         style={item[valueKey] === current ? Styles.selectedItem : Styles.normalItem}>
                                         {item.name}
@@ -158,6 +165,7 @@ Select.propTypes = {
     valueKey: PropTypes.string,
     loading: PropTypes.bool,
     search: PropTypes.bool,
+    isProduct: PropTypes.bool,
 };
 
 Select.defaultProps = {
