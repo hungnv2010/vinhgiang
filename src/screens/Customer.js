@@ -36,6 +36,7 @@ const Customer = (props) => {
     const onChangeTextSearch = (text) => {
         let listFilter = listAllData.current.filter(item => 
                 (ChangeAlias(item.name).indexOf(ChangeAlias(text)) > -1 || (item.phone && item.phone.indexOf(text) > -1) 
+                || (item.name_store && ChangeAlias(item.name_store).indexOf(ChangeAlias(text)) > -1)
                 || (item.country_id[1] && ChangeAlias(item.country_id[1]).indexOf(ChangeAlias(text)) > -1)
                 || (item.district && ChangeAlias(item.district[1]).indexOf(ChangeAlias(text)) > -1)
                 || (item.street && ChangeAlias(item.street).indexOf(ChangeAlias(text)) > -1)

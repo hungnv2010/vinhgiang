@@ -349,7 +349,7 @@ const CustomerDetail = (props) => {
             width: 50,
             height: 50,
             includeBase64: true,
-
+            compressImageQuality: 0.5,
         }).then(image => {
             console.log("onClickCamera images ", image);
             uploadToServer([image]);
