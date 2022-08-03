@@ -13,6 +13,7 @@ import {logout, useAuthDispatch} from '../context';
 import {InvalidAccessToken} from '../errors';
 import messageService from '../services/messages';
 import { ApiService } from '../services';
+import { NumberFormat } from '../configs/Utils';
 
 const OrderForm = (props) => {
     const {orderName, mode, goBack} = props;
@@ -33,7 +34,7 @@ const OrderForm = (props) => {
 
     useEffect(() => {
         setShowLoading(true)
-        ApiService.getCustomer()
+        ApiService.getAllCustomer()
             .then(res => {
                 console.log("get customer ", res.data);
                 setPartnerList(res.data)
@@ -91,6 +92,12 @@ const OrderForm = (props) => {
             order.order_line[productSelect.current.index] = productData;
         else
             order.order_line.push(productData);
+
+        order.amount_untaxed =  order.order_line.map(product =>  product.price_subtotal ? product.price_subtotal : 0)
+            .reduce((prev, value) => value + prev)
+        order.amount_tax = order.amount_untaxed * 0.1
+        order.amount_total = order.amount_untaxed
+
         setOrder(order);
     };
 
@@ -155,7 +162,7 @@ const OrderForm = (props) => {
                     onChange={(value) => updateField('date_order', value)}/>
 
                 <TextArea
-                    label={'Điều khoản & điều kiện'}
+                    label={'Ghi ch'}
                     onChangeText={(val) => updateField('note', val)}/>
 
                 <View style={Styles.sectionHeader}>
@@ -181,6 +188,22 @@ const OrderForm = (props) => {
                     }}
                 
                     data={order.order_line}/>
+
+                    <View style={{ flex: 1, flexDirection: "row", justifyContent:"flex-end", paddingVertical:2, }}>
+                        <View >
+                            <Text style={{ color: Colors.gray4, marginTop: 4, fonSize: 13 }}>Tạm tính trước thuế: </Text>
+                            <Text style={{ color: Colors.gray4, marginTop: 4, fonSize: 13 }}>Tạm tính thuế: </Text>
+                            <Text style={{ color: Colors.gray4, marginTop: 4, fonSize: 13 }}>Tạm tính sau thuế: </Text>
+                        </View>
+
+                        <View style={{ flex: 0.05}}/>
+                        <View style={{ alignItems:'flex-end', justifyContent:'center', marginEnd: 10}}>
+                            <Text style={{color: Colors.black, marginTop: 4, fontSize: 13 }}>{NumberFormat(order.amount_untaxed) + 'đ'}</Text>
+                            <Text style={{color: Colors.black, marginTop: 4, fontSize: 13 }}>{NumberFormat(order.amount_tax) + 'đ'}</Text>
+                            <Text style={{color: Colors.blue, marginTop: 4, fontSize: 13 }}>{NumberFormat(order.amount_total) + 'đ'}</Text>
+                        </View>
+                            
+                    </View>
 
                 <View style ={{ flexDirection : "row"}}>
 

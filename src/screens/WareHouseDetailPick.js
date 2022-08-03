@@ -249,7 +249,7 @@ const WareHouseDetailPick = (props) => {
                             style={Styles.formTextAreaSmall}
                             multiline
                             onChangeText={(val) => setStockPicking({...stockPicking, note: val})}
-                            value={`${stockPicking.note??""}`}/>
+                            value={`${stockPicking.note? stockPicking.note : ""}`}/>
                     </View>
 
                     <Text style={{ color: Colors.gray4, marginTop: 4, fonSize: 13 }}>Hoạt động chi tiết </Text>

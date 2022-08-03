@@ -11,6 +11,7 @@ import { CheckBox } from 'react-native-elements';
 import { ChangeAlias } from '../configs/Utils';
 import { FAB } from 'react-native-elements';
 import { CustomerDetail } from '.';
+import messageService from '../services/messages';
 
 const Customer = (props) => {
     const { navigation, route } = props;
@@ -21,31 +22,69 @@ const Customer = (props) => {
     const [loadMore, setLoadMore] = useState(false)
     const listAllData = useRef([])
 
+    const offset = useRef(0)
+    const offsetEnd = useRef(false)
+    const textSearch = useRef("")
+
     useEffect(() => {
         getData();
     }, []);
 
     const getData = async () => {
-        let getCustomer = await ApiService.getCustomer()
-        console.log("getCustomer ", JSON.stringify(getCustomer));
-        setListCustomer(getCustomer.data)
-        listAllData.current = getCustomer.data;
-        setRefreshing(false);
+        ApiService.getCustomer(offset.current)
+        .then(res => {
+            if (res) {
+                console.log("getCustomer offset = "+ offset.current , res);
+                if(res.data.length == 0) {
+                    offsetEnd.current = true;
+                    return;
+                }
+                if(offset.current == 0) {
+                    setListCustomer(res.data);
+                    listAllData.current = res.data;
+                } else {
+                    listAllData.current = [...listAllData.current, ...res.data]
+                    filterText()
+                }
+            }
+            setRefreshing(false);
+        })
+        .catch(err => {
+            let msg = 'Lấy danh sách khách hàng thất bại!';
+            if (err.message) {
+                msg += '\n' + err;
+            }
+            messageService.showError(msg);
+            setRefreshing(false);
+        });
+    }
+    const onChangeTextSearch = (text) => {
+        textSearch.current = text;
+        filterText()
     }
 
-    const onChangeTextSearch = (text) => {
+    const filterText = () => {
         let listFilter = listAllData.current.filter(item => 
-                (ChangeAlias(item.name).indexOf(ChangeAlias(text)) > -1 || (item.phone && item.phone.indexOf(text) > -1) 
-                || (item.country_id[1] && ChangeAlias(item.country_id[1]).indexOf(ChangeAlias(text)) > -1)
-                || (item.district && ChangeAlias(item.district[1]).indexOf(ChangeAlias(text)) > -1)
-                || (item.street && ChangeAlias(item.street).indexOf(ChangeAlias(text)) > -1)
+                (ChangeAlias(item.name).indexOf(ChangeAlias(textSearch.current)) > -1 || (item.phone && item.phone.indexOf(textSearch.current) > -1)
+                || (item.name_store && ChangeAlias(item.name_store).indexOf(ChangeAlias(text)) > -1)
+                || (item.country_id[1] && ChangeAlias(item.country_id[1]).indexOf(ChangeAlias(textSearch.current)) > -1)
+                || (item.district && ChangeAlias(item.district[1]).indexOf(ChangeAlias(textSearch.current)) > -1)
+                || (item.street && ChangeAlias(item.street).indexOf(ChangeAlias(textSearch.current)) > -1)
                 )
             )
-        setListCustomer(listFilter)
+
+        if (listFilter.length == 0) filterMore()
+        else if (listFilter.length < 5) {
+            setListCustomer(listFilter)
+            filterMore()
+        }
+        else setListCustomer(listFilter)
     }
 
     const filterMore = () => {
-
+        if(offsetEnd.current) return;
+        offset.current += 20;
+        getData()
     }
 
     const onClickItem = (item) => {
@@ -55,6 +94,8 @@ const Customer = (props) => {
 
     const refresh = useCallback(() => {
         setRefreshing(true);
+        offsetEnd.current = false;
+        offset.current = 0;
         getData();
     });
 

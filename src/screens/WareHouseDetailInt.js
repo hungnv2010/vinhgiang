@@ -247,7 +247,7 @@ const WareHouseDetailInt = (props) => {
                             style={Styles.formTextAreaSmall}
                             multiline
                             onChangeText={(val) => setStockPicking({...stockPicking, note: val})}
-                            value={`${stockPicking.note??""}`}/>
+                            value={`${stockPicking.note? stockPicking.note : ""}`}/>
                      
                     </View>
 

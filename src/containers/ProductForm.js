@@ -9,6 +9,7 @@ import Select from '../components/Select';
 import {Button} from 'react-native-elements';
 import { ApiService } from '../services';
 import messageService from '../services/messages';
+import { NumberFormat } from '../configs/Utils';
 
 const ProductForm = (props) => {
     const {product, visible: isShow, onClose, onSubmit} = props;
@@ -20,10 +21,8 @@ const ProductForm = (props) => {
 
     const updateField = (key, value) => {
         console.log('update', key, value);
-        setData({
-            ...data,
-            [key]: value,
-        });
+        data[key] =  value
+        calculate()
     };
 
     useEffect(()=>{
@@ -40,6 +39,11 @@ const ProductForm = (props) => {
         if (!value.endsWith("."))
             updateField(key, Number(value))
     };
+
+    const calculate = () => {
+        data.price_subtotal = data.price_unit * data.product_uom_qty * (1 - data.discount/100) - data.x_discount_amount
+        setData({...data});
+    } 
 
     const updateUnit = (unit) => {
         console.log('updateUnit', unit);
@@ -186,6 +190,13 @@ const ProductForm = (props) => {
                         value={data.name}
                         label={'Mô tả'}
                         onChangeText={val => updateField('name', val)}/>
+
+                    <View style={Styles.formItem}>
+                        <Text style={Styles.formLabel}>
+                            Tạm tính
+                        </Text>
+                        <Text style={Styles.formText}>{NumberFormat(data.price_subtotal ? data.price_subtotal : 0)}</Text>
+                    </View>
   
                     <Button
                         title={product ? 'Sửa sản phẩm' : 'Thêm sản phẩm'.toUpperCase()}

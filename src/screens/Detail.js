@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Screen} from '../containers';
-import {Text, View} from 'react-native';
+import {Text, TextInput, View} from 'react-native';
 import {Button} from 'react-native-elements';
 import {Styles, Colors} from '../configs';
 import {NumberFormat} from '../configs/Utils'
@@ -91,31 +91,38 @@ const Detail = (props) => {
                                 flexDt ={1}
                                 dd={'Giao đến'}
                                 dt={order.warehouse_id.name}/>
-                    </View> 
+                    </View>
 
                     <Text style={{ color: Colors.gray4, marginTop: 4, fonSize: 13 }}>Sản phẩm </Text>
 
                 </View>
-                    <ProductList
-                        hideDeleteButton={true}
-                        data={order.order_line}/>
+                <ProductList
+                    hideDeleteButton={true}
+                    data={order.order_line}/>
 
-                    <View style={{ flex: 1, flexDirection: "row", justifyContent:"flex-end", paddingVertical:2, }}>
-                        <View >
-                            <Text style={{ color: Colors.gray4, marginTop: 4, fonSize: 13 }}>Tổng trước thuế: </Text>
-                            <Text style={{ color: Colors.gray4, marginTop: 4, fonSize: 13 }}>Thuế: </Text>
-                            <Text style={{ color: Colors.gray4, marginTop: 4, fonSize: 13 }}>Tổng sau thuế: </Text>
-                        </View>
-
-                        <View style={{ flex: 0.05}}/>
-                        <View style={{ alignItems:'flex-end', justifyContent:'center', marginEnd: 10}}>
-                            <Text style={{color: Colors.black, marginTop: 4, fontSize: 13 }}>{NumberFormat(order.amount_untaxed) + 'đ'}</Text>
-                            <Text style={{color: Colors.black, marginTop: 4, fontSize: 13 }}>{NumberFormat(order.amount_tax) + 'đ'}</Text>
-                            <Text style={{color: Colors.blue, marginTop: 4, fontSize: 13 }}>{NumberFormat(order.amount_total) + 'đ'}</Text>
-                        </View>
-                            
+                <View style={{ flex: 1, flexDirection: "row", justifyContent:"flex-end", paddingVertical:2, }}>
+                    <View >
+                        <Text style={{ color: Colors.gray4, marginTop: 4, fonSize: 13 }}>Tổng trước thuế: </Text>
+                        <Text style={{ color: Colors.gray4, marginTop: 4, fonSize: 13 }}>Thuế: </Text>
+                        <Text style={{ color: Colors.gray4, marginTop: 4, fonSize: 13 }}>Tổng sau thuế: </Text>
                     </View>
-                    
+
+                    <View style={{ flex: 0.05}}/>
+                    <View style={{ alignItems:'flex-end', justifyContent:'center', marginEnd: 10}}>
+                        <Text style={{color: Colors.black, marginTop: 4, fontSize: 13 }}>{NumberFormat(order.amount_untaxed) + 'đ'}</Text>
+                        <Text style={{color: Colors.black, marginTop: 4, fontSize: 13 }}>{NumberFormat(order.amount_tax) + 'đ'}</Text>
+                        <Text style={{color: Colors.blue, marginTop: 4, fontSize: 13 }}>{NumberFormat(order.amount_total) + 'đ'}</Text>
+                    </View>  
+                </View>
+
+                <View style={{paddingHorizontal: 10}}>
+                    <Text style={{ flex: 1, color: Colors.gray4}}>Ghi chú: </Text>
+                    <TextInput
+                        style={Styles.formTextAreaSmall}
+                        multiline
+                        onChangeText={(val) => {}}
+                        value={`${order.note? order.note : ""}`}/>
+                </View>    
 
                     {
                     (order.state === 'draft' || order.state === 'sent')

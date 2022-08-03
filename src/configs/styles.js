@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 import Colors from './colors';
 
-const FORM_INPUT_HEIGHT = 36;
+const FORM_INPUT_HEIGHT = 38;
 const FORM_TEXT_AREA_HEIGHT = 100;
 const FORM_LABEL_WIDTH = '35%';
 
@@ -256,6 +256,7 @@ const Styles = StyleSheet.create({
         maxHeight:100,
         textAlignVertical: 'top',
         paddingHorizontal: 10,
+        marginHorizontal: 10,
         flex: 1,
         borderColor: Colors.primary,
         backgroundColor: Colors.white_t,
@@ -273,9 +274,22 @@ const Styles = StyleSheet.create({
         paddingHorizontal: 10,
         color: Colors.black,
         flex: 1,
+        textAlignVertical: 'center',
         borderColor: Colors.primary,
         backgroundColor: Colors.white_t,
         borderWidth: 1,
+        borderRadius: 8,
+    },
+    formText: {
+        height: FORM_INPUT_HEIGHT,
+        paddingHorizontal: 10,
+        color: Colors.black,
+        flex: 1,
+        textAlignVertical: 'center',
+        textAlign:'center',
+        borderColor: Colors.gray4,
+        backgroundColor: Colors.white_t,
+        borderWidth: 0.4,
         borderRadius: 8,
     },
     formSelectContainer: {

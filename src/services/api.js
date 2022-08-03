@@ -124,12 +124,13 @@ export const post = async (uri, data = {}) => {
 
 export const get = async (uri, param = {}) => {
     const token = await AsyncStorage.getItem('token');
-    console.log("aaaa token ", token);
 
     let jsonParam = { ...param }
     let params = jsonParam ? convertJsonToPrameter(jsonParam) : "";
 
     const url = `${API_ROOT}/${uri}${params}`;
+    console.log('get url', url);
+
     return axios.get(url, {
         validateStatus: false,
         headers: {
@@ -210,7 +211,7 @@ const ApiService = {
         return await get('product.product')
     },
     getProducts: async (offset) => {
-        return await get('product.product', {limit: 10, offset: offset})
+        return await get('product.product', {limit: 20, offset: offset})
     },
     getAllColors: async () => {
         return await post('get_all_color_code');
@@ -218,8 +219,11 @@ const ApiService = {
     getProductAttachments: async () => {
         return await post('get_product_attach');
     },
-    getCustomer: async () => {
-        return await get('res.partner', {'order': 'id desc'});
+    getAllCustomer: async () => {
+        return await get('res.partner', {'order': 'id desc', limit: 200});
+    },
+    getCustomer: async (offset) => {
+        return await get('res.partner', {'order': 'id desc', limit: 20, offset: offset});
     },
     addCustomer: async (body) => {
         return await post('res.partner', body);

@@ -36,6 +36,7 @@ const Sell = (props) => {
     const listAllData = useRef([])
     const offset = useRef(0)
     const offsetEnd = useRef(false)
+    const textSearch = useRef("")
 
     const createOrder = () => {
         navigation.navigate(Create.route, {
@@ -60,25 +61,15 @@ const Sell = (props) => {
                         setData(res);
                         listAllData.current = res;
                     } else {
-                        console.log("get orderListsss  " , data);
-
                         let list = [...data.data, ...res.data]
                         console.log("get orderList  " , list);
-
-                        setData({...res, data: list})
                         listAllData.current = {...listAllData.current, data : [...listAllData.current.data, ...res.data]}
+                        filterText()
                     }
                 }
                 setRefreshing(false);
             })
             .catch(err => {
-                // if (InvalidAccessToken.compare(err)) {
-                //     logout(dispatch).then(() => {
-                //         const msg = 'Phiên đăng nhập hết hạn!\n' +
-                //             'Xin hãy đăng nhập lại!';
-                //         messageService.showError(msg);
-                //     });
-                // }
                 let msg = 'Lấy danh sách yêu cầu mua hàng thất bại!';
                 if (err.message) {
                     msg += '\n' + err;
@@ -92,10 +83,22 @@ const Sell = (props) => {
         getData()
     }, [dispatch]);
 
-    const filterMore = () => {
-        if(offsetEnd.current) return;
-        offset.current += 10;
-        getData()
+    const onChangeTextSearch = (text) => {
+        textSearch.current = text;
+        filterText()
+    }
+
+    const filterText = () => {
+        let listSearch = getListFilter().filter(item => 
+            (item.name && ChangeAlias(item.name.toLowerCase()).indexOf(ChangeAlias(textSearch.current)) > -1 )
+            || (item.partner_id.name && ChangeAlias(item.partner_id.name.toLowerCase()).indexOf(ChangeAlias(textSearch.current)) > -1 )
+        )
+        if (listSearch.length == 0) filterMore()
+        else if (listSearch.length < 5) {
+            setData({...data, data: listSearch})
+            filterMore()
+        }
+        else setData({...data, data: listSearch})
     }
 
     const getListFilter = () => {
@@ -107,13 +110,11 @@ const Sell = (props) => {
         )
     }
 
-    const onChangeTextSearch = (text) => {
-        let listSearch = getListFilter().filter(item => 
-            (item.name && ChangeAlias(item.name.toLowerCase()).indexOf(ChangeAlias(text)) > -1 )
-            || (item.partner_id.name && ChangeAlias(item.partner_id.name.toLowerCase()).indexOf(ChangeAlias(text)) > -1 )
-        )
-        setData({...data, data: listSearch})
-    }
+    const filterMore = () => {
+        if(offsetEnd.current) return;
+        offset.current += 10;
+        getData()
+    } 
 
     const refresh = () => {
         setRefreshing(true);
