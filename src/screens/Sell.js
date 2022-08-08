@@ -112,7 +112,7 @@ const Sell = (props) => {
 
     const filterMore = () => {
         if(offsetEnd.current) return;
-        offset.current += 10;
+        offset.current += 20;
         getData()
     } 
 

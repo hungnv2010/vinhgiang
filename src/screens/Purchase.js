@@ -32,8 +32,12 @@ const Purchase = (props) => {
     const dispatch = useAuthDispatch();
     const [refreshing, setRefreshing] = useState(false);
     const [loadMore, setLoadMore] = useState(false)
-    const listAllData = useRef([])
     const [filterState, setFilterState] = useState({show: false, state: null, startDate: null, endDate: null});
+
+    const listAllData = useRef([])
+    const offset = useRef(0)
+    const offsetEnd = useRef(false)
+    const textSearch = useRef("")
 
     const createOrder = () => {
         navigation.navigate(Create.route, {
@@ -41,33 +45,32 @@ const Purchase = (props) => {
         });
     };
 
-    const filterMore = () => {
-
-    }
-
     const onClickItem = (item) => {
         navigation.navigate(PurchaseDetail.route, {data: item, mode: 'view'});
     }
 
-    useEffect(() => {
-        setRefreshing(true);
-        OrderModel.GetPurchaseList(1)
+    const getData = () => {
+        OrderModel.GetPurchaseList(offset.current)
             .then(res => {
                 if (res) {
-                    setData(res);
-                    console.log("get purchaseList", res);
-                    listAllData.current = res;
+                    console.log("get orderList offset = "+ offset.current , res);
+                    if(res.data.length == 0) {
+                        offsetEnd.current = true;
+                        return;
+                    }
+                    if(offset.current == 0) {
+                        setData(res);
+                        listAllData.current = res;
+                    } else {
+                        let list = [...data.data, ...res.data]
+                        console.log("get orderList  " , list);
+                        listAllData.current = {...listAllData.current, data : [...listAllData.current.data, ...res.data]}
+                        filterText()
+                    }
                 }
                 setRefreshing(false);
             })
             .catch(err => {
-                // if (InvalidAccessToken.compare(err)) {
-                //     logout(dispatch).then(() => {
-                //         const msg = 'Phiên đăng nhập hết hạn!\n' +
-                //             'Xin hãy đăng nhập lại!';
-                //         messageService.showError(msg);
-                //     });
-                // }
                 let msg = 'Lấy danh sách yêu cầu mua hàng thất bại!';
                 if (err.message) {
                     msg += '\n' + err;
@@ -75,52 +78,51 @@ const Purchase = (props) => {
                 messageService.showError(msg);
                 setRefreshing(false);
             });
+    }
+
+    useEffect(() => {
+        getData()
     }, [dispatch]);
+
+    const onChangeTextSearch = (text) => {
+        textSearch.current = text;
+        filterText()
+    }
+
+    const filterText = () => {
+        let listSearch = getListFilter().filter(item => 
+            (item.name && ChangeAlias(item.name.toLowerCase()).indexOf(ChangeAlias(textSearch.current)) > -1 )
+            || (item.partner_id.name && ChangeAlias(item.partner_id.name.toLowerCase()).indexOf(ChangeAlias(textSearch.current)) > -1 )
+        )
+        if (listSearch.length == 0) filterMore()
+        else if (listSearch.length < 5) {
+            setData({...data, data: listSearch})
+            filterMore()
+        }
+        else setData({...data, data: listSearch})
+    }
 
     const getListFilter = () => {
         return listAllData.current.data.filter(item =>
-            (!filterState.state || item.state == filterState.state)
-            && (!filterState.startDate || moment(filterState.startDate).subtract(1, "days").isBefore(item.date_order, 'day'))
-            && (!filterState.endDate || moment(filterState.endDate).add(1, "days").isAfter(item.date_order, 'day'))
+            (!filterState.state || item.state == filterState.state) 
+            && (!filterState.invoice_status || item.invoice_status == filterState.invoice_status)
+            && (!filterState.startDate || moment(filterState.startDate).subtract(1, "days").isBefore(item.expected_date, 'day'))
+            && (!filterState.endDate || moment(filterState.endDate).add(1, "days").isAfter(item.expected_date, 'day'))
         )
     }
 
-    const onChangeTextSearch = (text) => {
-        let listFilter = getListFilter().data.filter(item => 
-                (item.name && ChangeAlias(item.name.toLowerCase()).indexOf(ChangeAlias(text)) > -1 )
-                || (item.partner_id && ChangeAlias(item.partner_id[1].toLowerCase()).indexOf(ChangeAlias(text)) > -1 )
-            )
-        setData({...data, data: listFilter})
-    }
+    const filterMore = () => {
+        if(offsetEnd.current) return;
+        offset.current += 20;
+        getData()
+    } 
 
-    const refresh = useCallback(() => {
+    const refresh = () => {
         setRefreshing(true);
-        OrderModel.GetPurchaseList(1)
-            .then(res => {
-                setRefreshing(false);
-                if (res) {
-                    setData(res);
-                }
-            })
-            .catch(err => {
-                setRefreshing(false);
-                if (InvalidAccessToken.compare(err)) {
-                    logout(dispatch).then(() => {
-                        logout(dispatch).then(() => {
-                            const msg = 'Phiên đăng nhập hết hạn!\n' +
-                                'Xin hãy đăng nhập lại!';
-                            messageService.showError(msg);
-                        });
-                    });
-                }
-                let msg = 'Lấy danh sách mua hàng thất bại!';
-                if (err.message) {
-                    msg += '\n' + err.message;
-                }
-                messageService.showError(msg);
-                setRefreshing(false);
-            });
-    }, [dispatch]);
+        offsetEnd.current = false;
+        offset.current = 0;
+        getData()
+    };
 
     const renderItem = (item, index, onClickItem) => {
         return (

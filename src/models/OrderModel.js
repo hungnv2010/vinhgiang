@@ -58,9 +58,9 @@ export default class OrderModel {
         }
     }
 
-    static async GetPurchaseList(page = 1) {
+    static async GetPurchaseList(offset) {
         try {
-            return await ApiService.getPurchaseList({page});
+            return await ApiService.getPurchaseList(offset);
         } catch (e) {
             console.log('get order list error', e);
             throw e;

@@ -213,7 +213,7 @@ const OrderForm = (props) => {
 
                     { order.id?
                     <TouchableOpacity onPress={()=> onConfirm()} style={{ padding: 5, flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: Colors.primary, borderRadius: 7, height: 40, margin: 10, marginTop: 10, height: 50 }}>
-                        <Text style={{color: Colors.white}}>Xác nhận</Text>
+                        <Text style={{color: Colors.white}}>Chốt đơn</Text>
                     </TouchableOpacity>
                     : null
                     }

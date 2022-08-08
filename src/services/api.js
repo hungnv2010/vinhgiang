@@ -189,7 +189,7 @@ const ApiService = {
             .then(res => res.result.data);
     },
     getOrderList: async (offset) => {
-        return await get('sale.order',{order: 'id desc', limit: 10, offset: offset})
+        return await get('sale.order',{order: 'id desc', limit: 20, offset: offset})
             // .then(res => res.result.data);
     },
     createOrder: async (data) => {
@@ -247,8 +247,8 @@ const ApiService = {
         return await get('stock.picking', {'picking_type_id': picking_type_id, 'order': 'id desc'});
     },
 
-    getPurchaseList: async (search = {}) => {
-        return await get('purchase.order', {'order': 'id desc'})
+    getPurchaseList: async (offset) => {
+        return await get('purchase.order', {'order': 'id desc', limit: 20, offset: offset})
             // .then(res => res.result.data);
     },
     getCountry: async () => {

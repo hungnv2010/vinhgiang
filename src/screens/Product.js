@@ -27,6 +27,7 @@ const Product = (props) => {
     const listAllData = useRef([])
     const offset = useRef(0)
     const offsetEnd = useRef(false)
+    const textSearch = useRef("")
 
     useEffect(() => {
         getData();
@@ -51,15 +52,32 @@ const Product = (props) => {
             setListProduct(getProducts.data)
             listAllData.current = getProducts.data;
         } else {
-            setListProduct([...listProduct, ...getProducts.data])
-            listAllData.current = [...listAllData.current, ...getProducts.data]; 
+            listAllData.current = [...listAllData.current, ...getProducts.data];
+            filterText()
         }
     }
 
+    const onChangeTextSearch = (text) => {
+        textSearch.current = text;
+        filterText()
+    }
+
+    const filterText = () => {
+        let listProductFilter = listAllData.current.filter(item => 
+                (ChangeAlias(item.name).toLowerCase().indexOf(ChangeAlias(textSearch.current)) > -1) || (item.code && item.code.toLowerCase().indexOf(textSearch.current) > -1) 
+                || (item.lst_price  && `${item.lst_price}`.indexOf(textSearch.current) > -1)
+            )
+        if (listProductFilter.length == 0) filterMore()
+        else if (listProductFilter.length < 5) {
+            setListProduct(listProductFilter)
+            filterMore()
+        }
+        else setListProduct(listProductFilter)
+    }
 
     const filterMore = () => {
         if(offsetEnd.current) return;
-        offset.current += 10;
+        offset.current += 20;
         getProducts()
     }
 
@@ -104,14 +122,6 @@ const Product = (props) => {
                 if (el.checkGroup && item.categ_id[0] == el.id) listProductFilter.push(item)
             })
         })
-        setListProduct(listProductFilter)
-    }
-
-    const onChangeTextSearch = (text) => {
-        let listProductFilter = listAllData.current.filter(item => 
-                (ChangeAlias(item.name).toLowerCase().indexOf(ChangeAlias(text)) > -1) || (item.code && item.code.toLowerCase().indexOf(text) > -1) 
-                || (item.lst_price  && `${item.lst_price}`.indexOf(text) > -1)
-            )
         setListProduct(listProductFilter)
     }
 
