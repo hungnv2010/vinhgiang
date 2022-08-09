@@ -10,6 +10,7 @@ import {Button} from 'react-native-elements';
 import { ApiService } from '../services';
 import messageService from '../services/messages';
 import { NumberFormat } from '../configs/Utils';
+import SelectLoadmore from '../components/SelectLoadmore';
 
 const ProductForm = (props) => {
     const {product, visible: isShow, onClose, onSubmit} = props;
@@ -129,7 +130,7 @@ const ProductForm = (props) => {
                         </Text>
                     </View>
 
-                    <Select
+                    <SelectLoadmore
                         label={'Sản phẩm'}
                         options={productList}
                         optionType={'array'}

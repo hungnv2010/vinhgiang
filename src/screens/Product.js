@@ -11,6 +11,7 @@ import FSModal from '../components/FSModal';
 import { Button } from 'react-native-elements/dist/buttons/Button';
 import { CheckBox } from 'react-native-elements';
 import { ChangeAlias, NumberFormat } from '../configs/Utils';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const Product = (props) => {
     const { navigation, route } = props;
@@ -68,7 +69,7 @@ const Product = (props) => {
                 || (item.lst_price  && `${item.lst_price}`.indexOf(textSearch.current) > -1)
             )
         if (listProductFilter.length == 0) filterMore()
-        else if (listProductFilter.length < 5) {
+        else if (listProductFilter.length < 20) {
             setListProduct(listProductFilter)
             filterMore()
         }
@@ -128,26 +129,28 @@ const Product = (props) => {
     const renderCategori = () => {
         return <View style={Styles.productViewModalCategori}>
             <MaterialCommunityIcons onPress={() => { setShowModal(false) }} style={Styles.productIconCloseModalCategori} name={"close"} color={Colors.gray_aaa} size={26} />
-            {
-                listCategori.length > 0 ?
-                    listCategori.map((item, index) => {
-                        return <TouchableOpacity key={index.toString()} onPress={() => { item.checkGroup = !item.checkGroup; setListCategori([...listCategori]) }} style={Styles.productViewItemModalCategori}>
-                            <CheckBox
-                                containerStyle={Styles.productCheckBox}
-                                center
-                                checkedColor={Colors.primary}
-                                checked={item.checkGroup}
-                                onPress={() => { item.checkGroup = !item.checkGroup; setListCategori([...listCategori]) }}
-                            />
-                            <Text style={Styles.productItemNameCategori} >{item.name}</Text>
-                        </TouchableOpacity>
-                    }
-                    )
-                    : null
-            }
-            <TouchableOpacity onPress={() => onClickApply()} style={Styles.productViewApply}>
-                <Text style={Styles.productTextApply}>Áp dụng</Text>
-            </TouchableOpacity>
+            <ScrollView>
+                {
+                    listCategori.length > 0 ?
+                        listCategori.map((item, index) => {
+                            return <TouchableOpacity key={index.toString()} onPress={() => { item.checkGroup = !item.checkGroup; setListCategori([...listCategori]) }} style={Styles.productViewItemModalCategori}>
+                                <CheckBox
+                                    containerStyle={Styles.productCheckBox}
+                                    center
+                                    checkedColor={Colors.primary}
+                                    checked={item.checkGroup}
+                                    onPress={() => { item.checkGroup = !item.checkGroup; setListCategori([...listCategori]) }}
+                                />
+                                <Text style={Styles.productItemNameCategori} >{item.name}</Text>
+                            </TouchableOpacity>
+                        }
+                        )
+                        : null
+                }
+                <TouchableOpacity onPress={() => onClickApply()} style={Styles.productViewApply}>
+                    <Text style={Styles.productTextApply}>Áp dụng</Text>
+                </TouchableOpacity>
+            </ScrollView>
         </View>
     }
 

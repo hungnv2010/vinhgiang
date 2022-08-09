@@ -14,6 +14,7 @@ import {InvalidAccessToken} from '../errors';
 import messageService from '../services/messages';
 import { ApiService } from '../services';
 import { NumberFormat } from '../configs/Utils';
+import SelectLoadmore from '../components/SelectLoadmore';
 
 const OrderForm = (props) => {
     const {orderName, mode, goBack} = props;
@@ -33,6 +34,10 @@ const OrderForm = (props) => {
     };
 
     useEffect(() => {
+        updateCustomerList()
+    }, []);
+
+    const updateCustomerList = () => {
         setShowLoading(true)
         ApiService.getAllCustomer()
             .then(res => {
@@ -44,8 +49,7 @@ const OrderForm = (props) => {
                 console.error('get customer error', e);
                 setShowLoading(false);
             })
-        ;
-    }, []);
+    }
 
     const onSubmit = () => {
         if (order.order_line.length === 0) {
@@ -136,7 +140,7 @@ const OrderForm = (props) => {
                 </View>
                 <View style={Styles.viewInput}>
 
-                <Select
+                <SelectLoadmore
                     label={'Khách hàng'}
                     options={partnerList}
                     optionType={'array'}
@@ -144,7 +148,7 @@ const OrderForm = (props) => {
                     type={'text'}
                     current={order.partner_id}
                     reload={() => {
-                        // updateProductList(data.type_of_sale);
+                        updateCustomerList();
                     }}
                     onSelect={(item) => { selectPartner(item)}}
                     search/>
@@ -162,7 +166,7 @@ const OrderForm = (props) => {
                     onChange={(value) => updateField('date_order', value)}/>
 
                 <TextArea
-                    label={'Ghi ch'}
+                    label={'Ghi chú'}
                     onChangeText={(val) => updateField('note', val)}/>
 
                 <View style={Styles.sectionHeader}>

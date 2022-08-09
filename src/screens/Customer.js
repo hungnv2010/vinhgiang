@@ -74,7 +74,7 @@ const Customer = (props) => {
             )
 
         if (listFilter.length == 0) filterMore()
-        else if (listFilter.length < 5) {
+        else if (listFilter.length < 20) {
             setListCustomer(listFilter)
             filterMore()
         }

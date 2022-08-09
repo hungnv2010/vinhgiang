@@ -208,7 +208,7 @@ const ApiService = {
         //.then(res => res.data);
     },
     getProductAll: async () => {
-        return await get('product.product')
+        return await get('product.product', {limit: 3000})
     },
     getProducts: async (offset) => {
         return await get('product.product', {limit: 20, offset: offset})
@@ -220,7 +220,7 @@ const ApiService = {
         return await post('get_product_attach');
     },
     getAllCustomer: async () => {
-        return await get('res.partner', {'order': 'id desc', limit: 200});
+        return await get('res.partner', {'order': 'id desc', limit: 8000});
     },
     getCustomer: async (offset) => {
         return await get('res.partner', {'order': 'id desc', limit: 20, offset: offset});

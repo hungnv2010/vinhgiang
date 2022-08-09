@@ -95,7 +95,7 @@ const Purchase = (props) => {
             || (item.partner_id.name && ChangeAlias(item.partner_id.name.toLowerCase()).indexOf(ChangeAlias(textSearch.current)) > -1 )
         )
         if (listSearch.length == 0) filterMore()
-        else if (listSearch.length < 5) {
+        else if (listSearch.length < 20) {
             setData({...data, data: listSearch})
             filterMore()
         }

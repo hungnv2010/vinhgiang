@@ -94,7 +94,7 @@ const Sell = (props) => {
             || (item.partner_id.name && ChangeAlias(item.partner_id.name.toLowerCase()).indexOf(ChangeAlias(textSearch.current)) > -1 )
         )
         if (listSearch.length == 0) filterMore()
-        else if (listSearch.length < 5) {
+        else if (listSearch.length < 20) {
             setData({...data, data: listSearch})
             filterMore()
         }
@@ -155,36 +155,38 @@ const Sell = (props) => {
                 setFilterState({...filterState, show: false})
                 setData({...data, data: getListFilter()})}} 
                 style={Styles.productIconCloseModalCategori} name={"close"} color={Colors.gray_aaa} size={26} />
-            <Text style={Styles.sectionTitleSmall}>Lọc theo ngày tạo</Text>
+            <ScrollView>
+                <Text style={Styles.sectionTitleSmall}>Lọc theo ngày tạo</Text>
 
-            <View>
-                <DatePickerNull
-                        label={'    Từ ngày:'}
-                        date={filterState.startDate}
-                        onChange={(value) => {filterState.startDate = value}}/> 
-                <DatePickerNull
-                        label={'    Đến ngày:'}
-                        date={filterState.endDate}
-                        onChange={(value) => {filterState.endDate = value}}/> 
-            </View>
+                <View>
+                    <DatePickerNull
+                            label={'    Từ ngày:'}
+                            date={filterState.startDate}
+                            onChange={(value) => {filterState.startDate = value}}/> 
+                    <DatePickerNull
+                            label={'    Đến ngày:'}
+                            date={filterState.endDate}
+                            onChange={(value) => {filterState.endDate = value}}/> 
+                </View>
 
-            <Text style={Styles.sectionTitleSmall}>Lọc trạng thái đơn hàng</Text>
+                <Text style={Styles.sectionTitleSmall}>Lọc trạng thái đơn hàng</Text>
 
-            {
-                [ null, 'draft','sent' ,'sale'].map((state, index) => itemFilterState(state, index) )
-            }
+                {
+                    [ null, 'draft','sent' ,'sale'].map((state, index) => itemFilterState(state, index) )
+                }
+                
+                <Text style={Styles.sectionTitleSmall}>Lọc trạng thái vận chuyển</Text>
+
+                {
+                    [ null, 'no','to invoice'].map((invoice_status, index) => itemFilterInvoiceStatus(invoice_status, index) )
+                }
+                <TouchableOpacity onPress={() => {
+                    setFilterState({...filterState, show: false})
+                    setData({...data, data: getListFilter()})}} style={[Styles.productViewApply, { marginTop: 10, height: 50 }]}>
+                    <Text style={Styles.productTextApply}>Xong</Text>
+                </TouchableOpacity>
             
-            <Text style={Styles.sectionTitleSmall}>Lọc trạng thái vận chuyển</Text>
-
-            {
-                [ null, 'no','to invoice'].map((invoice_status, index) => itemFilterInvoiceStatus(invoice_status, index) )
-            }
-            <TouchableOpacity onPress={() => {
-                setFilterState({...filterState, show: false})
-                setData({...data, data: getListFilter()})}} style={[Styles.productViewApply, { marginTop: 25, height: 50 }]}>
-                <Text style={Styles.productTextApply}>Xong</Text>
-            </TouchableOpacity>
-        
+            </ScrollView>
         </View>
     }
 
