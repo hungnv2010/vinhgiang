@@ -25,7 +25,7 @@ const ProductList = (props) => {
                 onPress={() => onClickItem ? onClickItem(index, item): null}>
                 <View style={Styles.flexDirection}>
                     <View style={Styles.itemViewContent}>
-                        <Text style={Styles.textSize14}>{item.product_id.name}</Text>
+                        <Text style={Styles.textSize14}>{item.product_id.name ? item.product_id.name : ""}</Text>
 
                         <View style={{ flex: 1, flexDirection: "row", justifyContent:'space-between'}}>
                             {renderTextItem("Số lượng: ", NumberFormat(item.product_uom_qty))}
@@ -35,8 +35,8 @@ const ProductList = (props) => {
                         </View>
 
                         <View style={{ flex: 1, flexDirection: "row", justifyContent:'space-between'}}>
-                            {renderTextItem("Đơn giá: ", NumberFormat(item.price_unit) +"đ/"+ item.product_uom.name)}
-                            {renderTextItem("Tổng: ", NumberFormat(item.price_subtotal) + "đ")}
+                            {renderTextItem("Đơn giá: ", NumberFormat(item.subtotal_with_tax / item.product_uom_qty) +"đ/"+ (item.product_uom? item.product_uom.name :""))}
+                            {renderTextItem("Tổng: ", NumberFormat(item.subtotal_with_tax) + "đ")}
                         </View>
                     </View>
                 </View>

@@ -97,10 +97,10 @@ const OrderForm = (props) => {
         else
             order.order_line.push(productData);
 
-        order.amount_untaxed =  order.order_line.map(product =>  product.price_subtotal ? product.price_subtotal : 0)
+        order.amount_total_with_tax =  order.order_line.map(product =>  product.subtotal_with_tax ? product.subtotal_with_tax : 0)
             .reduce((prev, value) => value + prev)
-        order.amount_tax = order.amount_untaxed * 0.1
-        order.amount_total = order.amount_untaxed
+        // order.amount_tax = order.amount_untaxed * 0.1
+        // order.amount_total = order.amount_untaxed
 
         setOrder(order);
     };
@@ -195,16 +195,16 @@ const OrderForm = (props) => {
 
                     <View style={{ flex: 1, flexDirection: "row", justifyContent:"flex-end", paddingVertical:2, }}>
                         <View >
-                            <Text style={{ color: Colors.gray4, marginTop: 4, fonSize: 13 }}>Tạm tính trước thuế: </Text>
-                            <Text style={{ color: Colors.gray4, marginTop: 4, fonSize: 13 }}>Tạm tính thuế: </Text>
-                            <Text style={{ color: Colors.gray4, marginTop: 4, fonSize: 13 }}>Tạm tính sau thuế: </Text>
+                            <Text style={{ color: Colors.gray4, marginTop: 4, fonSize: 13 }}>Tạm tính tiền phải trả: </Text>
+                            {/* <Text style={{ color: Colors.gray4, marginTop: 4, fonSize: 13 }}>Tạm tính thuế: </Text>
+                            <Text style={{ color: Colors.gray4, marginTop: 4, fonSize: 13 }}>Tạm tính sau thuế: </Text> */}
                         </View>
 
                         <View style={{ flex: 0.05}}/>
                         <View style={{ alignItems:'flex-end', justifyContent:'center', marginEnd: 10}}>
-                            <Text style={{color: Colors.black, marginTop: 4, fontSize: 13 }}>{NumberFormat(order.amount_untaxed) + 'đ'}</Text>
-                            <Text style={{color: Colors.black, marginTop: 4, fontSize: 13 }}>{NumberFormat(order.amount_tax) + 'đ'}</Text>
-                            <Text style={{color: Colors.blue, marginTop: 4, fontSize: 13 }}>{NumberFormat(order.amount_total) + 'đ'}</Text>
+                            <Text style={{color: Colors.black, marginTop: 4, fontSize: 13 }}>{NumberFormat(order.amount_total_with_tax) + 'đ'}</Text>
+                            {/* <Text style={{color: Colors.black, marginTop: 4, fontSize: 13 }}>{NumberFormat(order.amount_tax) + 'đ'}</Text>
+                            <Text style={{color: Colors.blue, marginTop: 4, fontSize: 13 }}>{NumberFormat(order.amount_total) + 'đ'}</Text> */}
                         </View>
                             
                     </View>

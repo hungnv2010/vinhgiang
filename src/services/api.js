@@ -59,8 +59,6 @@ export const put = async (uri, data = {}) => {
                 throw new InvalidAccessToken(result.message);
             }
 
-            console.log('result.error ==> ', res);
-
             if (res.data.error && res.data.error.data) {
                 console.log('result.error ==> ', res.error);
 
@@ -304,6 +302,14 @@ const ApiService = {
     getUsers: async () => {
         return await get( 'res.users');
     }, 
+
+    getCoupons: async () => {
+        return await get( 'coupon.program');
+    }, 
+
+    applyPromotionById: async (data) => {
+        return await post( 'sale_order/apply_promotion_by_id', data);
+    },
 
 };
 

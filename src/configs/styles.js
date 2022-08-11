@@ -460,7 +460,7 @@ const Styles = StyleSheet.create({
     normalItem: {},
     filterInput: {
         color: Colors.black,
-        height: 36,
+        height: 38,
         borderWidth: 1,
         borderRadius: 10,
         marginHorizontal: 20,

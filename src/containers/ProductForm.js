@@ -43,6 +43,8 @@ const ProductForm = (props) => {
 
     const calculate = () => {
         data.price_subtotal = data.price_unit * data.product_uom_qty * (1 - data.discount/100) - data.x_discount_amount
+        let tax = 10
+        data.subtotal_with_tax = data.price_subtotal * (100 + tax) /100
         setData({...data});
     } 
 
@@ -196,7 +198,7 @@ const ProductForm = (props) => {
                         <Text style={Styles.formLabel}>
                             Tạm tính
                         </Text>
-                        <Text style={Styles.formText}>{NumberFormat(data.price_subtotal ? data.price_subtotal : 0)}</Text>
+                        <Text style={Styles.formText}>{NumberFormat(data.subtotal_with_tax ? data.subtotal_with_tax : 0)}</Text>
                     </View>
   
                     <Button

@@ -53,7 +53,7 @@ const SelectLoadmore = (props) => {
         const isFilter = search && showSearch && keyword.length > 1;
         if (_.isArray(options)) {
             if (isFilter) {
-                return options.filter(item => removeAccents(item.name).includes(removeAccents(keyword)))
+                return options.filter(item => removeAccents(item.name.toLowerCase()).includes(removeAccents(keyword).toLowerCase()))
                     .slice(start, offset.current)
             }
             return options.slice(start, offset.current);
