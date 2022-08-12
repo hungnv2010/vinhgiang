@@ -124,7 +124,7 @@ const Detail = (props) => {
     
         return <View style={Styles.productViewModalCategori}>
             <View style={{ width: "100%", flexDirection: "row", justifyContent: 'space-between', alignItems: 'center' }}>
-                <Text style={{ flex: 1, marginLeft: 10, textAlign: 'center', fontSize: 16, color: Colors.primary }}>Chọn nhân Viên Tiếp Thị</Text>
+                <Text style={{ flex: 1, marginLeft: 10, textAlign: 'center', fontSize: 16, color: Colors.primary }}>Chọn chương trình khuyến mại</Text>
                 <MaterialCommunityIcons onPress={() => { setShowModal(false) }} name={"close"} color={Colors.gray_aaa} size={26} />
             </View>
             <TextInput
@@ -206,7 +206,7 @@ const Detail = (props) => {
                     hideDeleteButton={true}
                     data={order.order_line}/>
 
-                <TouchableOpacity onPress={onOpenSelectCoupon} style={[Styles.detailCustomerViewTextInput, { padding: 0, flex: 1 }]}>
+                <TouchableOpacity onPress={onOpenSelectCoupon} style={[Styles.detailCustomerViewTextInput, { paddingHorizontal: 10, flex: 1 }]}>
                     <Text numberOfLines={1} ellipsizeMode="tail" pointerEvents="none" style={{ paddingLeft: 10 }}>{"Thêm chương trình khuyến mãi"}</Text>
                     <MaterialCommunityIcons onPress={() => { setShowModal(false) }} style={{}} name={"menu-down"} color={Colors.black} size={26} />
                 </TouchableOpacity>

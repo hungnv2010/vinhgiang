@@ -42,6 +42,7 @@ export default class ProductModel {
         }
 
         delete data.product_uom;
+        if(data.subtotal_with_tax) delete data.subtotal_with_tax
         return data;
     }
 
