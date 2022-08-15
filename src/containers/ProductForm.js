@@ -20,6 +20,8 @@ const ProductForm = (props) => {
     const [productList, setProductList] = useState([]);
     const listUnit = useRef([])
 
+    const offset = useRef(0)
+
     const updateField = (key, value) => {
         console.log('update', key, value);
         data[key] =  value
@@ -43,7 +45,7 @@ const ProductForm = (props) => {
 
     const calculate = () => {
         data.price_subtotal = data.price_unit * data.product_uom_qty * (1 - data.discount/100) - data.x_discount_amount
-        let tax = 10
+        let tax = 0
         data.subtotal_with_tax = data.price_subtotal * (100 + tax) /100
         setData({...data});
     } 
@@ -69,12 +71,22 @@ const ProductForm = (props) => {
         });
     };
 
-    const updateProductList = (filters = {}) => {
+    const updateProductList = () => {
         setLoading(true);
-        ApiService.getProductAll()
+        ApiService.getProductAll(offset.current)
             .then(res => {
-                console.log('receive product data', res);
-                setProductList(res.data);
+                if (res) {
+                    if(res.data.length == 0) {
+                        return;
+                    }
+                    if(offset.current == 0) {
+                        setProductList(res.data);
+                    } else {
+                        setProductList( [...productList, ...res.data])
+                    }
+                    // filterMore()
+                }
+                // console.log('receive product data', res);
                 setLoading(false);
             })
             .catch(e => {
@@ -85,19 +97,17 @@ const ProductForm = (props) => {
     };
 
     useEffect(() => {
-        setLoading(true);
-        ApiService.getProductAll()
-            .then(res => {
-                console.log('receive product data', res);
-                setProductList(res.data);
-                setLoading(false);
-            })
-            .catch(e => {
-                console.error('get product error', e);
-                setLoading(false);
-            })
-        ;
+        offset.current = 0
+        updateProductList()
     }, []);
+
+    useEffect(() => {
+        if(productList.length == 0) return;
+        offset.current += 400;
+        updateProductList()
+    }, [productList]);
+
+
 
     const submit = () => {
         const model = new ProductModel(data);

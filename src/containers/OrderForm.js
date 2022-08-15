@@ -22,8 +22,9 @@ const OrderForm = (props) => {
     const [showLoading, setShowLoading] = useState(false);
     const [showProductForm, setShowProductForm] = useState(false);
     const [order, setOrder] = useState(new OrderModel());
-    const [partnerList, setPartnerList] = useState({});
+    const [partnerList, setPartnerList] = useState([]);
     const productSelect = useRef({})
+    const offset = useRef(0)
 
     const updateField = (key, value) => {
         setOrder({...order, [key]: value});
@@ -34,15 +35,33 @@ const OrderForm = (props) => {
     };
 
     useEffect(() => {
+        console.log('useEffect h', offset.current);
+
+        offset.current = 0
         updateCustomerList()
     }, []);
 
+    useEffect(() => {
+        if(partnerList.length == 0) return;
+        offset.current += 400;
+        updateCustomerList()
+    }, [partnerList]);
+
     const updateCustomerList = () => {
         setShowLoading(true)
-        ApiService.getAllCustomer()
+        ApiService.getAllCustomer(offset.current)
             .then(res => {
+                if (res) {
+                    if(res.data.length == 0) {
+                        return;
+                    }
+                    if(offset.current == 0) {
+                        setPartnerList(res.data);
+                    } else {
+                        setPartnerList( [...partnerList, ...res.data])
+                    }
+                }
                 console.log("get customer ", res.data);
-                setPartnerList(res.data)
                 setShowLoading(false);
             })
             .catch(e => {
@@ -97,7 +116,7 @@ const OrderForm = (props) => {
         else
             order.order_line.push(productData);
 
-        order.amount_total_with_tax =  order.order_line.map(product =>  product.subtotal_with_tax ? product.subtotal_with_tax : 0)
+        order.amount_untaxed =  order.order_line.map(product =>  product.subtotal_with_tax ? product.subtotal_with_tax : 0)
             .reduce((prev, value) => value + prev)
         // order.amount_tax = order.amount_untaxed * 0.1
         // order.amount_total = order.amount_untaxed

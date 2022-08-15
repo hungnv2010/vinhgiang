@@ -64,16 +64,30 @@ const Product = (props) => {
     }
 
     const filterText = () => {
-        let listProductFilter = listAllData.current.filter(item => 
+        let listFilter = getListFilter()
+        let listProductFilter = listFilter.filter(item => 
                 (ChangeAlias(item.name).toLowerCase().indexOf(ChangeAlias(textSearch.current)) > -1) || (item.code && item.code.toLowerCase().indexOf(textSearch.current) > -1) 
                 || (item.lst_price  && `${item.lst_price}`.indexOf(textSearch.current) > -1)
             )
+           
         if (listProductFilter.length == 0) filterMore()
         else if (listProductFilter.length < 20) {
             setListProduct(listProductFilter)
             filterMore()
         }
         else setListProduct(listProductFilter)
+    }
+
+    const getListFilter = () => {
+        let categoriesChecked = listCategori.filter(elm => elm.checkGroup)
+        if(categoriesChecked && categoriesChecked.length == 0) return listAllData.current
+        let listProductFilter = []
+        listAllData.current.forEach(item => {
+            categoriesChecked.forEach(el => {
+                if (item.categ_id[0] == el.id) listProductFilter.push(item)
+            })
+        })
+        return listProductFilter
     }
 
     const filterMore = () => {
@@ -117,13 +131,7 @@ const Product = (props) => {
 
     const onClickApply = () => {
         setShowModal(!showModal)
-        let listProductFilter = []
-        listAllData.current.forEach(item => {
-            listCategori.map(el => {
-                if (el.checkGroup && item.categ_id[0] == el.id) listProductFilter.push(item)
-            })
-        })
-        setListProduct(listProductFilter)
+        filterText()
     }
 
     const renderCategori = () => {
