@@ -70,6 +70,7 @@ const Customer = (props) => {
                 || (item.country_id[1] && ChangeAlias(item.country_id[1]).indexOf(ChangeAlias(textSearch.current)) > -1)
                 || (item.district && ChangeAlias(item.district[1]).indexOf(ChangeAlias(textSearch.current)) > -1)
                 || (item.street && ChangeAlias(item.street).indexOf(ChangeAlias(textSearch.current)) > -1)
+                || (item.code_ch_vg && ChangeAlias(item.code_ch_vg).indexOf(ChangeAlias(textSearch.current)) > -1)
                 )
             )
 
@@ -112,7 +113,17 @@ const Customer = (props) => {
                             <MaterialCommunityIcons name={"account"} color={Colors.secondaryLight} size={70} />
                         </View>
                         <View style={{ flexDirection: 'column', justifyContent: 'space-around', flex: 1, padding: 5, marginLeft: 5}}>
-                            <Text style={Styles.textSize14}>{item.name}</Text>
+                            <View style={{flexDirection:"row", justifyContent: 'space-between'}}>
+
+                                <Text style={Styles.textSize14}>{item.name}</Text>
+
+                                {item.code_ch_vg ? <View style={{flexDirection: 'row', alignItems:'center'}}>
+                                    <MaterialCommunityIcons name={"barcode"} color={Colors.primaryLight} size={16} />
+                                    <Text style={{color: Colors.gray_aaa, fontSize: 12, marginLeft: 2}}>{item.code_ch_vg}</Text>
+                                </View>
+                                : null
+                                }
+                            </View>
 
                             <View style={{flexDirection:"row", justifyContent: 'space-between'}}>
                                 <View style={{flexDirection: 'row', alignItems:'center'}}>

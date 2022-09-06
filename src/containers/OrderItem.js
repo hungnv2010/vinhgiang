@@ -4,7 +4,7 @@ import {Text, TouchableOpacity, View} from 'react-native';
 import {Styles} from '../configs';
 import {NumberFormat} from '../configs/Utils'
 import {OrderListItem} from '../components';
-import {INVOICE_STATUS, STATE} from '../models/OrderModel';
+import {INVOICE_STATUS, SO_TYPE, STATE} from '../models/OrderModel';
 
 const OrderItem = (item, index, onClickItem) => {
     return (
@@ -22,6 +22,10 @@ const OrderItem = (item, index, onClickItem) => {
                     //type={'date'}
                     dd={'Nhân viên'}
                     dt={item.user_id.name}/>
+                <OrderListItem
+                    type={'text'}
+                    dd={'Loại đơn hàng'}
+                    dt={SO_TYPE[item.so_type]}/>
                 <OrderListItem
                     type={'text'}
                     dd={'Trạng thái'}

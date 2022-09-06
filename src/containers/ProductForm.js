@@ -13,7 +13,7 @@ import { NumberFormat } from '../configs/Utils';
 import SelectLoadmore from '../components/SelectLoadmore';
 
 const ProductForm = (props) => {
-    const {product, visible: isShow, onClose, onSubmit} = props;
+    const {product, visible: isShow, onClose, onSubmit, onDelete} = props;
     const [errors, setErrors] = useState([]);
     const [data, setData] = useState(product? product: new ProductModel());
     const [loading, setLoading] = useState(false);
@@ -120,6 +120,13 @@ const ProductForm = (props) => {
         }
     };
 
+    const pressDelete = () => {
+        if(onDelete){
+            onDelete()
+            onClose()
+        }
+    }
+
     return <Modal visible={isShow}>
         <Screen goBack={onClose}
                 header={product ? 'Sửa sản phẩm' : 'Thêm sản phẩm'}>
@@ -155,7 +162,8 @@ const ProductForm = (props) => {
                         loading={loading}
                         onSelect={(item) => selectItem(item)}
                         search
-                        isProduct/>
+                        isProduct
+                        keySearchs = {["code"]}/>
 
                     <View style={Styles.formItem}>
                         <Text style={Styles.formLabel}>
@@ -210,12 +218,22 @@ const ProductForm = (props) => {
                         </Text>
                         <Text style={Styles.formText}>{NumberFormat(data.subtotal_with_tax ? data.subtotal_with_tax : 0)}</Text>
                     </View>
+
+                    <View style ={{ flexDirection : "row"}}>
+
+                        {product ?
+                        <TouchableOpacity onPress={pressDelete} style={{ padding: 5, flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: Colors.red, borderRadius: 7, height: 40, margin: 10, marginTop: 10, height: 50 }}>
+                            <Text style={{color: Colors.white}}>Xoá sản phẩm</Text>
+                        </TouchableOpacity>
+                            : null
+                        }
   
-                    <Button
-                        title={product ? 'Sửa sản phẩm' : 'Thêm sản phẩm'.toUpperCase()}
-                        buttonStyle={Styles.button}
-                        containerStyle={[Styles.formTouchContent, Styles.buttonContainer]}
-                        onPress={submit}/>
+                        <TouchableOpacity onPress={submit} 
+                        style={{ padding: 5, flex: 1, alignItems: "center", justifyContent: "center", 
+                        backgroundColor: Colors.primary, borderRadius: 7, height: 40, margin: 10, marginTop: 10, height: 50 }}>
+                            <Text style={{color: Colors.white}}>{product ? 'Sửa sản phẩm' : 'Thêm sản phẩm'.toUpperCase()}</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </ScrollView>
         </Screen>

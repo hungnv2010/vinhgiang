@@ -7,8 +7,8 @@ import AsyncStorage from '@react-native-community/async-storage';
 import {restorePassword} from '../context/actions';
 
 const Login = () => {
-    const [username, setUsername] = React.useState('admin');
-    const [password, setPassword] = React.useState('admin');
+    const [username, setUsername] = React.useState('admin@gmail.com');
+    const [password, setPassword] = React.useState('admin999');
     const [savePassword, setSavePassword] = React.useState(false);
     const dispatch = useAuthDispatch();
     const state = useAuthState();

@@ -28,7 +28,7 @@ const removeAccents = (str) => {
 
 // options : list(object) bắt buộc có trường 'name' (hiển thị), 'valueKey' là trường duy nhất tương ứng với trường 'current' (giá trị mặc định)
 const SelectLoadmore = (props) => {
-    const {onSelect, options, current, label, required, valueKey, reload, loading, search, isProduct} = props;
+    const {onSelect, options, current, label, required, valueKey, reload, loading, search, isProduct, keySearchs} = props;
     const [showModal, setShowModal] = useState(false);
     const [showSearch, setShowSearch] = useState(false);
     const [keyword, setKeyword] = useState('');
@@ -53,7 +53,15 @@ const SelectLoadmore = (props) => {
         const isFilter = search && showSearch && keyword.length > 1;
         if (_.isArray(options)) {
             if (isFilter) {
-                return options.filter(item => removeAccents(item.name.toLowerCase()).includes(removeAccents(keyword).toLowerCase()))
+                return options.filter(item => {
+                    let show = removeAccents(item.name.toLowerCase()).includes(removeAccents(keyword).toLowerCase())
+                    if(!show && keySearchs && _.isArray(keySearchs)) {
+                        keySearchs.forEach(keySearch => {
+                            if(removeAccents(item[keySearch].toLowerCase()).includes(removeAccents(keyword).toLowerCase())) show = true
+                        })
+                    }
+                    return show
+                })
                     .slice(start, offset.current)
             }
             return options.slice(start, offset.current);

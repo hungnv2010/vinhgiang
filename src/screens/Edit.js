@@ -3,34 +3,23 @@ import {OrderForm, Screen} from '../containers';
 
 const Edit = (props) => {
     const {navigation, route} = props;
-    const product = route?.params?.data;
-    const title = 'Sửa đơn hàng / ' + product.name;
-    const [loading, setLoading] = useState(false);
+    const orderData = route?.params?.data;
+    const title = 'Sửa đơn hàng / ' + orderData.name;
 
-    /**
-     * Send update order api
-     * @param order {OrderModel}
-     */
-    const submit = (order) => {
-        setLoading(true);
-        order.Update(order)
-            .then(res => {
-                setLoading(false);
-                console.log('update order res', res);
-            })
-            .catch(e => {
-                setLoading(false);
-                console.log('update order error', e.message);
-            });
+    const goBack = () => {
+        if (route?.params?.goBack) {
+            route.params.goBack();
+        }
+        navigation.goBack();
     };
 
     return (
-        <Screen header={title} goBack={navigation.goBack}>
+        <Screen header={title} goBack={() => goBack()}>
             <OrderForm
                 mode={'edit'}
-                orderName={product.name}
-                onSubmit={submit}
-                loading={loading}
+                orderData={orderData}
+                orderName={orderData.name}
+                goBack = {goBack}
                 submitLabel={'Sửa đơn hàng'}/>
         </Screen>
     );

@@ -270,6 +270,25 @@ const CustomerDetail = (props) => {
             messageService.showError('Vui lòng nhập tên cửa hàng');
             return false
         }
+
+        let phoneNumber = customer.phone.replace( /^\D+/g, '');
+
+        if (phoneNumber.charAt(0) != '0' || phoneNumber.length < 9) {
+            messageService.showError('Số điện thoại phải bắt đầu bằng số 0 và nhiều hơn 9 chữ số');
+            return false
+        }
+
+        let missingAdress = ''
+
+        if (!provice) missingAdress += "tỉnh "
+        if (!district) missingAdress += "quận/huyện "
+        if (!wards) missingAdress += "xã/phương"
+
+        if (missingAdress) {
+            messageService.showError('Vui lòng điền đầy đủ thông tin: '+ missingAdress);
+            return false
+        }
+
         return true;
     }
 

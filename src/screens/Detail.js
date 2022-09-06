@@ -32,11 +32,9 @@ const Detail = (props) => {
     if(order.order_line) {
         order.amount_total_with_tax = 0
         order.order_line.forEach(product => {
-            if (product.tax_id) {
-            let tax = parseInt(product.tax_id.name.replace(/\D/g,''))
+            let tax = (product.tax_id && product.tax_id.name) ? parseInt(product.tax_id.name.replace(/\D/g,'')) : 0
             product.subtotal_with_tax = product.price_subtotal * (100 + tax) /100
             order.amount_total_with_tax += product.subtotal_with_tax
-            }
         })
     }
 

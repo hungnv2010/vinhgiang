@@ -21,6 +21,12 @@ export const STATE_PURCHASE = {
     'purchase': 'Đơn bán hàng',
 };
 
+export const SO_TYPE = {
+    'hpc': 'Đơn HPC',
+    'sum': 'Đơn tổng hợp',
+    'ice': 'Đơn đông lạnh',
+}
+
 export default class OrderModel {
 
     date_order = moment();
@@ -78,19 +84,19 @@ export default class OrderModel {
         return ApiService.createOrder(data);
     }
 
-    Update() {
+    Update(id) {
         const data = this.getRequestData();
-        data.order_name = this.name;
+        data.id = id;
         return ApiService.editOrder(data);
     }
 
     getRequestData() {
         return {
             date_order: this.getDate(this.date_order),
+            so_type: this.so_type,
             note: this.note, // dieu khoan
             partner_id: this.partner_id,
             order_line: this.order_line.map(product => product.getRequestData()),
-            phone: this.phone
         };
     }
 

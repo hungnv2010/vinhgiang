@@ -6,7 +6,7 @@ import {Button, CheckBox} from 'react-native-elements';
 import {OrderItem} from '../containers';
 import {OrderModel} from '../models';
 import {logout, useAuthDispatch} from '../context';
-import {Create, Detail} from './index';
+import {Create, Detail, Edit} from './index';
 import {InvalidAccessToken} from '../errors';
 import Pagination from '../components/Pagination';
 import messageService from '../services/messages';
@@ -45,7 +45,10 @@ const Sell = (props) => {
     };
 
     const onClickItem = (item) => {
-        navigation.navigate(Detail.route, {data: item, mode: 'view',  goBack: refresh,});
+        if(item.state == 'draft')
+            navigation.navigate(Edit.route, {data: item, goBack: refresh, })
+        else
+            navigation.navigate(Detail.route, {data: item, mode: 'view',  goBack: refresh,});
     }
 
     const getData = () => {

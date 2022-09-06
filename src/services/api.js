@@ -198,8 +198,8 @@ const ApiService = {
         return await post('sale_order/confirm', {sale_order_id: id})
     },
     editOrder: async (data) => {
-        console.log('update order api', JSON.stringify(data));
-        return await post('edit_request_order', data);
+        console.log('edit order api', JSON.stringify(data));
+        return await put('sale.order', data);
     },
     getProductCategory: async () => {
         return await get('product.category')

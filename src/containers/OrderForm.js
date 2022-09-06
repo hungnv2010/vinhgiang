@@ -1,30 +1,35 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {PropTypes} from '../base';
-import {ScrollView, TouchableOpacity, View} from 'react-native';
+import {ScrollView, TextInput, TouchableOpacity, View} from 'react-native';
 import {Colors, Styles} from '../configs';
 import {Button, Text} from 'react-native-elements';
-import Select from '../components/Select';
-import {OrderModel} from '../models';
+import moment from 'moment';
+import {OrderModel, ProductModel} from '../models';
 import {DatePicker, FormInput, TextArea} from '../components';
 import ProductForm from './ProductForm';
 import ProductList from './ProductList';
-import {Loading} from './index';
 import {logout, useAuthDispatch} from '../context';
-import {InvalidAccessToken} from '../errors';
 import messageService from '../services/messages';
 import { ApiService } from '../services';
 import { NumberFormat } from '../configs/Utils';
 import SelectLoadmore from '../components/SelectLoadmore';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import FSModal from '../components/FSModal';
+import { SO_TYPE } from '../models/OrderModel';
+import Select from '../components/Select';
 
 const OrderForm = (props) => {
-    const {orderName, mode, goBack} = props;
+    const {orderData, orderName, mode, goBack} = props;
     const [error, setError] = useState([]);
     const [showLoading, setShowLoading] = useState(false);
     const [showProductForm, setShowProductForm] = useState(false);
     const [order, setOrder] = useState(new OrderModel());
     const [partnerList, setPartnerList] = useState([]);
+    const [coupons, setCoupons] = useState([]);
+    const [showModal, setShowModal] = useState(false);
     const productSelect = useRef({})
     const offset = useRef(0)
+    const listDataCoupon = useRef([]);
 
     const updateField = (key, value) => {
         setOrder({...order, [key]: value});
@@ -34,10 +39,12 @@ const OrderForm = (props) => {
         setOrder({...order, 'partner_name': item.name, 'partner_id': item.id});
     };
 
-    useEffect(() => {
-        console.log('useEffect h', offset.current);
+    const dispatch = useAuthDispatch();
 
+    useEffect(() => {
         offset.current = 0
+        if (orderData) setOrderData(orderData)
+        getCoupons()
         updateCustomerList()
     }, []);
 
@@ -46,6 +53,23 @@ const OrderForm = (props) => {
         offset.current += 400;
         updateCustomerList()
     }, [partnerList]);
+
+    const setOrderData = (data) => { 
+        if (data.date_order) data.date_order = moment(data.date_order);
+        data.partner_name = data.partner_id.name;
+        data.partner_id = data.partner_id.id;
+        // delete data.partner_id;
+        data.order_line = data.order_line.map(product => {
+            let tax = (product.tax_id && product.tax_id.name) ? parseInt(product.tax_id.name.replace(/\D/g,'')) : 0
+            product.subtotal_with_tax = product.price_subtotal * (100 + tax) /100
+            return new ProductModel(product)
+        })
+        data.amount_total_with_tax =  data.order_line.map(product =>  product.subtotal_with_tax ? product.subtotal_with_tax : 0)
+        .reduce((prev, value) => value + prev)
+
+        console.log("data ",data);
+        setOrder(data);
+    }
 
     const updateCustomerList = () => {
         setShowLoading(true)
@@ -70,7 +94,50 @@ const OrderForm = (props) => {
             })
     }
 
-    const onSubmit = () => {
+    const getCoupons = () => {
+        ApiService.getCoupons()
+            .then(res => {
+                console.log('getCoupons', res);
+                listDataCoupon.current = res.data;
+            })
+            .catch(e => {
+                console.error('getCoupons error', e);
+            })
+        ;
+    };
+
+    const onOpenSelectCoupon = () => {
+        setCoupons([...listDataCoupon.current]);
+        
+        setShowModal(true);
+    }
+
+    const filterSelectCoupon = (filterKey) => {
+        setCoupons([...listDataCoupon.current].filter(value => ChangeAlias(value.name).toLowerCase().includes(filterKey)));
+    }
+
+    const onClickCoupon = (item) => {
+        let body = {
+            sale_order_id: order.id,
+            promotion_program_id: item.id
+        }
+        console.log('applyPromotionById start', order, body);
+        ApiService.applyPromotionById(body)
+            .then(res => {
+                console.log('applyPromotionById', res);
+                messageService.showSuccess("Thêm chương trình khuyến mại thành công")
+                setShowModal(false)
+                goBack()
+            })
+            .catch(e => {
+                messageService.showError("Lỗi thêm chương trình khuyến mại \n" + e)
+                console.error('applyPromotionById error', e);
+                setShowModal(false)
+            })
+        ;
+    }
+
+    const onCreate = () => {
         if (order.order_line.length === 0) {
             messageService.showError('Chưa có sản phẩm nào');
             return;
@@ -82,8 +149,9 @@ const OrderForm = (props) => {
                 console.log("order.Create ",res);
                 messageService.showSuccess(`Lưu đơn thành công`);
                 let data = res.result ? JSON.parse(res.result).data : []
-                if(data && data[0] && data[0].id)
+                if(data && data[0] && data[0].id){
                     setOrder({...order, id: data[0].id})
+                }
                 else
                     goBack()
             })
@@ -94,6 +162,29 @@ const OrderForm = (props) => {
             });
     
     };
+
+    const onSave = () => {
+        if (order.order_line.length === 0) {
+            messageService.showError('Chưa có sản phẩm nào');
+            return;
+        }
+        const data = new OrderModel(order);
+        console.log("onSave data ", data);
+        setShowLoading(true);
+        data.Update(order.id)
+            .then(res => {
+                console.log("order.Update ",res);
+                messageService.showSuccess(`Lưu đơn thành công`);
+                goBack()
+            })
+            .catch(err => {
+                setShowLoading(false);
+                messageService.showError(`Có lỗi trong quá trình xử lý \n ${err}`);
+                console.log("confirmImportInPicking err ", err);
+            });
+    
+    };
+
 
     const onConfirm = () => {
         ApiService.confirmOrder(order.id)
@@ -116,7 +207,7 @@ const OrderForm = (props) => {
         else
             order.order_line.push(productData);
 
-        order.amount_untaxed =  order.order_line.map(product =>  product.subtotal_with_tax ? product.subtotal_with_tax : 0)
+        order.amount_total_with_tax =  order.order_line.map(product =>  product.subtotal_with_tax ? product.subtotal_with_tax : 0)
             .reduce((prev, value) => value + prev)
         // order.amount_tax = order.amount_untaxed * 0.1
         // order.amount_total = order.amount_untaxed
@@ -124,24 +215,41 @@ const OrderForm = (props) => {
         setOrder(order);
     };
 
-    const dispatch = useAuthDispatch();
-    useEffect(() => {
-        if (mode === 'edit' && orderName) {
-            OrderModel.getDetail(orderName)
-                .then(res => {
-                    setOrder(res);
-                }).catch(e => {
-                    if (InvalidAccessToken.compare(e)) {
-                        logout(dispatch)
-                            .catch(err => console.log('log out error', err));
-                    }
-                },
-            );
-        }
-    }, [dispatch, mode, orderName]);
+    const deleteProduct = () => {
+        if(productSelect.current.index >= 0)
+        order.order_line.splice(productSelect.current.index, 1);
 
-    if (mode === 'edit' && orderName && !order.name) {
-        return <Loading/>;
+        order.amount_total_with_tax =  order.order_line.map(product =>  product.subtotal_with_tax ? product.subtotal_with_tax : 0)
+            .reduce((prev, value) => value + prev)
+    }
+
+    const renderModal = () => {
+    
+        return <View style={Styles.productViewModalCategori}>
+            <View style={{ width: "100%", flexDirection: "row", justifyContent: 'space-between', alignItems: 'center' }}>
+                <Text style={{ flex: 1, marginLeft: 10, textAlign: 'center', fontSize: 16, color: Colors.primary }}>Chọn chương trình khuyến mại</Text>
+                <MaterialCommunityIcons onPress={() => { setShowModal(false) }} name={"close"} color={Colors.gray_aaa} size={26} />
+            </View>
+            <TextInput
+                paddingLeft={10}
+                placeholder='Tìm kiếm...'
+                autoFocus={true}
+                onChangeText={(val) => {
+                    filterSelectCoupon(ChangeAlias(val).toLowerCase())
+                }}
+                style={{ color: Colors.black, height: 36, borderWidth: 1, borderRadius: 10, marginHorizontal: 10, marginVertical: 5, borderColor: Colors.primary, }} />
+            <ScrollView>
+                {
+                    coupons.map(item => {
+                        return <TouchableOpacity onPress={() => onClickCoupon(item)} style={[Styles.productViewApply, { marginVertical: 10, height: 50, marginBottom: 10 }]}>
+                            <Text style={Styles.productTextApply}>{item.name}</Text>
+                        </TouchableOpacity>
+                    })
+                }
+
+            </ScrollView>
+        </View>
+
     }
 
     return <>
@@ -172,17 +280,23 @@ const OrderForm = (props) => {
                     onSelect={(item) => { selectPartner(item)}}
                     search/>
                 </View>
-{/* 
-                <FormInput
-                        keyboardType={'numeric'}
-                        label={'Số điện thoại'}
-                        value={`${order.phone}`}
-                        onChangeText={(val) => updateField('phone', val)}/> */}
 
                 <DatePicker
                     label={'Hạn chốt đặt'}
                     date={order.date_order}
                     onChange={(value) => updateField('date_order', value)}/>
+
+                <Select
+                    label={'Loại đơn hàng'}
+                    options={SO_TYPE}
+                    valueKey={'value'}
+                    type={'text'}
+                    current={order.so_type}
+                    onSelect={(item) => { 
+                        console.log(item);
+                        setOrder({...order, so_type: item.value})
+                    }}
+                    />
 
                 <TextArea
                     label={'Ghi chú'}
@@ -206,7 +320,6 @@ const OrderForm = (props) => {
                 <ProductList
                     onClickItem={(index, item) => {
                         productSelect.current = {index: index, product: item}
-                        console.log("add ProductList ", productSelect.current);
                         setShowProductForm(true)
                     }}
                 
@@ -228,26 +341,43 @@ const OrderForm = (props) => {
                             
                     </View>
 
+                <View style={{height: 50}}>
+                    {order.id ? 
+                        <TouchableOpacity onPress={onOpenSelectCoupon} style={[Styles.detailCustomerViewTextInput, { paddingHorizontal: 10, flex: 1 }]}>
+                            <Text numberOfLines={1} ellipsizeMode="tail" pointerEvents="none" style={{ paddingLeft: 10 }}>{"Thêm chương trình khuyến mãi"}</Text>
+                            <MaterialCommunityIcons onPress={() => { setShowModal(false) }} style={{}} name={"menu-down"} color={Colors.black} size={26} />
+                        </TouchableOpacity>
+                        : null 
+                    }
+                </View>
+
                 <View style ={{ flexDirection : "row"}}>
 
-                    <TouchableOpacity onPress={() => onSubmit()} style={{ padding: 5, flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: Colors.primary, borderRadius: 7, height: 40, margin: 10, marginTop: 10, height: 50 }}>
-                        <Text style={{color: Colors.white}}>Lưu</Text>
+                    <TouchableOpacity onPress={order.id? onSave : onCreate} style={{ padding: 5, flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: Colors.primary, borderRadius: 7, height: 40, margin: 10, marginTop: 10, height: 50 }}>
+                        <Text style={{color: Colors.white}}>{order.id? 'Lưu' : 'Tạo'}</Text>
                     </TouchableOpacity>
 
                     { order.id?
                     <TouchableOpacity onPress={()=> onConfirm()} style={{ padding: 5, flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: Colors.primary, borderRadius: 7, height: 40, margin: 10, marginTop: 10, height: 50 }}>
                         <Text style={{color: Colors.white}}>Chốt đơn</Text>
                     </TouchableOpacity>
-                    : null
+                    :   
+                    null
                     }
                 </View>
+
             </View>
         </ScrollView>
+
         <ProductForm
             product={productSelect.current.product}
             visible={showProductForm}
             onSubmit={addProduct}
+            onDelete={deleteProduct}
             onClose={() => setShowProductForm(false)}/>
+
+        <FSModal visible={showModal} children={renderModal()} />
+
     </>;
 };
 
