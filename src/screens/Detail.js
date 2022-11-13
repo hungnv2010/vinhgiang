@@ -16,7 +16,6 @@ import {INVOICE_STATUS, STATE} from '../models/OrderModel';
 import { ApiService } from '../services';
 import { TouchableOpacity } from 'react-native';
 import messageService from '../services/messages';
-import SelectLoadmore from '../components/SelectLoadmore';
 import FSModal from '../components/FSModal';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 

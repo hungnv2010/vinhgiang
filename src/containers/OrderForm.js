@@ -12,11 +12,12 @@ import {logout, useAuthDispatch} from '../context';
 import messageService from '../services/messages';
 import { ApiService } from '../services';
 import { NumberFormat } from '../configs/Utils';
-import SelectLoadmore from '../components/SelectLoadmore';
+import SelectLoadmore, { TYPE } from '../components/SelectLoadmore';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FSModal from '../components/FSModal';
 import { SO_TYPE } from '../models/OrderModel';
 import Select from '../components/Select';
+import _ from 'lodash';
 
 const OrderForm = (props) => {
     const {orderData, orderName, mode, goBack} = props;
@@ -30,6 +31,7 @@ const OrderForm = (props) => {
     const productSelect = useRef({})
     const offset = useRef(0)
     const listDataCoupon = useRef([]);
+    const listDataPriceList = useRef([]);
 
     const updateField = (key, value) => {
         setOrder({...order, [key]: value});
@@ -44,6 +46,7 @@ const OrderForm = (props) => {
     useEffect(() => {
         offset.current = 0
         if (orderData) setOrderData(orderData)
+        getPriceList()
         getCoupons()
         updateCustomerList()
     }, []);
@@ -65,7 +68,7 @@ const OrderForm = (props) => {
             return new ProductModel(product)
         })
         data.amount_total_with_tax =  data.order_line.map(product =>  product.subtotal_with_tax ? product.subtotal_with_tax : 0)
-        .reduce((prev, value) => value + prev)
+        .reduce((prev, value) => value + prev, 0)
 
         console.log("data ",data);
         setOrder(data);
@@ -102,6 +105,21 @@ const OrderForm = (props) => {
             })
             .catch(e => {
                 console.error('getCoupons error', e);
+            })
+        ;
+    };
+
+    const getPriceList = () => {
+        ApiService.getPriceList()
+            .then(res => {
+                console.log('getPriceList', res);
+                if(_.isArray(res.data)) {
+                    let currentPriceLists = res.data.filter((priceList) => priceList.default_on_mobile)
+                    if(currentPriceLists && currentPriceLists.length > 0) listDataPriceList.current = currentPriceLists[0];
+                }
+            })
+            .catch(e => {
+                console.error('getPriceList error', e);
             })
         ;
     };
@@ -208,7 +226,7 @@ const OrderForm = (props) => {
             order.order_line.push(productData);
 
         order.amount_total_with_tax =  order.order_line.map(product =>  product.subtotal_with_tax ? product.subtotal_with_tax : 0)
-            .reduce((prev, value) => value + prev)
+            .reduce((prev, value) => value + prev, 0)
         // order.amount_tax = order.amount_untaxed * 0.1
         // order.amount_total = order.amount_untaxed
 
@@ -220,7 +238,7 @@ const OrderForm = (props) => {
         order.order_line.splice(productSelect.current.index, 1);
 
         order.amount_total_with_tax =  order.order_line.map(product =>  product.subtotal_with_tax ? product.subtotal_with_tax : 0)
-            .reduce((prev, value) => value + prev)
+            .reduce((prev, value) => value + prev, 0)
     }
 
     const renderModal = () => {
@@ -277,7 +295,9 @@ const OrderForm = (props) => {
                     reload={() => {
                         updateCustomerList();
                     }}
+                    modelType= {TYPE.CUSTOMER}
                     onSelect={(item) => { selectPartner(item)}}
+                    keySearchs = {["code_ch_ncc1", "street"]}
                     search/>
                 </View>
 
@@ -371,6 +391,7 @@ const OrderForm = (props) => {
 
         <ProductForm
             product={productSelect.current.product}
+            priceList ={listDataPriceList.current.item_ids ? listDataPriceList.current.item_ids : []}
             visible={showProductForm}
             onSubmit={addProduct}
             onDelete={deleteProduct}

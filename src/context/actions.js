@@ -12,7 +12,8 @@ export const loginUser = async (dispatch, loginPayload) => {
             dispatch({type: LOGIN_SUCCESS, payload: {token: res.access_token, user: username}});
             await AsyncStorage.setItem('token', res.access_token);
             await AsyncStorage.setItem('userId', `${res.uid}`);
-            await AsyncStorage.setItem('currentUser', username);
+            await AsyncStorage.setItem('currentUser', savePassword ? username : '');
+            await AsyncStorage.setItem('currentPassword', savePassword ? password : '');
             if (savePassword) {
                 await AsyncStorage.setItem('save_password', 'true');
             }
@@ -31,19 +32,19 @@ export const loginUser = async (dispatch, loginPayload) => {
     }
 };
 
-export const restorePassword = async (dispatch) => {
-    const user = await AsyncStorage.getItem('currentUser');
-    const token = await AsyncStorage.getItem('token');
-    if (user && token) {
-        dispatch({type: LOGIN_SUCCESS, payload: {token, user}});
+export const restorePassword = async () => {
+    const username = await AsyncStorage.getItem('currentUser');
+    const password = await AsyncStorage.getItem('currentPassword');
+    if (username && password) {
+        return {username: username, password: password};
     } else {
-        await AsyncStorage.removeItem('save_password');
+        return {username: '', password: ''};
     }
 };
 
 export const logout = async (dispatch) => {
     dispatch({type: LOGOUT});
     await AsyncStorage.removeItem('token');
-    await AsyncStorage.removeItem('userId');
-    await AsyncStorage.removeItem('currentUser');
+    // await AsyncStorage.removeItem('userId');
+    // await AsyncStorage.removeItem('currentUser');
 };

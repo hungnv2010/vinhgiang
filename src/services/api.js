@@ -299,8 +299,8 @@ const ApiService = {
         return await post( 'stock_picking/confirm', data);
     },
 
-    getUsers: async () => {
-        return await get( 'res.users');
+    getUsers: async (offset) => {
+        return await get( 'res.users', {limit: 400, offset: offset});
     }, 
 
     getCoupons: async () => {
@@ -310,6 +310,10 @@ const ApiService = {
     applyPromotionById: async (data) => {
         return await post( 'sale_order/apply_promotion_by_id', data);
     },
+
+    getPriceList: async () => {
+        return await get( 'product.pricelist');
+    }, 
 
 };
 

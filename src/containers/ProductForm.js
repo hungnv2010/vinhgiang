@@ -10,10 +10,11 @@ import {Button} from 'react-native-elements';
 import { ApiService } from '../services';
 import messageService from '../services/messages';
 import { NumberFormat } from '../configs/Utils';
-import SelectLoadmore from '../components/SelectLoadmore';
+import SelectLoadmore, { TYPE } from '../components/SelectLoadmore';
+import FormText from '../components/FormText';
 
 const ProductForm = (props) => {
-    const {product, visible: isShow, onClose, onSubmit, onDelete} = props;
+    const {product, priceList, visible: isShow, onClose, onSubmit, onDelete} = props;
     const [errors, setErrors] = useState([]);
     const [data, setData] = useState(product? product: new ProductModel());
     const [loading, setLoading] = useState(false);
@@ -43,7 +44,7 @@ const ProductForm = (props) => {
             updateField(key, Number(value))
     };
 
-    const calculate = () => {
+    const calculate = () => {        
         data.price_subtotal = data.price_unit * data.product_uom_qty * (1 - data.discount/100) - data.x_discount_amount
         let tax = 0
         data.subtotal_with_tax = data.price_subtotal * (100 + tax) /100
@@ -60,11 +61,15 @@ const ProductForm = (props) => {
 
     const selectItem = (item) => {
         listUnit.current = [{id: item.uom_id[0], name: item.uom_id[1]}, {id: item.uom_po_id[0], name: item.uom_po_id[1]}]
+
+        let priceFilter = priceList.filter((price) =>  price.product_id && price.product_id[0] == item.id)
+        let priceItem = priceFilter.length > 0 ? priceFilter[0] : {}
+
         setData({
             name: item.display_name, // mo ta
             product_id: {id: item.id, name: item.display_name},
             product_uom_qty: 0,
-            discount: 0,
+            discount: priceItem.compute_price == 'percentage' ? priceItem.percent_price : 0,
             product_uom: {id: item.uom_id[0], name: item.uom_id[1]},
             price_unit: item.list_price,
             x_discount_amount: 0,
@@ -151,7 +156,7 @@ const ProductForm = (props) => {
 
                     <SelectLoadmore
                         label={'Sản phẩm'}
-                        options={productList}
+                        options={productList.filter(product => product.qty_available && product.qty_available > 0)}
                         optionType={'array'}
                         valueKey={'id'}
                         type={'text'}
@@ -162,7 +167,7 @@ const ProductForm = (props) => {
                         loading={loading}
                         onSelect={(item) => selectItem(item)}
                         search
-                        isProduct
+                        modelType= {TYPE.PRODUCT}
                         keySearchs = {["code"]}/>
 
                     <View style={Styles.formItem}>
@@ -178,21 +183,25 @@ const ProductForm = (props) => {
                         </View>
                     </View>
 
-                    <FormInput
-                        keyboardType={'numeric'}
-                        label={'Đơn giá'}
-                        value={`${data.price_unit}`}
-                        onChangeText={(val) => updateFieldFloat('price_unit', val)}/>
-                        
-                    <Select
+                    <FormText
                         label={'Đơn vị tính'}
+                        value={`${data.product_uom.name}`}/>
+
+                    {/* <Select
+                        label={'Đơn vị tínhj'}
                         options={listUnit.current}
                         optionType={'array'}
                         valueKey={'id'}
                         type={'text'}
                         current={data.product_uom.id}
                         loading={loading}
-                        onSelect={(item) => updateUnit(item)}/>
+                        onSelect={(item) => updateUnit(item)}/> */}
+
+                    <FormInput
+                         keyboardType={'numeric'}
+                         label={'Đơn giá'}
+                         value={`${data.price_unit}`}
+                         onChangeText={(val) => updateFieldFloat('price_unit', val)}/>
 
                     <FormInput
                         keyboardType={'numeric'}

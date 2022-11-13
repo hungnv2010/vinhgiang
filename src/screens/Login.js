@@ -7,23 +7,30 @@ import AsyncStorage from '@react-native-community/async-storage';
 import {restorePassword} from '../context/actions';
 
 const Login = () => {
-    const [username, setUsername] = React.useState('admin@gmail.com');
-    const [password, setPassword] = React.useState('admin999');
+    const [username, setUsername] = React.useState('');
+    const [password, setPassword] = React.useState('');
     const [savePassword, setSavePassword] = React.useState(false);
     const dispatch = useAuthDispatch();
     const state = useAuthState();
 
     useEffect(() => {
+        console.log('restore password');
+
         AsyncStorage.getItem('save_password')
             .then(async res => {
+                console.log('restore password ', res);
+
                 if (res === 'true') {
-                    await restorePassword(dispatch);
+                    let {username, password} = await restorePassword();
+                    console.log('restore password ', username, password);
+                    setUsername(username);
+                    setPassword(password);
                 }
             })
             .catch(e => {
                 console.log('restore password error', e);
             });
-    }, [dispatch]);
+    }, []);
 
     const handleLogin = async (evt) => {
         evt.preventDefault();
@@ -77,12 +84,12 @@ const Login = () => {
                             onSubmitEditing={handleLogin}
                             onChangeText={val => setPassword(val)}/>
 
-                        {/* <CheckBox
+                        <CheckBox
                             containerStyle={Styles.checkBoxContainer}
                             textStyle={Styles.checkBox}
                             checked={savePassword}
                             onPress={() => setSavePassword(!savePassword)}
-                            title={'Nhớ mật khẩu'}/> */}
+                            title={'Nhớ mật khẩu'}/>
 
                         <Button
                             type={'solid'}

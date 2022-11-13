@@ -59,6 +59,7 @@ const CustomerDetail = (props) => {
     const typeModal = useRef(0);
     const listDataProvice = useRef([]);
     const listDataUsers = useRef([]);
+    const offset = useRef(0);
 
     useEffect(() => {
         getListImage();
@@ -165,14 +166,27 @@ const CustomerDetail = (props) => {
     }
 
     const getDataUsers = async () => {
-        let getUsers = await ApiService.getUsers()
-        if (getUsers.data && getUsers.data.length > 0) {
-            listDataUsers.current = getUsers.data
-            setSalesmanIds([...salesmanIds])
-        }
-        console.log("getDataUsers ", listDataUsers.current);
-    }
+        ApiService.getUsers(offset.current)
+            .then(res => {
+                if (res) {
+                    if(res.data.length == 0) {
+                        return;
+                    }
+                    if(offset.current == 0) {
+                        listDataUsers.current  = res.data;
+                    } else {
+                        listDataUsers.current = [...listDataUsers.current, ...res.data];
+                    }
+                }
+                offset.current += 400;
+                getDataUsers()
+                console.log("getDataUsers ", res.data);
+            })
+            .catch(e => {
+                console.error('getDataUsers error', e);
+            })
 
+    }
 
     const getPosition = async () => {
         const hasPermission = await hasLocationPermission();
@@ -208,6 +222,8 @@ const CustomerDetail = (props) => {
             return;
         const userIdString = await AsyncStorage.getItem('userId');
         const userId = parseInt(userIdString);
+        let salesmanIds = salesmanIds ?? [userId]
+        salesmanIds = salesmanIds.length > 0 ? salesmanIds : [userId]
         let body = {
             "user_id": (customer.user_id && customer.user_id[0])? customer.user_id[0] : userId,
             "phone": customer.phone,
@@ -216,7 +232,7 @@ const CustomerDetail = (props) => {
             "ward_id": wards != "" ? wards.id : null,
             "state_id": district != "" ? district.id : null,
             "country_id": provice != "" ? provice.id : null,
-            "salesman_ids": salesmanIds ?? [],
+            "salesman_ids": salesmanIds,
             "vehicle_route": 1,
             "name_store": customer.name_store ? customer.name_store : "",
             "code_ch_ncc1": customer.code_ch_ncc1 ? customer.code_ch_ncc1 : "", //"Ma cua hang ncc1",
@@ -485,30 +501,54 @@ const CustomerDetail = (props) => {
     return (
         <Screen header={title} goBack={() => goBack()}>
             <ScrollView>
-                <View style={Styles.detailCustomerViewTextInput}>
-                    <TextInput value={customer.name} placeholder='Tên khách hàng' style={Styles.detailCustomerInput} onChangeText={(text) => setCustomer({ ...customer, name: text })} />
+                <View style={Styles.detailCustomerItem}>
+                    <Text style={Styles.detailCustomerLabel}>Tên khách hàng</Text>
+                    <View style={{flex:1, flexDirection:"row"}}>
+                        <TextInput editable={!customer.id}
+                        value={customer.name} style={Styles.detailCustomerInput} onChangeText={(text) => setCustomer({ ...customer, name: text })} />
+                    </View>
                 </View>
-                <View style={Styles.detailCustomerViewTextInput}>
-                    <TextInput keyboardType='numeric' value={customer.phone ? `${customer.phone}` : ''} placeholder='Số điện thoại' style={Styles.detailCustomerInput} onChangeText={(text) => setCustomer({ ...customer, phone: text })} />
+                <View style={Styles.detailCustomerItem}>
+                    <Text style={Styles.detailCustomerLabel}>Số điện thoại</Text>
+                    <View style={{flex:1, flexDirection:"row"}}>
+                        <TextInput editable={!customer.id}
+                            keyboardType='numeric' value={customer.phone ? `${customer.phone}` : ''} style={Styles.detailCustomerInput} onChangeText={(text) => setCustomer({ ...customer, phone: text })} />
+                    </View>
                 </View>
-
+ 
                 {/* <View style={Styles.detailCustomerViewTextInput}>
                     <TextInput value={customer.street2} placeholder='Địa chỉ 2' style={Styles.detailCustomerInput} onChangeText={(text) => setCustomer({ ...customer, street2: text })} />
                 </View> */}
-                <View style={Styles.detailCustomerViewTextInput}>
-                    <TextInput value={customer.name_store} placeholder='Tên cửa hàng' style={Styles.detailCustomerInput} onChangeText={(text) => setCustomer({ ...customer, name_store: text })} />
+                 <View style={Styles.detailCustomerItem}>
+                    <Text style={Styles.detailCustomerLabel}>Tên cửa hàng</Text>
+                    <View style={{flex:1, flexDirection:"row"}}>
+                        <TextInput editable={!customer.id}
+                            value={customer.name_store} style={Styles.detailCustomerInput} onChangeText={(text) => setCustomer({ ...customer, name_store: text })} />
+                    </View>
                 </View>
                 {/* <View style={Styles.detailCustomerViewTextInput}>
                     <TextInput value={customer.code_ch_vg} placeholder='Mã cửa hàng Vĩnh Giang' style={Styles.detailCustomerInput} onChangeText={(text) => setCustomer({ ...customer, code_ch_vg: text })} />
                 </View> */}
-                <View style={Styles.detailCustomerViewTextInput}>
-                    <TextInput value={customer.code_ch_ncc1} placeholder='Mã cửa hàng nhà cung cấp 1' style={Styles.detailCustomerInput} onChangeText={(text) => setCustomer({ ...customer, code_ch_ncc1: text })} />
+                <View style={Styles.detailCustomerItem}>
+                    <Text style={Styles.detailCustomerLabel}>Mã HPC</Text>
+                    <View style={{flex:1, flexDirection:"row"}}>                    
+                        <TextInput editable={!customer.id}
+                            value={customer.code_ch_ncc1} style={Styles.detailCustomerInput} onChangeText={(text) => setCustomer({ ...customer, code_ch_ncc1: text })} />
+                    </View>
                 </View>
-                <View style={Styles.detailCustomerViewTextInput}>
-                    <TextInput value={customer.code_ch_ncc2} placeholder='Mã cửa hàng nhà cung cấp 2' style={Styles.detailCustomerInput} onChangeText={(text) => setCustomer({ ...customer, code_ch_ncc2: text })} />
+                <View style={Styles.detailCustomerItem}>
+                    <Text style={Styles.detailCustomerLabel}>Mã Kem</Text>
+                    <View style={{flex:1, flexDirection:"row"}}>                    
+                        <TextInput editable={!customer.id}
+                            value={customer.code_ch_ncc2} style={Styles.detailCustomerInput} onChangeText={(text) => setCustomer({ ...customer, code_ch_ncc2: text })} />
+                    </View>
                 </View>
-                <View style={Styles.detailCustomerViewTextInput}>
-                    <TextInput value={customer.code_ch_ncc3} placeholder='Mã cửa hàng nhà cung cấp 3' style={Styles.detailCustomerInput} onChangeText={(text) => setCustomer({ ...customer, code_ch_nc3: text })} />
+                <View style={Styles.detailCustomerItem}>
+                    <Text style={Styles.detailCustomerLabel}>Mã tổng hợp</Text>
+                    <View style={{flex:1, flexDirection:"row"}}>                    
+                        <TextInput editable={!customer.id}
+                            value={customer.code_ch_ncc3} style={Styles.detailCustomerInput} onChangeText={(text) => setCustomer({ ...customer, code_ch_nc3: text })} />
+                    </View>
                 </View>
 
                 <Text style={{ color: Colors.primary, marginTop: 10, marginLeft: 5, fontSize: 15 }}>Nhân viên tiếp thị</Text>
@@ -526,28 +566,47 @@ const CustomerDetail = (props) => {
                     }
                 </View>
 
-                <TouchableOpacity onPress={onOpenSelectSaleman} style={[Styles.detailCustomerViewTextInput, { padding: 0, flex: 1 }]}>
-                    <Text numberOfLines={1} ellipsizeMode="tail" pointerEvents="none" style={{ paddingLeft: 10 }}>{"Thêm nhân viên tiếp thị"}</Text>
-                    <MaterialCommunityIcons onPress={() => { setShowModal(false) }} style={{}} name={"menu-down"} color={Colors.black} size={26} />
-                </TouchableOpacity>
+                {
+                    !customer.id?
+                    <TouchableOpacity onPress={onOpenSelectSaleman} style={[Styles.detailCustomerSelect, { padding: 0, flex: 1 }]}>
+                        <Text numberOfLines={1} ellipsizeMode="tail" pointerEvents="none" style={{ paddingLeft: 10 }}>{"Thêm nhân viên tiếp thị"}</Text>
+
+                            <MaterialCommunityIcons onPress={() => { setShowModal(false) }} style={{}} name={"menu-down"} color={Colors.black} size={26} />
+
+                    </TouchableOpacity>
+                    : null
+                }
 
                 <Text style={{ color: Colors.primary, marginTop: 10, marginLeft: 5, fontSize: 15 }}>Địa chỉ</Text>
 
-                <View style={Styles.detailCustomerViewTextInput}>
-                    <TextInput value={customer.street} placeholder='Nhập địa chỉ' style={Styles.detailCustomerInput} onChangeText={(text) => setCustomer({ ...customer, street: text })} />
+                <View style={Styles.detailCustomerItem}>
+                    <TextInput editable={!customer.id}
+                    value={customer.street} placeholder='Nhập địa chỉ' style={Styles.detailCustomerInput} onChangeText={(text) => setCustomer({ ...customer, street: text })} />
                 </View>
                 <View style={{ flexDirection: "column" }}>
-                    <TouchableOpacity onPress={() => { onOpenSelectAdress(MODAL_PROVINCE) }} style={[Styles.detailCustomerViewTextInput, { padding: 0, flex: 1 }]}>
+                    <TouchableOpacity disabled={customer.id} onPress={() => { onOpenSelectAdress(MODAL_PROVINCE) }} style={[Styles.detailCustomerSelect, { padding: 0, flex: 1 }]}>
                         <Text numberOfLines={1} ellipsizeMode="tail" pointerEvents="none" style={{ paddingLeft: 10 }}>{provice != "" ? provice.name : "Tỉnh / thành"}</Text>
-                        <MaterialCommunityIcons onPress={() => { setShowModal(false) }} style={{}} name={"menu-down"} color={Colors.black} size={26} />
+                        {
+                            !customer.id?
+                            <MaterialCommunityIcons onPress={() => { setShowModal(false) }} style={{}} name={"menu-down"} color={Colors.black} size={26} />
+                            : null
+                        }
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => { onOpenSelectAdress(MODAL_DISTRICT) }} style={[Styles.detailCustomerViewTextInput, { padding: 0, flex: 1 }]}>
+                    <TouchableOpacity disabled={customer.id} onPress={() => { onOpenSelectAdress(MODAL_DISTRICT) }} style={[Styles.detailCustomerSelect, { padding: 0, flex: 1 }]}>
                         <Text numberOfLines={1} ellipsizeMode="tail" pointerEvents="none" style={{ paddingLeft: 10 }}>{district != "" ? district.name : "Quận / huyện"}</Text>
-                        <MaterialCommunityIcons onPress={() => { setShowModal(false) }} style={{}} name={"menu-down"} color={Colors.black} size={26} />
+                        {
+                            !customer.id?
+                            <MaterialCommunityIcons onPress={() => { setShowModal(false) }} style={{}} name={"menu-down"} color={Colors.black} size={26} />
+                            :null                        
+                        }
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => { onOpenSelectAdress(MODAL_WARDS) }} style={[Styles.detailCustomerViewTextInput, { padding: 0, flex: 1 }]}>
+                    <TouchableOpacity disabled={customer.id} onPress={() => { onOpenSelectAdress(MODAL_WARDS) }} style={[Styles.detailCustomerSelect, { padding: 0, flex: 1 }]}>
                         <Text numberOfLines={1} ellipsizeMode="tail" pointerEvents="none" style={{ paddingLeft: 10 }}>{wards != "" ? wards.name : "Xã / phường"}</Text>
-                        <MaterialCommunityIcons onPress={() => { setShowModal(false) }} style={{}} name={"menu-down"} color={Colors.black} size={26} />
+                        {
+                            !customer.id?
+                            <MaterialCommunityIcons onPress={() => { setShowModal(false) }} style={{}} name={"menu-down"} color={Colors.black} size={26} />
+                            :null
+                        }
                     </TouchableOpacity>
                 </View>
                 {(customer.id && customer.id != "") ?
@@ -569,9 +628,13 @@ const CustomerDetail = (props) => {
                     : null
                 }
 
-                <TouchableOpacity onPress={() => onClickApply()} style={Styles.detailCustomerApply}>
-                    <Text style={Styles.detailCustomerTextApply}>Áp dụng</Text>
-                </TouchableOpacity>
+                {
+                    !customer.id?
+                    <TouchableOpacity onPress={() => onClickApply()} style={Styles.detailCustomerApply}>
+                        <Text style={Styles.detailCustomerTextApply}>Áp dụng</Text>
+                    </TouchableOpacity>
+                    :null
+                }
             </ScrollView>
             <FSModal visible={showModal} children={renderCategori()} />
         </Screen>

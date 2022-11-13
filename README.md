@@ -1,2 +1,2 @@
-# Alux App v2
+# Vinh Giang
 

@@ -7,6 +7,7 @@ import PSModal from './PSModal';
 import _ from 'lodash';
 import {Loading} from '../containers';
 import { NumberFormat } from '../configs/Utils';
+import { Customer } from '../screens';
 
 const removeAccents = (str) => {
     var AccentsMap = [
@@ -25,10 +26,15 @@ const removeAccents = (str) => {
     }
     return str;
 };
+//ModelType:  1 - product, 2 customer
+export const TYPE = {
+    PRODUCT: 1,
+    CUSTOMER: 2
+}
 
 // options : list(object) bắt buộc có trường 'name' (hiển thị), 'valueKey' là trường duy nhất tương ứng với trường 'current' (giá trị mặc định)
 const SelectLoadmore = (props) => {
-    const {onSelect, options, current, label, required, valueKey, reload, loading, search, isProduct, keySearchs} = props;
+    const {onSelect, options, current, label, required, valueKey, reload, loading, search, modelType, keySearchs} = props;
     const [showModal, setShowModal] = useState(false);
     const [showSearch, setShowSearch] = useState(false);
     const [keyword, setKeyword] = useState('');
@@ -57,7 +63,7 @@ const SelectLoadmore = (props) => {
                     let show = removeAccents(item.name.toLowerCase()).includes(removeAccents(keyword).toLowerCase())
                     if(!show && keySearchs && _.isArray(keySearchs)) {
                         keySearchs.forEach(keySearch => {
-                            if(removeAccents(item[keySearch].toLowerCase()).includes(removeAccents(keyword).toLowerCase())) show = true
+                            if(item[keySearch] && removeAccents(item[keySearch].toLowerCase()).includes(removeAccents(keyword).toLowerCase())) show = true
                         })
                     }
                     return show
@@ -69,7 +75,7 @@ const SelectLoadmore = (props) => {
         if (_.isObject(options)) {
             const opts = Object.keys(options).map(key => ({value: key, name: options[key]}));
             if (isFilter) {
-                return opts.filter(item => removeAccents(isProduct? item.display_name : item.name).includes(removeAccents(keyword)))
+                return opts.filter(item => removeAccents(modelType == TYPE.PRODUCT? item.display_name : item.name).includes(removeAccents(keyword)))
                     .slice(start, offset.current);
             }
             return opts;
@@ -124,10 +130,15 @@ const SelectLoadmore = (props) => {
                 onPress={() => select(item)}>
                 <ListItem key={item[valueKey] + index}>
                     <ListItem.Content>
-                        { isProduct ?
+                        { modelType == TYPE.PRODUCT ?
                         <ListItem.Title
                             style={item[valueKey] === current ? Styles.selectedSubItem : Styles.normalSubItem}>
-                            {`[${item.code}]    -   Tồn kho: ${NumberFormat(item.qty_available)}`}
+                            {`[${item.code}]    - Tồn kho: ${NumberFormat(item.qty_available)} ${item.uom_name ? item.uom_name : '' }`}
+                        </ListItem.Title>
+                        :modelType == TYPE.CUSTOMER && (item.code_ch_ncc1 || item.street)?
+                        <ListItem.Title
+                            style={item[valueKey] === current ? Styles.selectedSubItem : Styles.normalSubItem}>
+                            {(item.code_ch_ncc1 ? `Mã HPC: ${item.code_ch_ncc1}  ${item.street ? '|' : ''}`: '') + (item.street ? `🏠 ${item.street}` :'')}
                         </ListItem.Title>
                         : null
                         }

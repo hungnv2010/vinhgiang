@@ -446,7 +446,7 @@ const Styles = StyleSheet.create({
     },
     selectedSubItem: {
         fontWeight: 'bold',
-        fontSize: 14,
+        fontSize: 12,
         color: Colors.primary,
     },
     selectedItem: {
@@ -455,7 +455,7 @@ const Styles = StyleSheet.create({
     },
     normalSubItem: {
         color: Colors.gray4,
-        fontSize: 14,
+        fontSize: 12,
     },
     normalItem: {},
     filterInput: {
@@ -507,7 +507,7 @@ const Styles = StyleSheet.create({
         borderWidth: 0,
     },
     checkBox: {
-        color: Colors.white,
+        color: Colors.black,
     },
 
     productList: { flex: 1, padding: 5 },
@@ -524,8 +524,29 @@ const Styles = StyleSheet.create({
     productViewItemModalCategori: { padding: 0, flexDirection: "row", alignItems: "center", justifyContent: "center", },
     productItemNameCategori: { padding: 0, alignSelf: "center", flex: 1 },
     productCheckBox: { padding: 0, margin: 10 },
-    detailCustomerViewTextInput: { flexDirection: "row", paddingHorizontal: 5, alignItems: "center", justifyContent: "center", borderWidth: 0.5, borderColor: "#aaa", borderRadius: 7, height: 40, margin: 5, marginBottom: 0 },
-    detailCustomerInput: { flex: 1 },
+    detailCustomerItem: {
+        flexDirection: 'row',
+        padding: 4,
+        color: Colors.black,
+        // marginVertical: 0,
+    },
+    detailCustomerLabel: { 
+        width: "30%",
+        lineHeight: 40,
+        color: Colors.primary,
+    },
+    detailCustomerInput: { 
+        height: 40,
+        paddingHorizontal: 10,
+        color: Colors.black,
+        flex: 1,
+        textAlignVertical: 'center',
+        borderColor: "#aaa",
+        backgroundColor: Colors.white_t,
+        borderWidth: 1,
+        borderRadius: 8,
+     },
+    detailCustomerSelect: { flexDirection: "row", paddingHorizontal: 5, alignItems: "center", justifyContent: "center", borderWidth: 0.5, borderColor: "#aaa", borderRadius: 7, height: 40, margin: 5, marginBottom: 0 },
     detailCustomerApply: { padding: 5, flexDirection: "row", alignItems: "center", justifyContent: "center", borderWidth: 0, backgroundColor: Colors.primary, borderRadius: 7, height: 40, margin: 10 },
     detailCustomerTextApply: { color: Colors.white },
     customerAdd: { right: 20, bottom: 15, position: "absolute" },
